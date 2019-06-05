@@ -3,7 +3,7 @@
     "config": {
       "append": [
         {
-          "source": "http://<IP address of your ansible box>/bootstrap.ign",
+          "source": "http://<IP of your ansible box>/bootstrap.ign",
           "verification": {}
         }
       ]

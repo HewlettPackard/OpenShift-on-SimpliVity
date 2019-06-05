@@ -2,7 +2,7 @@
 # Ignition related settings
 #
 install_dir: /root/install/ins                                  # Path to your ignition files (base64 encoded) (append-bootstrap.64, master.64 and worker.64)
-coreos_ova_path: "/root/rhcos-410.8.20190516.0-vmware.ova"      # Path to the RHCOS OVA (file is expected to be there)
+coreos_ova_path: "/kits/rhcos-4.1.0-x86_64-vmware.ova"		# Path to the RHCOS OVA (file is expected to be there)
 
 #
 # You need a VLAN with transparent access to Internet
