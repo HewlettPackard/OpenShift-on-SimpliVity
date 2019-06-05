@@ -3,7 +3,7 @@
     "config": {
       "append": [
         {
-          "source": "http://clh-infra.clh.hpecloud.org/bootstrap.ign",
+          "source": "http://<IP address of your ansible box>/bootstrap.ign",
           "verification": {}
         }
       ]
