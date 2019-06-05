@@ -1,0 +1,19 @@
+cpus: '2'						# number of vCPUs
+ram: '4096'						# RAM size in MBs
+disk1_size: '60'					# disk size in Gbs
+template: "{{ rhel_template }}"				# Override the default CoreOS template
+
+customvalues:
+  - key: HPE
+    value: 'Not used for now'
+
+networks:
+  - name:  '{{ vm_portgroup }}'
+    ip:  "{{ ansible_host }}"
+    netmask: "{{ dhcp_subnet | ipaddr('netmask') }}"
+    gateway: "{{ gateway }}"
+  
+disks_specs:
+  - size_gb:  '{{ disk1_size }}'
+    type: thin
+    datastore: "{{ datastores | random }}"

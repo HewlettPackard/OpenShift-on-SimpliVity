@@ -1,0 +1,18 @@
+cpus: 2
+ram: 8192
+disk1_size: 50
+template: "{{ rhel_template }}"
+
+#
+# the following data structures are specific to VMWare VMs and are used as such by the ansible module vmware_guest 
+#
+networks:
+  - name: '{{ vm_portgroup }}'
+    ip:  "{{ ansible_host }}"
+    netmask: "{{ dhcp_subnet | ipaddr('netmask') }}"
+    gateway: "{{ gateway }}"
+
+disks_specs:
+  - size_gb:  '{{ disk1_size }}'
+    type: thin
+    datastore: "{{ datastores | random }}"

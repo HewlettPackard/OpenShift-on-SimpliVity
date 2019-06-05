@@ -1,0 +1,37 @@
+#
+# Ignition related settings
+#
+install_dir: /root/install/ins                                  # Path to your ignition files (base64 encoded) (append-bootstrap.64, master.64 and worker.64)
+coreos_ova_path: "/root/rhcos-410.8.20190516.0-vmware.ova"      # Path to the RHCOS OVA (file is expected to be there)
+
+#
+# You need a VLAN with transparent access to Internet
+#
+vm_portgroup: 'yourproxyfreeVLAN'
+dhcp_scope: 'x.y.z.201 x.y.z.254'				# DHCP scope to use on the above LAN (see your net admin)
+dhcp_subnet: x.y.z.0/24						# subnet to use on the above VLAN (see your net admin)
+gateway: 'x.y.z.1'						# gateway for the above subnet (see your net admin)
+domain_name: hpecloud.org					# you can keep this 
+
+#
+# vcenter related settings
+#
+vcenter_hostname: vcentergen10.am2.cloudra.local		# name of your vCenter server
+vcenter_username: Administrator@vsphere.local			# Admin user for your vCenter environment
+vcenter_validate_certs: false					# true not implemented/testes
+vcenter_cluster: Docker						# Name of your SimpliVity Cluster (must exists)
+datacenter: DEVOPS						# Name of your DATACENTER (must exists)
+infra_folder: 'hpeinfra'					# Folder for non-OCP VMs and templates (created if needed)
+template: xxx-rhcos						# VMWare template to use when provisioning OCP machines
+rhel_template: xxx-tpl-rhel760					# VMWare template to use for non OCP machines
+datastores: ['Docker_CLH']					# where to store the VMs (datastore must exists)
+cluster_name: hpe						# Name of the K8S Cluster. a VM folder with the same name is created if needed
+ntp_servers: ['10.12.2.1']					# ntp servers in your environment
+dns_servers: ['10.10.173.1','10.10.173.31']			# DNS servers in your environment
+
+#
+# temporary settings (don't change them for now)
+#
+resource_plane_vip: "{{ hostvars[groups.loadbalancer.0].ansible_host }}" # for now, the IP of your unique Load Balancer
+external_lb_vip: "{{ hostvars[groups.loadbalancer.0].ansible_host }}"	# no vip implemented yet
+internal_lb_vip: "{{ hostvars[groups.loadbalancer.0].ansible_host }}"	# no vip implemented yet

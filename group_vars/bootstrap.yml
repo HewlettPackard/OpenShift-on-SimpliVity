@@ -1,0 +1,19 @@
+cpus: '4'						# Number of vCPUs
+ram: 16384						# RAM size in MBs
+disk1_size: '120'					# Disk size in Gbs
+ignition_file: '{{ install_dir }}/append-bootstrap.64'	# location of the ignition data
+initial_port_check: 22					# this is the SSH port, 
+initial_port_check_timeout: 10				# delay in seconds we wait for port 22 to be open on the bootstrap node after intial power on 
+customvalues:
+  - key: disk.EnableUUID
+    value: "TRUE"
+  - key: guestinfo.ignition.config.data
+    value: "{{ ignition_data }}"
+  - key: guestinfo.ignition.config.data.encoding
+    value: base64
+  - key: sched.cpu.latencySensitivity
+    value: High
+disks_specs:
+  - size_gb:  '{{ disk1_size }}'
+    type: thin
+    datastore: "{{ datastores | random }}"

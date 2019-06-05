@@ -1,0 +1,19 @@
+apiVersion: v1
+baseDomain: {{ domain_name }}
+compute:
+- name: worker
+  replicas: {{ groups.worker | count }}
+controlPlane:
+  name: master
+  replicas: {{ groups.master | count }} 
+metadata:
+  name: {{ cluster_name }}
+platform:
+  vsphere:
+    vcenter: {{ vcenter_hostname }}
+    username: '{{ vcenter_username }}'
+    password: '{{ vcenter_password }}'
+    datacenter: {{ datacenter }}
+    defaultDatastore: {{ datastores[0] }}
+pullSecret: '{{ pull_secret }}'
+sshKey: '{{ ssh_key }}'

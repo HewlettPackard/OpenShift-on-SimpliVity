@@ -1,0 +1,188 @@
+###
+# Copyright (2017) Hewlett Packard Enterprise Development LP
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# You may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+### 
+---
+#######################################################################
+#
+# Play: Configure DHCP
+#
+#######################################################################
+- name: Configure DHCP
+  hosts: infrastructure
+  tasks:
+
+  - name: Install DHCP package
+    yum: 
+      name: dhcp
+      state: present
+
+  - name: Create the Initial dhcp.conf file
+    template:
+      src: templates/dhcpd.conf.j2
+      dest: /etc/dhcp/dhcpd.conf
+
+  - name: Retrieve the MAC Address of all VMs
+    delegate_to: localhost
+    vmware_guest_facts:
+      hostname: "{{ vcenter_hostname }}"
+      username: "{{ vcenter_username }}"
+      password: "{{ vcenter_password }}"
+      validate_certs: no
+      datacenter: "{{ datacenter }}"
+      folder: "{{ datacenter }}/vm/{{ cluster_name }}"
+      name: "{{ item }}"
+    with_items:
+      - "{{ groups.ocp }}"
+    register: vms_facts
+
+  - name: Remove any existing DHCP entry for host
+    replace:
+      path: /etc/dhcp/dhcpd.conf
+      regexp: |
+          host {{ inventory_hostname }} {
+          ^(.+)$
+          ^(.+)$
+          ^(.+)$
+          }
+
+  - name: Add DHCP reservations for our OCP VMsZZ
+    blockinfile:
+      path: /etc/dhcp/dhcpd.conf
+      block: |
+        host {{ item.instance.hw_name }} {
+           hardware ethernet {{ item.instance.hw_eth0.macaddress }};
+           fixed-address {{ hostvars[item.instance.hw_name].ansible_host }};
+           option host-name "{{ item.instance.hw_name }}";
+        }
+      marker: ""
+    with_items:
+      - "{{ vms_facts.results }}"
+    
+  - name: restart DHCP
+    systemd:
+      name: dhcpd
+      state: restarted
+
+#######################################################################
+#
+# Play: Configure DNS
+#
+#######################################################################
+- name: Configure DNS
+  hosts: infrastructure
+  tasks:
+
+#
+# In this prototype dnsmasq is used to provide name services
+#
+    - name: Configure required firewall ports
+      firewalld:
+        port: "{{ item }}"
+        permanent: true
+        immediate: true
+        state: enabled
+      with_items:
+        - 53/tcp
+        - 53/udp
+
+    - name: Install dnsmasq
+      yum:
+        name: dnsmasq
+        state: present
+
+    - name: Create Resolv.conf file
+      template:
+         src: templates/dnsmasq-resolv.conf.j2
+         dest: /var/lib/dnsmasq/resolv.conf
+
+    - name: Add DNS records required by OCP
+      template:
+         src: templates/dnsmasq_etcd.conf.j2
+         dest: /etc/dnsmasq.d/k8s.conf
+
+    - name: Populate DNS (dnsmasq)
+      template:
+        src: templates/hosts.j2
+        dest: /etc/hosts
+
+#######################################################################
+#
+# Play: Restart DNS and DHCP Services
+#
+#######################################################################
+- name: Restart DNS and DHCP services
+  hosts: infrastructure
+  tasks:
+ 
+    - name: Restart DNS Services
+      systemd:
+        state: restarted
+        name: dnsmasq
+      become: true
+
+    - name: Restart DHCP service
+      systemd:
+        state: restarted
+        name: dhcpd
+      become: true
+
+
+#######################################################################
+#
+# Play 2: Load Balancers
+#
+#######################################################################
+- name: Configure Load Balancer
+  hosts: loadbalancer
+  gather_facts: false
+
+  tasks:
+
+    - name: Install Pkgs needed by seboolean module
+      yum:
+        name: "{{ packages }}"
+        state: latest
+      vars:
+        packages:
+        - libsemanage-python
+        - libselinux-python
+
+    - name: Enable HAPROXY to open non standard ports
+      seboolean:
+        name: haproxy_connect_any
+        state: yes
+        persistent: yes
+
+    - name: Install haproxy
+      yum:
+        name: haproxy
+        state: present
+
+    - name: Disable firewall for now
+      systemd:
+        name: firewalld
+        state: stopped
+
+    - name: Update haproxy.cfg
+      template:
+         src: templates/haproxy.cfg.j2
+         dest: /etc/haproxy/haproxy.cfg
+      notify: Restart haproxy
+
+  handlers:
+    - name: Restart haproxy
+      systemd:
+        name: haproxy
+        state: restarted

@@ -1,0 +1,5 @@
+---
+vcenter_password: 'PasswordForYourvCenterAdminAccount'
+simplivity_password: 'PasswordForYourSimpliVityAdminAccount'
+pull_secret: 'not used for now'
+ssh_key:  'not used for now'

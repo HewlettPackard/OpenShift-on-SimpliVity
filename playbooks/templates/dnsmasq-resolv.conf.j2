@@ -1,0 +1,4 @@
+search {{ cluster_name }}.{{ domain_name }}
+{% for dns in dns_servers %}
+nameserver {{ dns }}
+{% endfor %}

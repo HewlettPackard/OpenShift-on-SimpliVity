@@ -1,0 +1,217 @@
+###
+# Copyright (2017) Hewlett Packard Enterprise Development LP
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# You may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+### 
+---
+#######################################################################
+#
+# Play: Deploy OCP nodes
+#
+#######################################################################
+- name: Deploy openshift nodes
+  hosts: ocp
+  gather_facts: false
+
+  tasks:
+
+#
+# Make sure we have the ignition data created
+#
+    - name: Load Ignition Data
+      set_fact:
+        ignition_data: "{{ lookup('file', ignition_file) }}"
+
+#
+# Create the VM in two steps to work around issue 55551 https://github.com/ansible/ansible/issues/55551
+# also changing the network connectivity seems to break things (etcd cluster does not start) so we rely on the template
+# to be connected to the expected network.
+#
+    - name: Create OCP VMs
+      delegate_to: localhost
+      vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: "{{ vcenter_validate_certs }}"
+        esxi_hostname: "{{ esxi_host }}"
+        datacenter: "{{ datacenter }}"
+        folder: "{{ datacenter }}/vm/{{ cluster_name }}"
+        name: "{{ inventory_hostname }}"
+        template: "{{ template }}"
+        state: present
+        hardware:
+          memory_mb: "{{ ram }}"
+          memory_reservation: "{{ ram }}"
+          num_cpus: "{{ cpus }}"
+        customvalues:
+          "{{ customvalues }}"
+      register: res
+
+#
+# Second step is to adjust the size of the disk (bug with ansible 2.8)
+#
+    - name: Adjust Disk Size
+      delegate_to: localhost
+      vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: "{{ vcenter_validate_certs }}"
+        datacenter: "{{ datacenter }}"
+        folder: "{{ datacenter }}/vm/{{ cluster_name }}"
+        name: "{{ inventory_hostname }}"
+        disk:
+          "{{ disks_specs }}"
+        state: present
+
+#######################################################################
+#
+# Play 2: Provision Load Balancers
+#
+#######################################################################
+- name: Provision Load Balancers
+  hosts: loadbalancer
+  gather_facts: false
+
+  tasks:
+
+  - set_fact:
+      internal_dns_servers: "{{ groups['infrastructure'] | map('extract', hostvars, ['ansible_host']) | list }}"
+
+  - name: Create VMs
+    delegate_to: localhost
+    vmware_guest:
+      hostname: "{{ vcenter_hostname }}"
+      username: "{{ vcenter_username }}"
+      password: "{{ vcenter_password }}"
+      validate_certs: "{{ vcenter_validate_certs }}"
+      esxi_hostname: "{{ esxi_host }}"
+      datacenter: "{{ datacenter }}"
+      folder: "{{ datacenter }}/vm/{{ infra_folder }}"
+      name: "{{ inventory_hostname }}"
+      template: "{{ template }}"
+      state: poweredon
+      networks: "{{ networks }}"
+      customization:
+        dns_servers: 
+          "{{ internal_dns_servers | union(dns_servers) }}"
+        domain: "{{ cluster_name }}.{{ domain_name }}"
+      hardware:
+        memory_mb: "{{ ram }}"
+        num_cpus: "{{ cpus }}"
+
+#
+# Second step is to adjust the size of the disk (bug with ansible 2.8)
+#
+  - name: Adjust Disk Size
+    delegate_to: localhost
+    vmware_guest:
+      hostname: "{{ vcenter_hostname }}"
+      username: "{{ vcenter_username }}"
+      password: "{{ vcenter_password }}"
+      validate_certs: "{{ vcenter_validate_certs }}"
+      datacenter: "{{ datacenter }}"
+      folder: "{{ datacenter }}/vm/{{ infra_folder }}"
+      name: "{{ inventory_hostname }}"
+      disk:
+        "{{ disks_specs }}"
+      state: present
+
+
+  - name: CreateVMsWait
+    wait_for_connection:
+      delay: 5
+      sleep: 15
+      timeout: 900
+
+
+#######################################################################
+#
+# Play 2: Provision Infrastructure nodes
+#
+#######################################################################
+- name: Provision Infrastructure VMs
+  hosts: infrastructure
+  gather_facts: false
+
+  tasks:
+
+  - set_fact:
+      internal_dns_servers: "{{ groups['infrastructure'] | map('extract', hostvars, ['ansible_host']) | list }}"
+
+#
+# cannot create the VM in one shot due to an issue with ansible 2.8
+#
+  - name: Create VMs
+    delegate_to: localhost
+    vmware_guest:
+      hostname: "{{ vcenter_hostname }}"
+      username: "{{ vcenter_username }}"
+      password: "{{ vcenter_password }}"
+      validate_certs: "{{ vcenter_validate_certs }}"
+      esxi_hostname: "{{ esxi_host }}"
+      datacenter: "{{ datacenter }}"
+      folder: "{{ datacenter }}/vm/{{ infra_folder }}"
+      name: "{{ inventory_hostname }}"
+      template: "{{ template }}"
+      state: present
+      networks: "{{ networks }}"
+      customization:
+        dns_servers: 
+          "{{ internal_dns_servers | union(dns_servers) }}"
+        domain: "{{ cluster_name }}.{{ domain_name }}"
+      hardware:
+        memory_mb: "{{ ram }}"
+        num_cpus: "{{ cpus }}"
+    vars:
+      dns_list: "{% for host in groups.infrastructure %}{% if loop.index != 1 %},{% endif %}{{ hostvars[host].ansible_host }}{% endfor %}"
+
+  - debug:
+      msg: "{% for host in groups.infrastructure %}{% if loop.index != 1 %},{% endif %}{{ hostvars[host].ansible_host }}{% endfor %}"
+ 
+#
+# Second step is to adjust the size of the disk (bug with ansible 2.8)
+#
+  - name: Adjust Disk Size
+    delegate_to: localhost
+    vmware_guest:
+      hostname: "{{ vcenter_hostname }}"
+      username: "{{ vcenter_username }}"
+      password: "{{ vcenter_password }}"
+      validate_certs: "{{ vcenter_validate_certs }}"
+      datacenter: "{{ datacenter }}"
+      folder: "{{ datacenter }}/vm/{{ cluster_name }}"
+      name: "{{ inventory_hostname }}"
+      disk:
+        "{{ disks_specs }}"
+      state: present
+
+  - name: Power on Infra VM
+    delegate_to: localhost
+    vmware_guest:
+      hostname: "{{ vcenter_hostname }}"
+      username: "{{ vcenter_username }}"
+      password: "{{ vcenter_password }}"
+      validate_certs: "{{ vcenter_validate_certs }}"
+      datacenter: "{{ datacenter }}"
+      folder: "{{ datacenter }}/vm/{{ cluster_name }}"
+      name: "{{ inventory_hostname }}"
+      state: poweredon
+
+  - name: CreateVMsWait
+    wait_for_connection:
+      delay: 5
+      sleep: 15
+      timeout: 300
+
