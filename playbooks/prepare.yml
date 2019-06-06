@@ -66,6 +66,7 @@
       register: res
 
     - name: Populate /etc/hosts
+      become: true
       template:
         src: templates/hosts.j2
         dest: /etc/hosts

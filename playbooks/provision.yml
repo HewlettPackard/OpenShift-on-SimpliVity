@@ -16,28 +16,96 @@
 ---
 #######################################################################
 #
-# Play: Deploy OCP nodes
+# Play: Prepare ignition data files by running the OCP installer
 #
 #######################################################################
-- name: Deploy openshift nodes
+- name: Prepare the ignition data files by running the OCP installer
+  hosts: localhost
+  gather_facts: yes 
+
+  tasks:
+
+  - name: Verify Presence of Required files
+    stat:
+      path: "{{ item }}"
+    register: res
+    failed_when: res.stat.exists == false
+    with_items:
+      - "{{ coreos_ova_path }}"
+      - "{{ ocp_installer_path }}"
+
+  - name: Create the Installation dir if necessary
+    file:
+      path: "{{ install_dir }}"
+      state: directory
+
+  - name: Generate the append-bootstrap.ign file
+    template:
+      src: templates/append-bootstrap.ign.j2
+      dest: "{{ install_dir }}/append-bootstrap.ign"
+
+  - name: Generate the install-config.yaml file
+    template:
+      src: templates/install-config.yaml.j2
+      dest: "{{ install_dir }}/install-config.yaml"
+
+  - name: Run the OpenShift Installer to generate the Ignition data Files
+    shell: |
+      {{ ocp_installer_path }} create ignition-configs --dir={{ install_dir }}
+    register: res
+
+  - name: Install http server on the ansible box
+    become: true
+    package:
+      name: httpd
+      state: present
+
+  - name: Make sure http is started
+    become: true
+    systemd:
+      name: httpd
+      state: started
+
+  - name: Configure required firewall ports
+    become: true
+    firewalld:
+      port: "{{ item }}"
+      permanent: yes
+      immediate: true
+      state: enabled
+    with_items:
+      - "80/tcp"
+
+  - name: Copy bootstrap.ign to the local http server
+    become: true
+    copy:
+      src: "{{ install_dir }}/bootstrap.ign"
+      dest: /var/www/html/bootstrap.ign
+
+#######################################################################
+#
+# Play: Deploy OCP node
+#
+#######################################################################
+- name: Deploy Openshift nodes
   hosts: ocp
   gather_facts: false
 
   tasks:
 
 #
-# Make sure we have the ignition data created
+# Load the Ignition data file
 #
     - name: Load Ignition Data
       set_fact:
-        ignition_data: "{{ lookup('file', ignition_file) }}"
+        ignition_data: "{{ lookup('file', ignition_file) | b64encode }}"
 
 #
 # Create the VM in two steps to work around issue 55551 https://github.com/ansible/ansible/issues/55551
 # also changing the network connectivity seems to break things (etcd cluster does not start) so we rely on the template
 # to be connected to the expected network.
 #
-    - name: Create OCP VMs
+    - name: Create OCP node
       delegate_to: localhost
       vmware_guest:
         hostname: "{{ vcenter_hostname }}"
@@ -89,7 +157,7 @@
   - set_fact:
       internal_dns_servers: "{{ groups['infrastructure'] | map('extract', hostvars, ['ansible_host']) | list }}"
 
-  - name: Create VMs
+  - name: Create load balancer node
     delegate_to: localhost
     vmware_guest:
       hostname: "{{ vcenter_hostname }}"
@@ -101,7 +169,7 @@
       folder: "{{ datacenter }}/vm/{{ infra_folder }}"
       name: "{{ inventory_hostname }}"
       template: "{{ template }}"
-      state: poweredon
+      state: present
       networks: "{{ networks }}"
       customization:
         dns_servers: 
@@ -128,20 +196,32 @@
         "{{ disks_specs }}"
       state: present
 
+  - name: Power on load balancer
+    delegate_to: localhost
+    vmware_guest:
+      hostname: "{{ vcenter_hostname }}"
+      username: "{{ vcenter_username }}"
+      password: "{{ vcenter_password }}"
+      validate_certs: "{{ vcenter_validate_certs }}"
+      datacenter: "{{ datacenter }}"
+      folder: "{{ datacenter }}/vm/{{ infra_folder }}"
+      name: "{{ inventory_hostname }}"
+      state: poweredon
 
-  - name: CreateVMsWait
+
+  - name: wait for connection with load balancer
     wait_for_connection:
       delay: 5
       sleep: 15
-      timeout: 900
+      timeout: 300
 
 
 #######################################################################
 #
-# Play 2: Provision Infrastructure nodes
+# Play 2: Provision Infrastructure node
 #
 #######################################################################
-- name: Provision Infrastructure VMs
+- name: Provision Infrastructure node
   hosts: infrastructure
   gather_facts: false
 
@@ -153,7 +233,7 @@
 #
 # cannot create the VM in one shot due to an issue with ansible 2.8
 #
-  - name: Create VMs
+  - name: Create infrastructure node
     delegate_to: localhost
     vmware_guest:
       hostname: "{{ vcenter_hostname }}"
@@ -174,12 +254,7 @@
       hardware:
         memory_mb: "{{ ram }}"
         num_cpus: "{{ cpus }}"
-    vars:
-      dns_list: "{% for host in groups.infrastructure %}{% if loop.index != 1 %},{% endif %}{{ hostvars[host].ansible_host }}{% endfor %}"
 
-  - debug:
-      msg: "{% for host in groups.infrastructure %}{% if loop.index != 1 %},{% endif %}{{ hostvars[host].ansible_host }}{% endfor %}"
- 
 #
 # Second step is to adjust the size of the disk (bug with ansible 2.8)
 #
@@ -197,7 +272,7 @@
         "{{ disks_specs }}"
       state: present
 
-  - name: Power on Infra VM
+  - name: Power on Infrastructure node
     delegate_to: localhost
     vmware_guest:
       hostname: "{{ vcenter_hostname }}"
@@ -209,7 +284,7 @@
       name: "{{ inventory_hostname }}"
       state: poweredon
 
-  - name: CreateVMsWait
+  - name: Wait for connection with Infrastructure node
     wait_for_connection:
       delay: 5
       sleep: 15

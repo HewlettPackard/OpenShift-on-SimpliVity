@@ -24,16 +24,18 @@
   tasks:
 
   - name: Install DHCP package
-    yum: 
+    become: true
+    package: 
       name: dhcp
       state: present
 
   - name: Create the Initial dhcp.conf file
+    become: true
     template:
       src: templates/dhcpd.conf.j2
       dest: /etc/dhcp/dhcpd.conf
 
-  - name: Retrieve the MAC Address of all VMs
+  - name: Retrieve the MAC Address of all Openshift nodes
     delegate_to: localhost
     vmware_guest_facts:
       hostname: "{{ vcenter_hostname }}"
@@ -48,6 +50,7 @@
     register: vms_facts
 
   - name: Remove any existing DHCP entry for host
+    become: true
     replace:
       path: /etc/dhcp/dhcpd.conf
       regexp: |
@@ -57,7 +60,8 @@
           ^(.+)$
           }
 
-  - name: Add DHCP reservations for our OCP VMsZZ
+  - name: Add DHCP reservations for all Openshift nodes
+    become: true
     blockinfile:
       path: /etc/dhcp/dhcpd.conf
       block: |
@@ -71,6 +75,7 @@
       - "{{ vms_facts.results }}"
     
   - name: restart DHCP
+    become: true
     systemd:
       name: dhcpd
       state: restarted
@@ -88,6 +93,7 @@
 # In this prototype dnsmasq is used to provide name services
 #
     - name: Configure required firewall ports
+      become: true
       firewalld:
         port: "{{ item }}"
         permanent: true
@@ -98,21 +104,25 @@
         - 53/udp
 
     - name: Install dnsmasq
-      yum:
+      become: true
+      package:
         name: dnsmasq
         state: present
 
     - name: Create Resolv.conf file
+      become: true
       template:
          src: templates/dnsmasq-resolv.conf.j2
          dest: /var/lib/dnsmasq/resolv.conf
 
     - name: Add DNS records required by OCP
+      become: true
       template:
          src: templates/dnsmasq_etcd.conf.j2
          dest: /etc/dnsmasq.d/k8s.conf
 
     - name: Populate DNS (dnsmasq)
+      become: true
       template:
         src: templates/hosts.j2
         dest: /etc/hosts
@@ -127,16 +137,16 @@
   tasks:
  
     - name: Restart DNS Services
+      become: true
       systemd:
         state: restarted
         name: dnsmasq
-      become: true
 
     - name: Restart DHCP service
+      become: true
       systemd:
         state: restarted
         name: dhcpd
-      become: true
 
 
 #######################################################################
@@ -151,7 +161,8 @@
   tasks:
 
     - name: Install Pkgs needed by seboolean module
-      yum:
+      become: true
+      package:
         name: "{{ packages }}"
         state: latest
       vars:
@@ -160,22 +171,26 @@
         - libselinux-python
 
     - name: Enable HAPROXY to open non standard ports
+      become: true
       seboolean:
         name: haproxy_connect_any
         state: yes
         persistent: yes
 
     - name: Install haproxy
-      yum:
+      become: true
+      package:
         name: haproxy
         state: present
 
     - name: Disable firewall for now
+      become: true
       systemd:
         name: firewalld
         state: stopped
 
     - name: Update haproxy.cfg
+      become: true
       template:
          src: templates/haproxy.cfg.j2
          dest: /etc/haproxy/haproxy.cfg
@@ -183,6 +198,7 @@
 
   handlers:
     - name: Restart haproxy
+      become: true
       systemd:
         name: haproxy
         state: restarted

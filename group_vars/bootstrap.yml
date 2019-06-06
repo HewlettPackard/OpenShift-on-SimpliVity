@@ -1,7 +1,7 @@
 cpus: '4'						# Number of vCPUs
 ram: 16384						# RAM size in MBs
 disk1_size: '120'					# Disk size in Gbs
-ignition_file: '{{ install_dir }}/append-bootstrap.64'	# location of the ignition data
+ignition_file: '{{ install_dir }}/append-bootstrap.ign'	# location of the ignition data
 initial_port_check: 22					# this is the SSH port, 
 initial_port_check_timeout: 10				# delay in seconds we wait for port 22 to be open on the bootstrap node after intial power on 
 customvalues:
