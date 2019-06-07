@@ -13,17 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ### 
----
-#######################################################################
-#
-# Play 1: Power on OCP nodes
-#
-#######################################################################
-- name: Deploy openshift nodes
-  hosts: ocp
-  gather_facts: false
 
-  roles:
-  - role: ocp
-    vars:
-      poweron: yes
+- block:
+  - debug: msg="Confugure"
+  tags:
+  - [ never, configure ]

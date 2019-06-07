@@ -12,18 +12,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-### 
+###
 ---
-#######################################################################
-#
-# Play 1: Power on OCP nodes
-#
-#######################################################################
-- name: Deploy openshift nodes
-  hosts: ocp
-  gather_facts: false
 
-  roles:
-  - role: ocp
-    vars:
-      poweron: yes
+- name: Restart haproxy
+  become: true
+  systemd:
+    name: haproxy
+    state: restarted
+

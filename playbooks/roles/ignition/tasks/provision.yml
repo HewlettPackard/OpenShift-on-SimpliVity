@@ -1,0 +1,72 @@
+###
+# Copyright (2017) Hewlett Packard Enterprise Development LP
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# You may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+### 
+
+  - name: Verify Presence of Required files
+    stat:
+      path: "{{ item }}"
+    register: res
+    failed_when: res.stat.exists == false
+    with_items:
+      - "{{ coreos_ova_path }}"
+      - "{{ ocp_installer_path }}"
+
+  - name: Create the Installation dir if necessary
+    file:
+      path: "{{ install_dir }}"
+      state: directory
+
+  - name: Generate the append-bootstrap.ign file
+    template:
+      src: templates/append-bootstrap.ign.j2
+      dest: "{{ install_dir }}/append-bootstrap.ign"
+
+  - name: Generate the install-config.yaml file
+    template:
+      src: templates/install-config.yaml.j2
+      dest: "{{ install_dir }}/install-config.yaml"
+
+  - name: Run the OpenShift Installer to generate the Ignition data Files
+    shell: |
+      {{ ocp_installer_path }} create ignition-configs --dir={{ install_dir }}
+    register: res
+
+  - name: Install http server on the ansible box
+    become: true
+    package:
+      name: httpd
+      state: present
+
+  - name: Make sure http is started
+    become: true
+    systemd:
+      name: httpd
+      state: started
+
+  - name: Configure required firewall ports
+    become: true
+    firewalld:
+      port: "{{ item }}"
+      permanent: yes
+      immediate: true
+      state: enabled
+    with_items:
+      - "80/tcp"
+
+  - name: Copy bootstrap.ign to the local http server
+    become: true
+    copy:
+      src: "{{ install_dir }}/bootstrap.ign"
+      dest: /var/www/html/bootstrap.ign

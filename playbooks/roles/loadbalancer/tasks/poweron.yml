@@ -14,16 +14,5 @@
 # limitations under the License.
 ### 
 ---
-#######################################################################
-#
-# Play 1: Power on OCP nodes
-#
-#######################################################################
-- name: Deploy openshift nodes
-  hosts: ocp
-  gather_facts: false
 
-  roles:
-  - role: ocp
-    vars:
-      poweron: yes
+  - debug: msg="Power on"

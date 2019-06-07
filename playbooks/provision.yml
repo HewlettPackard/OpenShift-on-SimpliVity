@@ -19,274 +19,54 @@
 # Play: Prepare ignition data files by running the OCP installer
 #
 #######################################################################
-- name: Prepare the ignition data files by running the OCP installer
+- name: Prepare Ignition data files
   hosts: localhost
   gather_facts: yes 
 
-  tasks:
-
-  - name: Verify Presence of Required files
-    stat:
-      path: "{{ item }}"
-    register: res
-    failed_when: res.stat.exists == false
-    with_items:
-      - "{{ coreos_ova_path }}"
-      - "{{ ocp_installer_path }}"
-
-  - name: Create the Installation dir if necessary
-    file:
-      path: "{{ install_dir }}"
-      state: directory
-
-  - name: Generate the append-bootstrap.ign file
-    template:
-      src: templates/append-bootstrap.ign.j2
-      dest: "{{ install_dir }}/append-bootstrap.ign"
-
-  - name: Generate the install-config.yaml file
-    template:
-      src: templates/install-config.yaml.j2
-      dest: "{{ install_dir }}/install-config.yaml"
-
-  - name: Run the OpenShift Installer to generate the Ignition data Files
-    shell: |
-      {{ ocp_installer_path }} create ignition-configs --dir={{ install_dir }}
-    register: res
-
-  - name: Install http server on the ansible box
-    become: true
-    package:
-      name: httpd
-      state: present
-
-  - name: Make sure http is started
-    become: true
-    systemd:
-      name: httpd
-      state: started
-
-  - name: Configure required firewall ports
-    become: true
-    firewalld:
-      port: "{{ item }}"
-      permanent: yes
-      immediate: true
-      state: enabled
-    with_items:
-      - "80/tcp"
-
-  - name: Copy bootstrap.ign to the local http server
-    become: true
-    copy:
-      src: "{{ install_dir }}/bootstrap.ign"
-      dest: /var/www/html/bootstrap.ign
+  roles:
+  - role: ignition
+    vars:
+      provision: yes
 
 #######################################################################
 #
-# Play: Deploy OCP node
+# Play: Provision OCP nodes
 #
 #######################################################################
-- name: Deploy Openshift nodes
+- name: Provision Openshift nodes
   hosts: ocp
   gather_facts: false
 
-  tasks:
-
-#
-# Load the Ignition data file
-#
-    - name: Load Ignition Data
-      set_fact:
-        ignition_data: "{{ lookup('file', ignition_file) | b64encode }}"
-
-#
-# Create the VM in two steps to work around issue 55551 https://github.com/ansible/ansible/issues/55551
-# also changing the network connectivity seems to break things (etcd cluster does not start) so we rely on the template
-# to be connected to the expected network.
-#
-    - name: Create OCP node
-      delegate_to: localhost
-      vmware_guest:
-        hostname: "{{ vcenter_hostname }}"
-        username: "{{ vcenter_username }}"
-        password: "{{ vcenter_password }}"
-        validate_certs: "{{ vcenter_validate_certs }}"
-        esxi_hostname: "{{ esxi_host }}"
-        datacenter: "{{ datacenter }}"
-        folder: "{{ datacenter }}/vm/{{ cluster_name }}"
-        name: "{{ inventory_hostname }}"
-        template: "{{ template }}"
-        state: present
-        hardware:
-          memory_mb: "{{ ram }}"
-          memory_reservation: "{{ ram }}"
-          num_cpus: "{{ cpus }}"
-        customvalues:
-          "{{ customvalues }}"
-      register: res
-
-#
-# Second step is to adjust the size of the disk (bug with ansible 2.8)
-#
-    - name: Adjust Disk Size
-      delegate_to: localhost
-      vmware_guest:
-        hostname: "{{ vcenter_hostname }}"
-        username: "{{ vcenter_username }}"
-        password: "{{ vcenter_password }}"
-        validate_certs: "{{ vcenter_validate_certs }}"
-        datacenter: "{{ datacenter }}"
-        folder: "{{ datacenter }}/vm/{{ cluster_name }}"
-        name: "{{ inventory_hostname }}"
-        disk:
-          "{{ disks_specs }}"
-        state: present
+  roles:
+  - role: ocp
+    vars:
+      provision: yes
 
 #######################################################################
 #
-# Play 2: Provision Load Balancers
+# Play: Provision Load Balancers
 #
 #######################################################################
 - name: Provision Load Balancers
   hosts: loadbalancer
   gather_facts: false
 
-  tasks:
-
-  - set_fact:
-      internal_dns_servers: "{{ groups['infrastructure'] | map('extract', hostvars, ['ansible_host']) | list }}"
-
-  - name: Create load balancer node
-    delegate_to: localhost
-    vmware_guest:
-      hostname: "{{ vcenter_hostname }}"
-      username: "{{ vcenter_username }}"
-      password: "{{ vcenter_password }}"
-      validate_certs: "{{ vcenter_validate_certs }}"
-      esxi_hostname: "{{ esxi_host }}"
-      datacenter: "{{ datacenter }}"
-      folder: "{{ datacenter }}/vm/{{ infra_folder }}"
-      name: "{{ inventory_hostname }}"
-      template: "{{ template }}"
-      state: present
-      networks: "{{ networks }}"
-      customization:
-        dns_servers: 
-          "{{ internal_dns_servers | union(dns_servers) }}"
-        domain: "{{ cluster_name }}.{{ domain_name }}"
-      hardware:
-        memory_mb: "{{ ram }}"
-        num_cpus: "{{ cpus }}"
-
-#
-# Second step is to adjust the size of the disk (bug with ansible 2.8)
-#
-  - name: Adjust Disk Size
-    delegate_to: localhost
-    vmware_guest:
-      hostname: "{{ vcenter_hostname }}"
-      username: "{{ vcenter_username }}"
-      password: "{{ vcenter_password }}"
-      validate_certs: "{{ vcenter_validate_certs }}"
-      datacenter: "{{ datacenter }}"
-      folder: "{{ datacenter }}/vm/{{ infra_folder }}"
-      name: "{{ inventory_hostname }}"
-      disk:
-        "{{ disks_specs }}"
-      state: present
-
-  - name: Power on load balancer
-    delegate_to: localhost
-    vmware_guest:
-      hostname: "{{ vcenter_hostname }}"
-      username: "{{ vcenter_username }}"
-      password: "{{ vcenter_password }}"
-      validate_certs: "{{ vcenter_validate_certs }}"
-      datacenter: "{{ datacenter }}"
-      folder: "{{ datacenter }}/vm/{{ infra_folder }}"
-      name: "{{ inventory_hostname }}"
-      state: poweredon
-
-
-  - name: wait for connection with load balancer
-    wait_for_connection:
-      delay: 5
-      sleep: 15
-      timeout: 300
-
+  roles:
+  - role: loadbalancer
+    vars:
+      provision: yes
 
 #######################################################################
 #
-# Play 2: Provision Infrastructure node
+# Play: Provision Infrastructure nodes
 #
 #######################################################################
-- name: Provision Infrastructure node
+- name: Provision Infrastructure nodes
   hosts: infrastructure
   gather_facts: false
 
-  tasks:
-
-  - set_fact:
-      internal_dns_servers: "{{ groups['infrastructure'] | map('extract', hostvars, ['ansible_host']) | list }}"
-
-#
-# cannot create the VM in one shot due to an issue with ansible 2.8
-#
-  - name: Create infrastructure node
-    delegate_to: localhost
-    vmware_guest:
-      hostname: "{{ vcenter_hostname }}"
-      username: "{{ vcenter_username }}"
-      password: "{{ vcenter_password }}"
-      validate_certs: "{{ vcenter_validate_certs }}"
-      esxi_hostname: "{{ esxi_host }}"
-      datacenter: "{{ datacenter }}"
-      folder: "{{ datacenter }}/vm/{{ infra_folder }}"
-      name: "{{ inventory_hostname }}"
-      template: "{{ template }}"
-      state: present
-      networks: "{{ networks }}"
-      customization:
-        dns_servers: 
-          "{{ internal_dns_servers | union(dns_servers) }}"
-        domain: "{{ cluster_name }}.{{ domain_name }}"
-      hardware:
-        memory_mb: "{{ ram }}"
-        num_cpus: "{{ cpus }}"
-
-#
-# Second step is to adjust the size of the disk (bug with ansible 2.8)
-#
-  - name: Adjust Disk Size
-    delegate_to: localhost
-    vmware_guest:
-      hostname: "{{ vcenter_hostname }}"
-      username: "{{ vcenter_username }}"
-      password: "{{ vcenter_password }}"
-      validate_certs: "{{ vcenter_validate_certs }}"
-      datacenter: "{{ datacenter }}"
-      folder: "{{ datacenter }}/vm/{{ cluster_name }}"
-      name: "{{ inventory_hostname }}"
-      disk:
-        "{{ disks_specs }}"
-      state: present
-
-  - name: Power on Infrastructure node
-    delegate_to: localhost
-    vmware_guest:
-      hostname: "{{ vcenter_hostname }}"
-      username: "{{ vcenter_username }}"
-      password: "{{ vcenter_password }}"
-      validate_certs: "{{ vcenter_validate_certs }}"
-      datacenter: "{{ datacenter }}"
-      folder: "{{ datacenter }}/vm/{{ cluster_name }}"
-      name: "{{ inventory_hostname }}"
-      state: poweredon
-
-  - name: Wait for connection with Infrastructure node
-    wait_for_connection:
-      delay: 5
-      sleep: 15
-      timeout: 300
+  roles:
+  - role: infrastructure
+    vars:
+      provision: yes
 

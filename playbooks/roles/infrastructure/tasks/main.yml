@@ -14,16 +14,12 @@
 # limitations under the License.
 ### 
 ---
-#######################################################################
-#
-# Play 1: Power on OCP nodes
-#
-#######################################################################
-- name: Deploy openshift nodes
-  hosts: ocp
-  gather_facts: false
 
-  roles:
-  - role: ocp
-    vars:
-      poweron: yes
+- include_tasks: provision.yml
+  when: provision is defined
+
+- include_tasks: configure.yml
+  when: configure is defined
+
+- include_tasks: poweron.yml
+  when: poweron is defined

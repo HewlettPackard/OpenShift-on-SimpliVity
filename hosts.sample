@@ -1,22 +1,26 @@
-[loadbalancer]
-hpe-lb1       ansible_host=x.y.z.5   esxi_host=simply04.am2.cloudra.local
-#hpe-lb2      ansible_host=x.y.z.6   esxi_host=simply04.am2.cloudra.local	# only one supported for now
+[local]
+localhost ansible_connection=local ansible_python_interpreter=/usr/bin/python3 # 10.15.152.4
 
 [infrastructure]
-hpe-infra1    ansible_host=x.y.z.8   esxi_host=
-#hpe-infra2   ansible_host=x.y.z.9   esxi_host=  # only one infra node supported at this time
+hpe-infra1    ansible_host=10.15.152.5   esxi_host=
+#hpe-infra2   ansible_host=10.15.152.6   esxi_host=		# only one infra node supported at this time
+
+[loadbalancer]
+hpe-lb1       ansible_host=10.15.152.7   esxi_host=
+#hpe-lb2      ansible_host=10.15.152.8   esxi_host=		# only one LB supported at this time
+
 
 [bootstrap]
-hpe-bootstrap ansible_host=x.y.z.209 esxi_host=simply04.am2.cloudra.local
+hpe-bootstrap ansible_host=10.15.152.209 esxi_host=
 
 [master]
-hpe-master0   ansible_host=x.y.z.210 esxi_host=simply05.am2.cloudra.local
-hpe-master1   ansible_host=x.y.z.211 esxi_host=simply06.am2.cloudra.local
-hpe-master2   ansible_host=x.y.z.212 esxi_host=simply07.am2.cloudra.local
+hpe-master0   ansible_host=10.15.152.210 esxi_host=
+hpe-master1   ansible_host=10.15.152.211 esxi_host=
+hpe-master2   ansible_host=10.15.152.212 esxi_host=
 
 [worker]
-hpe-worker0   ansible_host=x.y.z.213 esxi_host=simply04.am2.cloudra.local
-hpe-worker1   ansible_host=x.y.z.214 esxi_host=simply04.am2.cloudra.local
+hpe-worker0   ansible_host=10.15.152.213 esxi_host=
+hpe-worker1   ansible_host=10.15.152.214 esxi_host=
 
 [ocp:children]
 bootstrap
@@ -27,6 +31,4 @@ worker
 ansible_user=core
 ansible_python_interpreter=/usr/bin/python3
 
-[local]
-localhost ansible_connection=local ansible_python_interpreter=/usr/bin/python3
 

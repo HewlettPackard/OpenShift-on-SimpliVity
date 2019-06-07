@@ -1,17 +1,17 @@
 #
-# OCP installer related settings
+# OCP installer related settins
 #
-install_dir: "{{ playbook_dir }}/../../ocp"			# OCP installation folder on the ansible box. Will be created if it does not exists
+install_dir: "{{ playbook_dir }}/../../.ocp"			# OCP installation folder this folder must exists
 coreos_ova_path: "/kits/rhcos-4.1.0-x86_64-vmware.ova"		# Path to the RHCOS OVA (file is expected to be there)
 ocp_installer_path: /kits/openshift-install			# Path to the OCP installer
 
 #
 # You need a VLAN with transparent access to Internet
 #
-vm_portgroup: 'yourproxyfreeVLAN'				# portgroup that the VMS connect to (must exists)
-dhcp_scope: 'x.y.z.201 x.y.z.254'				# DHCP scope to use on the above LAN (see your net admin)
-dhcp_subnet: x.y.z.0/24						# subnet to use on the above VLAN (see your net admin)
-gateway: 'x.y.z.1'						# gateway for the above subnet (see your net admin)
+vm_portgroup: hpeOpenshift					# portgroup that the VMS connect to (must exists)
+dhcp_scope: '10.15.152.201 10.15.152.254'			# DHCP scope to use on the above LAN (see your net admin)
+dhcp_subnet: 10.15.152.0/24					# subnet to use on the above VLAN (see your net admin)
+gateway: '10.15.152.1'						# gateway for the above subnet (see your net admin)
 domain_name: hpecloud.org					# you can keep this 
 
 #
@@ -22,11 +22,11 @@ vcenter_username: Administrator@vsphere.local			# Admin user for your vCenter en
 vcenter_validate_certs: false					# true not implemented/testes
 vcenter_cluster: Docker						# Name of your SimpliVity Cluster (must exists)
 datacenter: DEVOPS						# Name of your DATACENTER (must exists)
-infra_folder: 'xxxinfra'					# Folder for non-OCP VMs and templates (created if needed)
-template: xxx-rhcos						# VMWare template to use when provisioning OCP machines
-rhel_template: xxx-tpl-rhel7					# VMWare template to use for non OCP machines
-datastores: ['Docker_XXX']					# where to store the VMs (datastore must exists)
-cluster_name: xxx						# Name of the K8S Cluster. a VM folder with the same name is created if needed
+infra_folder: 'hpeInfra'					# Folder for non-OCP VMs and templates (created if needed)
+template: hpe-rhcos						# VMWare template to use when provisioning OCP machines
+rhel_template: hpe-tpl-rhel7					# VMWare template to use for non OCP machines
+datastores: ['Openshift_HPE']					# where to store the VMs (datastore must exists)
+cluster_name: hpe						# Name of the K8S Cluster. a VM folder with the same name is created if needed
 ntp_servers: ['10.12.2.1']					# ntp servers in your environment
 dns_servers: ['10.10.173.1','10.10.173.31']			# DNS servers in your environment
 
