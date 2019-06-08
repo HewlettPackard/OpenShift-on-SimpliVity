@@ -1,18 +1,22 @@
 cpus: 2
 ram: 8192
 disk1_size: 50
-template: "{{ rhel_template }}"
+folder: "{{ infra_folder }}"                            # Where the VM will be stored
+template: "{{ rhel_template }}"				# Name of the template
+ignition_file: /dev/null				# no ignition data
 
-#
-# the following data structures are specific to VMWare VMs and are used as such by the ansible module vmware_guest 
-#
+customvalues: []
 networks:
   - name: '{{ vm_portgroup }}'
     ip:  "{{ ansible_host }}"
     netmask: "{{ dhcp_subnet | ipaddr('netmask') }}"
     gateway: "{{ gateway }}"
-
+customization:
+  dns_servers:
+    "{{ internal_dns_servers | union(dns_servers) }}"
+  domain: "{{ cluster_name }}.{{ domain_name }}"
 disks_specs:
   - size_gb:  '{{ disk1_size }}'
     type: thin
     datastore: "{{ datastores | random }}"
+

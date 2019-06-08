@@ -25,6 +25,16 @@
 
   tasks:
 
+    - name: Populate /etc/hosts
+      become: true
+      blockinfile:
+        path: /etc/hosts
+        block: |
+          {{ hostvars[item].ansible_host }} {{ hostvars[item].inventory_hostname }}  {{ hostvars[item].inventory_hostname }}.{{ cluster_name }}.{{ domain_name }}
+        marker: "# {mark} ANSIBLE MANAGED BLOCK {{ hostvars[item].inventory_hostname }}"
+      with_items:
+      - "{{ groups['all'] | difference (groups.local) }}"
+
     - name: Create Infra Folder
       vcenter_folder:
         hostname: "{{ vcenter_hostname }}"
@@ -64,10 +74,4 @@
         power_on: no
         allow_duplicates: no
       register: res
-
-    - name: Populate /etc/hosts
-      become: true
-      template:
-        src: templates/hosts.j2
-        dest: /etc/hosts
 

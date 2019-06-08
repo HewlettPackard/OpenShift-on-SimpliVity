@@ -14,40 +14,40 @@
 # limitations under the License.
 ### 
 ---
+- name: Configure required firewall ports
+  become: true
+  firewalld:
+    port: "{{ item }}"
+    permanent: true
+    immediate: true
+    state: enabled
+  with_items:
+    - 53/tcp
+    - 53/udp
 
-- name: Install Pkgs needed by seboolean module
+- name: Install dnsmasq
   become: true
   package:
-    name: "{{ packages }}"
-    state: latest
-  vars:
-    packages:
-    - libsemanage-python
-    - libselinux-python
-
-- name: Enable HAPROXY to open non standard ports
-  become: true
-  seboolean:
-    name: haproxy_connect_any
-    state: yes
-    persistent: yes
-
-- name: Install haproxy
-  become: true
-  package:
-    name: haproxy
+    name: dnsmasq
     state: present
 
-- name: Disable firewall for now
-  become: true
-  systemd:
-    name: firewalld
-    state: stopped
-
-- name: Update haproxy.cfg
+- name: Create Resolv.conf file
   become: true
   template:
-     src: haproxy.cfg.j2
-     dest: /etc/haproxy/haproxy.cfg
-  notify: Restart haproxy
+     src: dnsmasq-resolv.conf.j2
+     dest: /var/lib/dnsmasq/resolv.conf
+  notify: Restart DNS Services
 
+- name: Add DNS records required by OCP
+  become: true
+  template:
+     src: dnsmasq_etcd.conf.j2
+     dest: /etc/dnsmasq.d/k8s.conf
+  notify: Restart DNS Services
+
+- name: Populate DNS (dnsmasq)
+  become: true
+  template:
+    src: hosts.j2
+    dest: /etc/hosts
+  notify: Restart DNS Services

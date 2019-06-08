@@ -30,12 +30,12 @@
 
   - name: Generate the append-bootstrap.ign file
     template:
-      src: templates/append-bootstrap.ign.j2
+      src: append-bootstrap.ign.j2
       dest: "{{ install_dir }}/append-bootstrap.ign"
 
   - name: Generate the install-config.yaml file
     template:
-      src: templates/install-config.yaml.j2
+      src: install-config.yaml.j2
       dest: "{{ install_dir }}/install-config.yaml"
 
   - name: Run the OpenShift Installer to generate the Ignition data Files

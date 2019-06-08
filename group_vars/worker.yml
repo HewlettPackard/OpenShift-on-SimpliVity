@@ -1,9 +1,11 @@
-cpus: '4'					# number of vCPUs
-ram: '16384'					# RAM size in MBs
-disk1_size: '120'				# disk size in GBs
-ignition_file: '{{ install_dir }}/worker.ign'	# location of the ignition data
-initial_port_check: 22                  	# this is the SSH port,
-initial_port_check_timeout: 10 			# maximum number of seconds waiting for port 22 to be open. d$Capped by timeout_waiting_for_k8s_api
+cpus: '4'						# number of vCPUs
+ram: '16384'						# RAM size in MBs
+disk1_size: '120'					# disk size in GBs
+folder: "{{ cluster_name }}"                            # Where the VM will be stored
+ignition_file: '{{ install_dir }}/worker.ign'		# location of the ignition data
+initial_port_check: 22                  		# this is the SSH port,
+initial_port_check_timeout: 10 				# seconds waiting for port 22 to be open.
+
 customvalues:
   - key: disk.EnableUUID
     value: "TRUE"
@@ -13,7 +15,8 @@ customvalues:
     value: base64
   - key: sched.cpu.latencySensitivity
     value: High
-
+networks: []
+customization: {}
 disks_specs:
   - size_gb:  '{{ disk1_size }}'
     type: thin

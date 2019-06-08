@@ -3,15 +3,15 @@
 
 {{ external_lb_vip | ipaddr('address') }} api
 {{ internal_lb_vip | ipaddr('address') }} api-int
-
 {% for host in groups.loadbalancer %}
 {{ hostvars[host].ansible_host }} {{ host }}
 {% endfor %}
-
 {% for host in groups.infrastructure %}
 {{ hostvars[host].ansible_host }} {{ host }}
 {% endfor %}
-
+{% for host in groups.bootstrap %}
+{{ hostvars[host].ansible_host }} {{ host }}
+{% endfor %}
 {% for host in groups.ocp %}
 {{ hostvars[host].ansible_host }} {{ host }}
 {% endfor %}

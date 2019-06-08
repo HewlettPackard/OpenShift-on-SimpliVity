@@ -14,5 +14,15 @@
 # limitations under the License.
 ### 
 ---
-- include_tasks: configure_dhcp.yml
-- include_tasks: configure_dns.yml
+
+- include_tasks: provision.yml
+  when: provision is defined
+
+- include_tasks: configure.yml
+  when: configure is defined
+
+- include_tasks: poweron.yml
+  when: poweron is defined
+
+- include_tasks: decommission.yml
+  when: decommission is defined

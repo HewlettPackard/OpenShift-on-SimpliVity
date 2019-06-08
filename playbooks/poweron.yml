@@ -20,10 +20,26 @@
 #
 #######################################################################
 - name: Deploy openshift nodes
-  hosts: ocp
+  hosts: ocp:bootstrap
   gather_facts: false
 
   roles:
-  - role: ocp
+  - role: vspherevm
     vars:
       poweron: yes
+
+  tasks:
+
+# using hostsvars[inventory_hostname].ansible_hosts because inventory_hostname may not resolve on the ansible box
+  - name: "Waiting for openshift api server port on master nodes. (~10 to 15mns)"
+    delegate_to: localhost
+    wait_for:
+      port: "{{ initial_port_check }}"
+      host: "{{ hostvars[inventory_hostname].ansible_host }}"
+      state: started
+      timeout: 10
+    failed_when: false
+    register: res
+    delay: 10
+    retries:  "{{ ( 1 + initial_port_check_timeout | int / 10 ) | int }}"
+    until: res.state is defined and res.state == "started"

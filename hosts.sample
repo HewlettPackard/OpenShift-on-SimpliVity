@@ -9,7 +9,6 @@ hpe-infra1    ansible_host=10.15.152.5   esxi_host=
 hpe-lb1       ansible_host=10.15.152.7   esxi_host=
 #hpe-lb2      ansible_host=10.15.152.8   esxi_host=		# only one LB supported at this time
 
-
 [bootstrap]
 hpe-bootstrap ansible_host=10.15.152.209 esxi_host=
 
@@ -18,17 +17,26 @@ hpe-master0   ansible_host=10.15.152.210 esxi_host=
 hpe-master1   ansible_host=10.15.152.211 esxi_host=
 hpe-master2   ansible_host=10.15.152.212 esxi_host=
 
-[worker]
+[rhcos_worker]
 hpe-worker0   ansible_host=10.15.152.213 esxi_host=
 hpe-worker1   ansible_host=10.15.152.214 esxi_host=
 
-[ocp:children]
+[rhel_worker]
+# to be done
+
+[worker:children]
+rhcos_worker
+rhel_worker
+
+[rhcos:children]
 bootstrap
 master
-worker
+rhcos_worker
 
-[ocp:vars]
+[rhcos:vars]
 ansible_user=core
 ansible_python_interpreter=/usr/bin/python3
 
-
+[ocp:children]
+master
+worker

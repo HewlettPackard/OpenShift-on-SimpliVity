@@ -14,12 +14,4 @@
 # limitations under the License.
 ### 
 ---
-
-- include_tasks: provision.yml
-  when: provision is defined
-
-- include_tasks: configure.yml
-  when: configure is defined
-
-- include_tasks: poweron.yml
-  when: poweron is defined
+  - debug: msg="Power on"

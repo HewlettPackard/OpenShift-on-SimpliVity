@@ -22,7 +22,10 @@
 - name: Configure Infrastructure Nodes
   hosts: infrastructure
   roles:
-  - role: infrastructure
+  - role: dns
+    vars: 
+      configure: yes
+  - role: dhcp
     vars: 
       configure: yes
 

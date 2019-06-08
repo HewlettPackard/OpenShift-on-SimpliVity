@@ -22,7 +22,6 @@
 - name: Prepare Ignition data files
   hosts: localhost
   gather_facts: yes 
-
   roles:
   - role: ignition
     vars:
@@ -30,43 +29,31 @@
 
 #######################################################################
 #
-# Play: Provision OCP nodes
+# Play: Provision Openshit nodes
 #
 #######################################################################
 - name: Provision Openshift nodes
-  hosts: ocp
+  hosts: bootstrap:master:rhcos_worker
   gather_facts: false
 
   roles:
-  - role: ocp
+  - role: vspherevm
     vars:
       provision: yes
 
 #######################################################################
 #
-# Play: Provision Load Balancers
+# Play: Provision Infrastructure VMs
 #
 #######################################################################
 - name: Provision Load Balancers
-  hosts: loadbalancer
+  hosts: loadbalancer:infrastructure
   gather_facts: false
 
   roles:
-  - role: loadbalancer
+  - role: vspherevm
     vars:
       provision: yes
+      poweron: yes
 
-#######################################################################
-#
-# Play: Provision Infrastructure nodes
-#
-#######################################################################
-- name: Provision Infrastructure nodes
-  hosts: infrastructure
-  gather_facts: false
-
-  roles:
-  - role: infrastructure
-    vars:
-      provision: yes
 

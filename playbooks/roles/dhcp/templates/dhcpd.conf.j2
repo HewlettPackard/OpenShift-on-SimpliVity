@@ -22,3 +22,11 @@ subnet {{ dhcp_subnet | ipaddr('network') }} netmask {{ dhcp_subnet | ipaddr('ne
 }
 
 
+{% for host in vms_facts.results %}
+host {{ host.instance.hw_name }} {
+   hardware ethernet {{ host.instance.hw_eth0.macaddress }} ;
+   fixed-address {{ hostvars[host.instance.hw_name].ansible_host }} ;
+   option host-name "{{ host.instance.hw_name }}" ;
+}
+{% endfor %}
+

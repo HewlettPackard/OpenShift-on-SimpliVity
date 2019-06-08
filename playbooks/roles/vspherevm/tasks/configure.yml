@@ -13,16 +13,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ### 
----
-
-- include_tasks: provision.yml
-  when: provision is defined
-
-- include_tasks: configure.yml
-  when: configure is defined
-
-- include_tasks: poweron.yml
-  when: poweron is defined
-
-- include_tasks: decommission.yml
-  when: decommission is defined
+- debug:
+  msg: "Configure"

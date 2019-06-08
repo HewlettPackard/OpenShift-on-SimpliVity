@@ -1,19 +1,22 @@
 cpus: '2'						# number of vCPUs
 ram: '4096'						# RAM size in MBs
 disk1_size: '60'					# disk size in Gbs
+folder: "{{ infra_folder }}"                            # Where the VM will be stored
 template: "{{ rhel_template }}"				# Override the default CoreOS template
+ignition_file: /dev/null                                # no ignition data
 
-customvalues:
-  - key: HPE
-    value: 'Not used for now'
-
+customvalues: []
 networks:
   - name:  '{{ vm_portgroup }}'
     ip:  "{{ ansible_host }}"
     netmask: "{{ dhcp_subnet | ipaddr('netmask') }}"
     gateway: "{{ gateway }}"
-  
+customization:
+  dns_servers:
+    "{{ internal_dns_servers | union(dns_servers) }}"
+  domain: "{{ cluster_name }}.{{ domain_name }}"
 disks_specs:
   - size_gb:  '{{ disk1_size }}'
     type: thin
     datastore: "{{ datastores | random }}"
+
