@@ -14,25 +14,15 @@
 # limitations under the License.
 ### 
 ---
-- hosts: rhcos
-  name: Delete VMs
-  gather_facts: false
-  roles:
-  - role: vspherevm
-    vars:
-      decommission: yes
- 
-- hosts: loadbalancer:infrastructure
-  name: Delete other VMs
-  gather_facts: false
-  roles:
-  - role: vspherevm
-    vars:
-      decommission: yes
 
-- hosts: localhost
-  name: Delete Template
-  roles:
-  - role: prepare
-    decommission: yes
+- include_tasks: provision.yml
+  when: provision is defined
 
+- include_tasks: configure.yml
+  when: configure is defined
+
+- include_tasks: poweron.yml
+  when: poweron is defined
+
+- include_tasks: decommission.yml
+  when: decommission is defined
