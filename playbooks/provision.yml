@@ -35,7 +35,6 @@
 - name: Provision Openshift nodes
   hosts: bootstrap:master:rhcos_worker
   gather_facts: false
-
   roles:
   - role: vspherevm
     vars:
@@ -43,17 +42,27 @@
 
 #######################################################################
 #
-# Play: Provision Infrastructure VMs
+# Play: Prepare cloud init data for non CoreOS VMs
+#
+#######################################################################
+- name: Prepare cloud-init data 
+  hosts: loadbalancer:infrastructure
+  gather_facts: false 
+  roles:
+  - role: cloudinit
+    vars:
+      provision: yes
+
+#######################################################################
+#
+# Play: Provision non-coreOS VMs
 #
 #######################################################################
 - name: Provision Load Balancers
   hosts: loadbalancer:infrastructure
   gather_facts: false
-
   roles:
   - role: vspherevm
     vars:
       provision: yes
       poweron: yes
-
-

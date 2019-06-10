@@ -3,18 +3,40 @@ ram: 8192
 disk1_size: 50
 folder: "{{ infra_folder }}"                            # Where the VM will be stored
 template: "{{ rhel_template }}"				# Name of the template
-ignition_file: /dev/null				# no ignition data
 
-customvalues: []
+#
+# without cloud-init
+#
+#customvalues: []
+#networks:
+#  - name: '{{ vm_portgroup }}'
+#    ip:  "{{ ansible_host }}"
+#    netmask: "{{ dhcp_subnet | ipaddr('netmask') }}"
+#    gateway: "{{ gateway }}"
+#customization:
+#  dns_servers:
+#    "{{ internal_dns_servers | union(dns_servers) }}"
+#  domain: "{{ cluster_name }}.{{ domain_name }}"
+#disks_specs:
+#  - size_gb:  '{{ disk1_size }}'
+#    type: thin
+#    datastore: "{{ datastores | random }}"
+
+#
+# with cloud init
+#
+customvalues: 
+  - key: guestinfo.metadata
+    value: "{{ cloud_init_metadata_data }}"
+  - key: guestinfo.metadata.encoding
+    value: base64
+  - key: guestinfo.userdata
+    value:  "{{ cloud_init_users_data }}"
+  - key: guestinfo.userdata.encoding
+    value: base64
 networks:
   - name: '{{ vm_portgroup }}'
-    ip:  "{{ ansible_host }}"
-    netmask: "{{ dhcp_subnet | ipaddr('netmask') }}"
-    gateway: "{{ gateway }}"
-customization:
-  dns_servers:
-    "{{ internal_dns_servers | union(dns_servers) }}"
-  domain: "{{ cluster_name }}.{{ domain_name }}"
+customization: {}
 disks_specs:
   - size_gb:  '{{ disk1_size }}'
     type: thin

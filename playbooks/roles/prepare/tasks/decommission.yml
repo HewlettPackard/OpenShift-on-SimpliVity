@@ -26,4 +26,17 @@
     state: absent
   vars:
     ansible_connection: local
-#  when: delete_rhcos_template is defined
+  when: delete_templates | bool
+
+- name: Delete RH CoreOS template
+  vmware_guest:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    validate_certs: "{{ vcenter_validate_certs }}"
+    datacenter: "{{ datacenter }}"
+    folder: "{{ datacenter }}/vm/{{ infra_folder }}"
+    name: "{{ rhel_template }}"
+    state: absent
+  when: delete_templates | bool
+

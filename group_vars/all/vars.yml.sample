@@ -24,15 +24,9 @@ vcenter_cluster: Docker						# Name of your SimpliVity Cluster (must exists)
 datacenter: DEVOPS						# Name of your DATACENTER (must exists)
 infra_folder: 'hpeInfra'					# Folder for non-OCP VMs and templates (created if needed)
 template: hpe-rhcos						# VMWare template to use when provisioning OCP machines
-rhel_template: hpe-tpl-rhel7					# VMWare template to use for non OCP machines
+rhel_ova_path: "/kits/hpe-centos760.ova" 
+rhel_template: hpe-centos760					# VMWare template to use for non OCP machines
 datastores: ['Openshift_HPE']					# where to store the VMs (datastore must exists)
 cluster_name: hpe						# Name of the K8S Cluster. a VM folder with the same name is created if needed
 ntp_servers: ['10.12.2.1']					# ntp servers in your environment
 dns_servers: ['10.10.173.1','10.10.173.31']			# DNS servers in your environment
-
-#
-# temporary settings (don't change them for now)
-#
-resource_plane_vip: "{{ hostvars[groups.loadbalancer.0].ansible_host }}" # for now, the IP of your unique Load Balancer
-external_lb_vip: "{{ hostvars[groups.loadbalancer.0].ansible_host }}"	# no vip implemented yet
-internal_lb_vip: "{{ hostvars[groups.loadbalancer.0].ansible_host }}"	# no vip implemented yet

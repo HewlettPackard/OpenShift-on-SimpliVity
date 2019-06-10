@@ -13,15 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ### 
-- name: Populate /etc/hosts
-  become: true
-  blockinfile:
-    path: /etc/hosts
-    block: |
-      {{ hostvars[item].ansible_host }} {{ hostvars[item].inventory_hostname }}  {{ hostvars[item].inventory_hostname }}.{{ cluster_name }}.{{ domain_name }}
-    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ hostvars[item].inventory_hostname }}"
+
+- name: Verify Presence of Required files
+  stat:
+    path: "{{ item }}"
+  register: res
+  failed_when: res.stat.exists == false
   with_items:
-  - "{{ groups['all'] | difference (groups.local) }}"
+    - "{{ ocp_installer_path }}"
 
 - name: Create Infra Folder
   vcenter_folder:
@@ -63,3 +62,60 @@
     allow_duplicates: no
   register: res
 
+- name: Deploy RHEL OVA
+  vmware_deploy_ovf:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    validate_certs: "{{ vcenter_validate_certs }}"
+    ova: "{{ rhel_ova_path }}"
+    cluster: "{{ vcenter_cluster }}"
+    datacenter: "{{ datacenter }}"
+    folder: "{{ datacenter }}/vm/{{ infra_folder }}"
+    datastore: "{{ datastores | random }}"
+    disk_provisioning: thin
+    networks: '{"VM Network":"{{ vm_portgroup }}"}'
+    name: "{{ rhel_template }}"
+    power_on: no
+    allow_duplicates: no
+  register: res
+
+- name: Populate /etc/hosts
+  become: true
+  blockinfile:
+    path: /etc/hosts
+    block: |
+      {{ external_lb_vip | ipaddr('address') }} api api.{{ cluster_name }}.{{ domain_name }}
+    marker: "# {mark} ANSIBLE MANAGED BLOCK api"
+
+- name: Populate /etc/hosts
+  become: true
+  blockinfile:
+    path: /etc/hosts
+    block: |
+      {{ hostvars[item].ansible_host }} {{ hostvars[item].inventory_hostname }}  {{ hostvars[item].inventory_hostname }}.{{ cluster_name }}.{{ domain_name }}
+    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ hostvars[item].inventory_hostname }}"
+  with_items:
+  - "{{ groups['all'] | difference (groups.local) }}"
+
+- name: Install http server on the ansible box
+  become: true
+  package:
+    name: httpd
+    state: present
+
+- name: Make sure http is started
+  become: true
+  systemd:
+    name: httpd
+    state: started
+
+- name: Configure required firewall ports
+  become: true
+  firewalld:
+    port: "{{ item }}"
+    permanent: yes
+    immediate: true
+    state: enabled
+  with_items:
+  - 80/tcp
