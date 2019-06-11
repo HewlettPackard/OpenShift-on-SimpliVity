@@ -43,3 +43,14 @@
     delay: 10
     retries:  "{{ ( 1 + initial_port_check_timeout | int / 10 ) | int }}"
     until: res.state is defined and res.state == "started"
+
+# last wait_for to fail the playbook if necessary
+
+  - name: "Final verification to fail the playbook is port 22 is not open"
+    delegate_to: localhost
+    wait_for:
+      port: "{{ initial_port_check }}"
+      host: "{{ hostvars[inventory_hostname].ansible_host }}"
+      state: started
+      timeout: 10
+

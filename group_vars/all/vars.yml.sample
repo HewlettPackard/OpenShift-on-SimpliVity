@@ -4,6 +4,7 @@
 install_dir: "{{ playbook_dir }}/../../.ocp"			# OCP installation folder this folder must exists
 coreos_ova_path: "/kits/rhcos-4.1.0-x86_64-vmware.ova"		# Path to the RHCOS OVA (file is expected to be there)
 ocp_installer_path: /kits/openshift-install			# Path to the OCP installer
+pull_secret: '{{ vault.pull_secret }}'				# pull secret
 
 #
 # You need a VLAN with transparent access to Internet
@@ -19,14 +20,27 @@ domain_name: hpecloud.org					# you can keep this
 #
 vcenter_hostname: vcentergen10.am2.cloudra.local		# name of your vCenter server
 vcenter_username: Administrator@vsphere.local			# Admin user for your vCenter environment
+vcenter_password: '{{ vault.vcenter_password }}'		# Password for the above
 vcenter_validate_certs: false					# true not implemented/testes
 vcenter_cluster: Docker						# Name of your SimpliVity Cluster (must exists)
 datacenter: DEVOPS						# Name of your DATACENTER (must exists)
 infra_folder: 'hpeInfra'					# Folder for non-OCP VMs and templates (created if needed)
 template: hpe-rhcos						# VMWare template to use when provisioning OCP machines
-rhel_ova_path: "/kits/hpe-centos760.ova" 
-rhel_template: hpe-centos760					# VMWare template to use for non OCP machines
+rhel_ova_path: "/kits/hpe-rhel760.ova"				# path on the ansible controller to the iOVA file used to create the template for non-coreOS machines
+rhel_template: hpe-rhel760					# name that will be given to the VM when the above OVA is deployed
 datastores: ['Openshift_HPE']					# where to store the VMs (datastore must exists)
 cluster_name: hpe						# Name of the K8S Cluster. a VM folder with the same name is created if needed
 ntp_servers: ['10.12.2.1']					# ntp servers in your environment
 dns_servers: ['10.10.173.1','10.10.173.31']			# DNS servers in your environment
+
+#
+# passwordless login
+#
+ssh_key: '{{ vault.ssh_key }}'					# ssh public key for all VMs
+
+#
+# not used for now
+#
+simplivity_password: '{{ vault.simplivity_password }}'		# not used for now
+rhn_orgid: '{{ vault.rhn_orgid }}'				# not used for now
+rhn_key: '{{ vault.rhn_key }}'					# not used for now

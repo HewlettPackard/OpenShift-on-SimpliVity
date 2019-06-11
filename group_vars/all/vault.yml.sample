@@ -1,5 +1,8 @@
 ---
-vcenter_password: 'PasswordForYourvCenterAdminAccount'
-simplivity_password: 'PasswordForYourSimpliVityAdminAccount'
-pull_secret: 'not used for now'
-ssh_key:  'not used for now'
+vault:
+  vcenter_password: 'YourvCenterAdminPassword'
+  simplivity_password: 'YourvCenterAdminPassword'
+  rhn_orgid: "YourRHNOrgId"
+  rhn_key: "YourRHNkey"
+  pull_secret: '...  replace with your pull secret  ... '
+  ssh_key:  'your ssh public key here'
