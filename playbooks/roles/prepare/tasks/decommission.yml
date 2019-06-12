@@ -14,29 +14,5 @@
 # limitations under the License.
 ### 
 ---
-- name: Delete RH CoreOS template
-  vmware_guest:
-    hostname: "{{ vcenter_hostname }}"
-    username: "{{ vcenter_username }}"
-    password: "{{ vcenter_password }}"
-    validate_certs: "{{ vcenter_validate_certs }}"
-    datacenter: "{{ datacenter }}"
-    folder: "{{ datacenter }}/vm/{{ infra_folder }}"
-    name: "{{ template }}"
-    state: absent
-  vars:
-    ansible_connection: local
-  when: delete_templates | bool
-
-- name: Delete RH CoreOS template
-  vmware_guest:
-    hostname: "{{ vcenter_hostname }}"
-    username: "{{ vcenter_username }}"
-    password: "{{ vcenter_password }}"
-    validate_certs: "{{ vcenter_validate_certs }}"
-    datacenter: "{{ datacenter }}"
-    folder: "{{ datacenter }}/vm/{{ infra_folder }}"
-    name: "{{ rhel_template }}"
-    state: absent
-  when: delete_templates | bool
-
+- debug:
+    msg: "Nothing to decommission"

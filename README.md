@@ -1,6 +1,6 @@
 **Version Installed:** OCP 4.1 released!
 
-## Introduction: What these playbooks are doing
+## Introduction: Purpose of these playbooks
 
 The OCP 4.1 installer supports two deployments scenarios: IPI and UPI. **I**nstaller‑**P**rovisioned **I**nfrastructure (IPI) is only supported on AWS for now. Because we deploy on vSphere, we use the **U**ser-**P**rovisioned **I**nfrastructure (UPI) scenario which means we need to provision... the infrastructure (surprise!).
 
@@ -86,16 +86,21 @@ Once the installation is finished, log in the VM (root account) and perform the 
 
   `shutdown -h now`
 
+**Note:** The playbooks have been tested with CentOS 7.6 as well. if you use CentOS you don;t have to run the subscription-manager command above.
+
+Finally, make sure the name of this template match the variable group_vars/all/vars.yml:infra_template.
+
 ## **Prepare an OVA file (optional)**
 
-It is possible to deploy the rhel_template from an OVA. To create the OVA proceed as indicated below:
+It is possible to deploy the infra_template from an OVA. To create the OVA proceed as indicated below:
 
+- **make sure** the one network interface of the template is connected to the network named 'VM Network'
 - set the CD/DVD for the template to client device (vs ISO in Datastore)
 - Select the template and export it as an OVF template
 - create a tar archive of **all** the files that where downloaded. the extension MUST be .ova (and not .tar)
-- copy the ova file to a location that the ansible user can access and use the ansible_variable **group_vars/all/vars.yml:rhel_template:ova_path:** to tell the playbooks where you stored the ova file.
+- copy the ova file to a location that the ansible user can access and use the ansible_variable **group_vars/all/vars.yml:infra_ova_path:** to tell the playbooks where you stored the ova file.
 
-**note:** If a template with the name specified by **group_vars/all/vars.yml:rhel_template** is found in the vCenter Datacenter, the ova file will not be deployed and the existing template will be used to deploy non-CoreOS VMS. If the template is not found, the ova file is deployed and the template is given the name documented by **rhel_template**.
+**note:** If a template with the name specified by **group_vars/all/vars.yml:infra_template** is found in the vCenter Datacenter, the ova file will not be deployed and the existing template will be used to deploy non-CoreOS VMS. If the template is not found, the ova file is deployed and the template is given the name documented by **infra_template**.
 
 ## **Download Required Files**
 
@@ -195,32 +200,31 @@ Note that the kubeconfig file is located in the auth folder under your **install
 ## <a id="vars_yml"></a>group_vars/vars.yml
 
 
-| key                    | example value                                                | comments                                                     |
-| :--------------------- | :----------------------------------------------------------- | :----------------------------------------------------------- |
-| install_dir            | "{{ playbook_dir }}/../../.ocp"                              | this is where the ignition files and the kubeconfig file will be stored. If you cloned the repo in ~/ocpsvt, the default value will create a folder ~/.ocp. The kubeconfig file is located in {{ instal_dir }}/auth |
-| coreos_ova_path        | /kits/rhcos-4.1.0-x86_64-vmware.ova                          | path to the OCP41. Red Hat CoreOS VM ova file. The OVA file should be there |
-| ocp_installer_path     | /kits/openshift-install                                      | The Openshift Installer is expected to be at this location   |
-| pull_secret            | '{{ vault.pull_secret }}'                                    | Indirection to the pull secret stored in group_vars/all/vault.yml. Use the example value as it is. |
-| vm_portgroup           | hpeOpenshift                                                 | portgroup that the VMs connet to. Must be a proxy free VLAN with an access to the internet |
-| dhcp_scope             | '10.15.152.201 10.15.152.254'                                | 'startaddr endaddr' scope that DHCP will manage. Of course this must be inside the **dhcp_subnet** (See below) |
-| dhcp_subnet            | 10.15.152.0/24                                               | subnet to use on the VLAN/network connected to the **vm_portgroup**. CIDR notation |
-| gateway                | 10.15.152.1                                                  | gateway for the **dhcp_subnet** subnet.                      |
-| domain_name            | hpecloud.org                                                 | base domain name. must match the baseDomain key in the install-config.yml file you used to generate the ignition files |
-| vcenter_hostname       | vcentergen10.em2.cloudra.local                               | name of your vcenter server. Must be resolvable by the ansible box |
-| vcenter_username:      | Administrator@vsphere.local                                  | Admin account in your vcenter infrastructure. The password is specified in group_vars/all/vault.yml (encrypted or not) |
-| vcenter_password       | '{{ vault.vcenter_password }}'                               | indirection to password in vault file, don;t change it       |
-| vcenter_validate_certs | false                                                        |                                                              |
-| vcenter_cluster        | Docker                                                       | the name of your SimpliVity cluster                          |
-| datacenter             | DEVOPS                                                       | datacenter where all the vcenter artifact can be found (including the vcenter_cluster, the templates etc) |
-| infra_folder           | hpeInfra                                                     | folder where the non-OCP VMs will be deployed. This folder is created if it does not exists |
-| template               | hpe-rhcos                                                    | name of the RHCOS template. Template will be created with this name and stored in the folder named **infra_folder**. You don;t need to create this template, the playbook will do it for you |
-| rhel_ova_path          | "/kits/hpe-rhel760.ova"                                      | path on the ansible controller to the OVA file used to create the template for non-coreOS machines |
-| rhel_template          | hpe-rhel760                                                  | name of the REd Hat EL7 template used as a basis for non OCP VMs such as the load balancer(s) the infrastructure nodes. this template MUST exists. The playbooks will not create it. (need doc to explain how to create this template, especially the ssh public key must be injected into this template) |
-| datastores             | [['Openshift_HPE'](https://confluence.simplivt.local/pages/createpage.action?spaceKey=PE&title='Docker_CLH'&linkCreation=true&fromPageId=56921082)] | name of the datastore where all the VMS will be stored. Can be a list of datastores but this was never tested |
-| cluster_name           | hpe                                                          | name of your OpenShift cluster. your openshift cluster will use names such as xxx.<**cluster_name**>.<**domain_name**>. IN addition all OCP Vms are created in this folder. The folder is created by the playbooks if it does not exists. |
-| ntp_servers            | [['10.12.2.1](https://confluence.simplivt.local/pages/createpage.action?spaceKey=PE&title='10.12.2.1'&linkCreation=true&fromPageId=56921082)'] | list of NTP servers in your environment (need to confirm that we can access this IP from our proxy free VLAN) |
-| dns_servers            | ['10.10.173.1','10.10.173.31']                               | DNS servers. the DNS server deployed by the playbooks managing the domain_name domain forwards to these servers when it cannot resolve names |
-| ssh_key                | '{{ vault.ssh_key }}'                                        | indirection to SSH public key stored in group_vars/all/vault.yml (note: it is a public key, there is no reason to store it in vault, will change this in the next revision of the playbookls) |
+| key                    | example value                         | comments                                                     |
+| :--------------------- | :------------------------------------ | :----------------------------------------------------------- |
+| install_dir            | "{{ playbook_dir }}/../../.ocp"       | this is where the ignition files and the kubeconfig file will be stored. If you cloned the repo in ~/ocpsvt, the default value will create a folder ~/.ocp. The kubeconfig file is located in {{ instal_dir }}/auth |
+| ocp_installer_path     | /kits/openshift-install               | The Openshift Installer is expected to be at this location   |
+| pull_secret            | '{{ vault.pull_secret }}'             | Indirection to the pull secret stored in group_vars/all/vault.yml. Use the example value as it is. |
+| vm_portgroup           | hpeOpenshift                          | portgroup that the VMs connet to. Must be a proxy free VLAN with an access to the internet |
+| dhcp_scope             | '10.15.152.201 10.15.152.254'         | 'startaddr endaddr' scope that DHCP will manage. Of course this must be inside the **dhcp_subnet** (See below) |
+| dhcp_subnet            | 10.15.152.0/24                        | subnet to use on the VLAN/network connected to the **vm_portgroup**. CIDR notation |
+| gateway                | 10.15.152.1                           | gateway for the **dhcp_subnet** subnet.                      |
+| domain_name            | hpecloud.org                          | base domain name. must match the baseDomain key in the install-config.yml file you used to generate the ignition files |
+| vcenter_hostname       | vcentergen10.em2.cloudra.local        | name of your vcenter server. Must be resolvable by the ansible box |
+| vcenter_username:      | Administrator@vsphere.local           | Admin account in your vcenter infrastructure. The password is specified in group_vars/all/vault.yml (encrypted or not) |
+| vcenter_password       | '{{ vault.vcenter_password }}'        | indirection to password in vault file, don't change it       |
+| vcenter_validate_certs | false                                 |                                                              |
+| vcenter_cluster        | Docker                                | the name of your SimpliVity cluster                          |
+| datacenter             | DEVOPS                                | datacenter where all the vcenter artifact can be found (including the vcenter_cluster, the templates etc) |
+| datastores             | ['Openshift_HPE']                     | Name of the Datastore which will receive all the VMs. Must exists (for now) |
+| infra_folder           | hpeInfra                              | folder where the non-OCP VMs and templates will be deployed. This folder is created if it does not exists |
+| master_ova_path        | "/kits/rhcos-4.1.0-x86_64-vmware.ova" | Path to RHCOS OVA (name and location of the file Red Hat CoreOS OVA you downloaded from Red Hat) |
+| worker_ova_path        | "{{ master_ova_path }}"               | path to the OVA file used to create the VM template for OCP worker nodes. The proposed value configures the same ova as master nodes. |
+| infra_ova_path         | "/kits/hpe-rhel760.ova"               | path to the OVA file used to create the VM template for infra machines (LBs etc) |
+| master_template        | hpe-rhcos                             | VMWare template name for OCP master nodes.You don't need to create this template, the playbook will do it for you |
+| worker_template        | "{{ master_template }}"               | VMWare template name for OCP worker nodes (same as master nodes by default, ie RH CoreOS) |
+| infra_template         | hpe-rhel760                           | VMWare template name for non OCP Vms (such as LBs etc)       |
+| ssh_key                | '{{ vault.ssh_key }}'                 | indirection to SSH public key stored in group_vars/all/vault.yml (note: it is a public key, there is no reason to store it in vault, will change this in the next revision of the playbooks) |
 
 
 
@@ -268,4 +272,5 @@ The environment consists of a 4 node SimpliVity cluster running the latest OmniS
 | hpe-master2   | 10.15.152.212               | OCP master machine. Note that this IP address is inside the **dhcp_scope**. (a reservation will be made by the playbooks) |
 | hpe-worker0   | 10.15.152.213               | OCP worker machine. Note that this IP address is inside the **dhcp_scope**. (a reservation will be made by the playbooks) |
 | hpe-worker1   | 10.15.152.214               | OCP worker machine. Note that this IP address is inside the **dhcp_scope**. (a reservation will be made by the playbooks) |
+
 

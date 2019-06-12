@@ -15,7 +15,7 @@
 ### 
 ---
 - hosts: all:!local
-  name: Delete VMs
+  name: Delete VMs and Templates
   gather_facts: false
   roles:
   - role: vspherevm
@@ -23,7 +23,7 @@
       decommission: yes
  
 - hosts: localhost
-  name: Delete Templates
+  name: Delete Local artifact
   roles:
   - role: prepare
     decommission: yes

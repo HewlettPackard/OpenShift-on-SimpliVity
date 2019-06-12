@@ -1,8 +1,9 @@
 cpus: '2'						# number of vCPUs
 ram: '4096'						# RAM size in MBs
 disk1_size: '60'					# disk size in Gbs
-folder: "{{ infra_folder }}"                            # Where the VM will be stored
-template: "{{ rhel_template }}"				# Override the default CoreOS template
+folder: "{{ infra_folder }}"				# Where the VM will be stored
+template: "{{ infra_template }}"			# Override the default CoreOS template
+ova_path: "{{ infra_ova_path }}"			# Name of the OVA used to import the template
 
 #
 # without cloud-init

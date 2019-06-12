@@ -13,50 +13,49 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ### 
----
-
-- name: Power off VMs
-  delegate_to: localhost
-  vmware_guest:
-    hostname: "{{ vcenter_hostname }}"
-    username: "{{ vcenter_username }}"
-    password: "{{ vcenter_password }}"
-    validate_certs: "{{ vcenter_validate_certs }}"
-    datacenter: "{{ datacenter }}"
-    folder: "{{ datacenter }}/vm/{{ folder }}"
-    name: "{{ inventory_hostname }}"
-    state: poweredoff
-  failed_when: false
-
-- name: Delete VMs
-  delegate_to: localhost
-  vmware_guest:
-    hostname: "{{ vcenter_hostname }}"
-    username: "{{ vcenter_username }}"
-    password: "{{ vcenter_password }}"
-    validate_certs: "{{ vcenter_validate_certs }}"
-    datacenter: "{{ datacenter }}"
-    folder: "{{ datacenter }}/vm/{{ folder }}"
-    name: "{{ inventory_hostname }}"
-    state: absent
-
--  name: Compile List of templates
-   delegate_to: localhost
-   set_fact: 
-     list_of_templates: "{{ play_hosts | map ('extract', hostvars, ['template'] ) | list | unique }}"
-
-# run once to avoid race conditions with all nodes initiating a VM delete
-- name: Delete Templates
+- name: See if VM template already loaded
   run_once: true
   delegate_to: localhost
-  vmware_guest:
+  vmware_guest_facts:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    datacenter: "{{ datacenter }}"
+    folder: "{{ datacenter }}/vm/{{ infra_folder }}"
+    validate_certs: no
+    name: "{{ template }}"
+  failed_when: false
+  register: vm_facts
+
+- name: Verify Presence of OVA file if template not found
+  run_once: true
+  delegate_to: localhost
+  stat:
+    path: "{{ item }}"
+  register: res
+  failed_when: res.stat.exists == false
+  with_items:
+    - "{{ ova_path }}"
+  when: vm_facts.instance is not defined
+
+- name: Deploy OVA
+  run_once: true
+  delegate_to: localhost
+  vmware_deploy_ovf:
     hostname: "{{ vcenter_hostname }}"
     username: "{{ vcenter_username }}"
     password: "{{ vcenter_password }}"
     validate_certs: "{{ vcenter_validate_certs }}"
+    ova: "{{ ova_path }}"
+    cluster: "{{ vcenter_cluster }}"
     datacenter: "{{ datacenter }}"
     folder: "{{ datacenter }}/vm/{{ infra_folder }}"
-    name: "{{ item }}"
-    state: absent
-  with_items:
-  - "{{ list_of_templates }}"
+    datastore: "{{ datastores | random }}"
+    disk_provisioning: thin
+    networks: '{"VM Network":"{{ vm_portgroup }}"}'
+    name: "{{ template }}"
+    power_on: no
+    allow_duplicates: no
+  when: vm_facts.instance is not defined
+  register: res
+

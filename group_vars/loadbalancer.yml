@@ -1,8 +1,9 @@
 cpus: 2
 ram: 8192
 disk1_size: 50
-folder: "{{ infra_folder }}"                            # Where the VM will be stored
-template: "{{ rhel_template }}"				# Name of the template
+folder: "{{ infra_folder }}"                            # Where the VM template is stored
+template: "{{ infra_template }}"			# Name of the template
+ova_path: "{{ infra_ova_path }}"			# Name of the OVA used to import the template
 
 #
 # without cloud-init
