@@ -12,18 +12,33 @@ The **site.yml** playbook does the following:
 4. powers up the OCP virtual machines
 5. wait for the Openshif API to come up on the master nodes
 
-The files located under the folder group_vars configures the virtual machines according to the minimum requirements documented by Red Hat. these requirements are listed in the table below:
 
-| Requirement (1)                | Choice Made                                            | Comment                                                      |
-| ------------------------------ | ------------------------------------------------------ | ------------------------------------------------------------ |
-| Transparent Access to Internet | Vlan 2964 (choose your VLAN)                           | No proxy needed                                              |
-| One bootstrap machine          | VM (CoreOS) 4xvCPU, 16GN RAM, 120GB disk space         | This is the RH minimum requirement                           |
-| Three master machines          | VM (CoreOS) 4xvCPU, 16GN RAM, 120GB disk space         | This is the RH minimum requirement                           |
-| Two worker machines            | VM (CoreOS) 4xvCPU, 16GB RAM, 120GB disk space         | This is the 2 times the CPU and RAM minimum requirement      |
-| DHCP for the CoreOS machines   | ISC DHCP running on an infrastructure VM               | Only one infrastructure VM supported as this point. This VM is deployed by the playbooks. |
-| DNS                            | Dnsmasq running on the same insfrastructure VM as DHCP | We may opt for named in the future. Service deployed and configured by the playbooks |
-| Ports                          | See doc                                                | CoreOS VMs (probably) have the required ports open as I did not have to configure their firewall |
-| Load Balancer                  | One VM running haproxy                                 | We will want two LBs with 2 floating IPs                     |
+
+| Requirement (1)                                              | Choice Made                                               | Comment                                                      |
+| ------------------------------------------------------------ | --------------------------------------------------------- | ------------------------------------------------------------ |
+| vCenter Infra 6.7U1                                          |                                                           | You need admin credentials                                   |
+| ESXi cluster of three machines                               |                                                           | If you want HA you need three machines in the cluster and you need to deploy 3 masters |
+| One proxy-free VLAN with access to Internet (to pull Red Hat artifacts | a portgroup connected to all machines in your ESX cluster | The playbooks install DHCP services on this VLAN so no other DHCP service should be running on this VLAN |
+| One routed subnet for use on the above VLAN                  |                                                           | from your net admin.                                         |
+| One Access Network / VLAN plus the following number of IP addresses:  1+ n, where n is the number of load balancers | another portgroup                                         | from your net admin                                          |
+| DNS and NTP services                                         |                                                           |                                                              |
+
+The playbooks creates  OCP VMs according to the following sizing:
+
+| VM                                           | OS and Sizing                            | Comments                                     |
+| -------------------------------------------- | ---------------------------------------- | -------------------------------------------- |
+| 1 x bootstrap machine                        | CoreOS 4xCPU, 16GN RAM, 120GB disk space | This is the RH minimum requirement           |
+| 3 x master machines                          | CoreOS 4xCPU, 16GN RAM, 120GB disk space | This is the RH minimum requirement           |
+| N x worker machines (depending on inventory) | CoreOS 2xCPU, 16GN RAM, 120GB disk space | This is two times the RH minimum requirement |
+
+
+
+The playbooks also creates the following VM which provides additional infrastructure services required by OCP
+
+| VM                | OS and Sizing | Comments                                                |
+| ----------------- | ------------- | ------------------------------------------------------- |
+| 1 x load balancer | Red Hat 7.6   | Only one LB allowed with this version of the playbooks  |
+| 1 x Infra         | Red Hat 7.6   | VM providing DHCP and DNS services on the internal VLAN |
 
 
 
@@ -131,23 +146,32 @@ cd git clone https://github.com/chris7444/ocpsvt.git
 
 ## **Prepare to run the playbooks**
 
-Copy group_vars/all/vars.yml.sample to group_vars/all/vars.yml
+### Configure the playbooks
 
-Edit vars.yml to match your environment (more details can be found [here](#vars_yml)
-
-Copy group_vars/all/vault.yml.sample to group_vars/all/vault.yml
-
-Edit vault.yml to match your environment (more details can be found [here](#vault-yml) 
+- Copy group_vars/all/vars.yml.sample to group_vars/all/vars.yml
+- Edit vars.yml to match your environment. More details can be found [here](#vars_yml)
+- Copy group_vars/all/vault.yml.sample to group_vars/all/vault.yml
+- Edit vault.yml to match your environment. More details can be found [here](#vault-yml) 
 
 **Note**: you don’t need to edit the group files.
 
+### Create your inventory
+
 Make a copy of hosts.sample (name the copy **hosts**) and make the modification needed to match your environment:
 
-- use unique names in the vcenter environment, recommended VM names in the form xxx-master0, xxx-lb1 etc (avoid underscores in names)
+- use unique names in the vcenter environment, recommended VM names in the form xxx-master0, xxx-lb1 etc, where xxx is the name of your cluster.
+
+  **note:** underscores (_) are not valid characters in hostnames
+
 - use your own IP addresses and not those coming from the sample file
-- verify that the IP addresses you allocate to the OCP VMs are inside the **dhcp_scope** you defined in **group_vars/all/vars.yml**
+
+- verify that the IP addresses you allocate to the OCP VMs are inside the **dhcp_scope** you define in **group_vars/all/vars.yml**
+
 - only configure one machine in the infrastructure group. If you configure two machines, you will end up having two DHCP servers on your VLAN (future rev will implement ISC DHCP failover)
+
 - only configure one machine in the loadbalancer group. Future rev will implement 2 LBs and virtual IPs (similar to what we have done for Docker EE)
+
+- Load balancers need to have two IP addresses.  One on the internal network designated b**y vm_portgroup** in group_vars/all/vars.yml  and specified with the ansible_host variable. A second one for the frontend network designated by **frontend_ipaddr** in the inventor. frontend_ipaddr should be specified in CIDR notation (for example 10.10.174.165/22).
 
 
 
@@ -159,7 +183,7 @@ Perform the following commands on your ansible machine
 cd ~/ocpsvt ansible-playbook –I hosts site.yml
 ```
 
-Depending on your hardware and the load, it takes approximately 20mns for the playbook to complete successfully,
+Depending on your hardware and the load, it takes approximately 20mns for the playbook to finish successfully,
 
 ## Monitoring the progresses
 
@@ -170,8 +194,6 @@ You can monitor the progresses of the ignition in several places:
 - After powering on the OCP VMs, the playbook repeatedly polls specific ports on the OCP machines and displays a line per retry for each machine being polled so that you know that it is not stuck.  To be specific, the playbook first polls ports 22 on all OCP machines, then when all OCP machines have their port 22 up and running, it pools ports 22 and 22623 depending on the machine role.
 
   **Note:** In my environment, the playbook finishes at 70 / 60 retries remaining.
-
-  
 
 - You should see the openshift-api-server and the machine-config-server endpoints available on the bootstrap machine. Use the Load Balancer stats screen to check this out (url [http://your‑lb-ip-address:9000](http://yourlb-ip-address:9000/) )
   
@@ -225,6 +247,8 @@ Note that the kubeconfig file is located in the auth folder under your **install
 | worker_template        | "{{ master_template }}"               | VMWare template name for OCP worker nodes (same as master nodes by default, ie RH CoreOS) |
 | infra_template         | hpe-rhel760                           | VMWare template name for non OCP Vms (such as LBs etc)       |
 | ssh_key                | '{{ vault.ssh_key }}'                 | indirection to SSH public key stored in group_vars/all/vault.yml (note: it is a public key, there is no reason to store it in vault, will change this in the next revision of the playbooks) |
+| frontend_vm_portgroup  | 'VM Network'                          | Name of the portgroup connected to the access/public network |
+| frontend_gateway       | '10.10.172.1'                         | Access network gateway                                       |
 
 
 

@@ -6,25 +6,7 @@ template: "{{ infra_template }}"			# Name of the template
 ova_path: "{{ infra_ova_path }}"			# Name of the OVA used to import the template
 
 #
-# without cloud-init
-#
-#customvalues: []
-#networks:
-#  - name: '{{ vm_portgroup }}'
-#    ip:  "{{ ansible_host }}"
-#    netmask: "{{ dhcp_subnet | ipaddr('netmask') }}"
-#    gateway: "{{ gateway }}"
-#customization:
-#  dns_servers:
-#    "{{ internal_dns_servers | union(dns_servers) }}"
-#  domain: "{{ cluster_name }}.{{ domain_name }}"
-#disks_specs:
-#  - size_gb:  '{{ disk1_size }}'
-#    type: thin
-#    datastore: "{{ datastores | random }}"
-
-#
-# with cloud init
+# with cloud init_data:
 #
 customvalues: 
   - key: guestinfo.metadata
@@ -37,9 +19,30 @@ customvalues:
     value: base64
 networks:
   - name: '{{ vm_portgroup }}'
+  - name: '{{ frontend_vm_portgroup }}'
 customization: {}
 disks_specs:
   - size_gb:  '{{ disk1_size }}'
     type: thin
     datastore: "{{ datastores | random }}"
 
+cloud_init_networks:
+  version: 1
+  config:
+  - type: physical
+    name: ens192
+    subnets:
+      - type: static
+        address: "{{ hostvars[inventory_hostname].ansible_host }}"
+        netmask: "{{ dhcp_subnet | ipaddr('netmask') }}"
+        gateway: "{{ gateway }}"
+        dns_nameservers: "{{ internal_dns_servers | union(dns_servers) }}"
+        dns_search:
+          - "{{ cluster_name }}.{{ domain_name }}"
+  - type: physical
+    name: ens224
+    subnets:
+      - type: static
+        address: "{{ hostvars[inventory_hostname].frontend_ipaddr | ipaddr('address') }}"
+        netmask: "{{ hostvars[inventory_hostname].frontend_ipaddr | ipaddr('netmask') }}"
+        gateway: "{{ frontend_gateway }}"

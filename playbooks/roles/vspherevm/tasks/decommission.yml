@@ -60,3 +60,4 @@
     state: absent
   with_items:
   - "{{ list_of_templates }}"
+  when: delete_templates | bool

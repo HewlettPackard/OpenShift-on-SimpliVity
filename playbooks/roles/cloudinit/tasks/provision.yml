@@ -40,17 +40,9 @@
   set_fact:
     cloud_init_users_data: "{{ lookup('file', outfile) | b64encode }}"
 
-# cloud-init network config
-- set_fact:
-    outfile: "{{ install_dir }}/{{inventory_hostname}}_cloud_init_network.yml"
-- name: Generate Cloud-init network config
-  delegate_to: localhost
-  template:
-    src: cloud_init_network.yml.j2
-    dest: "{{ outfile }}"
 - name: Encode cloud-init network config
   set_fact:
-    cloud_init_network_data: "{{ lookup('file', outfile) | b64encode }}"
+    cloud_init_network_data: "{{ cloud_init_networks | b64encode }}"
 
 # cloud-init metadata
 - set_fact:
