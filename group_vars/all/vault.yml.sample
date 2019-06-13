@@ -2,7 +2,9 @@
 vault:
   vcenter_password: 'YourvCenterAdminPassword'
   simplivity_password: 'YourvCenterAdminPassword'
-  rhn_orgid: "YourRHNOrgId"
-  rhn_key: "YourRHNkey"
-  pull_secret: '...  replace with your pull secret  ... '
-  ssh_key:  'your ssh public key here'
+  rhn_orgid: 'YourRHNOrgId'
+  rhn_key: 'YourRHNkey'
+  rhn_user: 'YourRHNuser'
+  rhn_pass: 'YourRHNpassword'
+  pull_secret: '...  replace with your pull secret  ...'
+  ssh_key: '...  replace with your ssh public key  ...'
