@@ -18,7 +18,6 @@ max-lease-time                          7200;
 subnet {{ dhcp_subnet | ipaddr('network') }} netmask {{ dhcp_subnet | ipaddr('netmask') }} {
         option routers                  {{ gateway }};
         option subnet-mask              {{ dhcp_subnet | ipaddr ('netmask') }};
-        range                           {{ dhcp_scope }};
 }
 
 

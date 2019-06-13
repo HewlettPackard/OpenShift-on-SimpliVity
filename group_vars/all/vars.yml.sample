@@ -10,7 +10,6 @@ pull_secret: '{{ vault.pull_secret }}'                          # pull secret
 # You need a VLAN with transparent access to Internet
 #
 vm_portgroup: hpeOpenshift                                      # portgroup that the VMS connect to (must exist)
-dhcp_scope: '10.15.152.201 10.15.152.254'                       # DHCP scope to use on the above LAN (see your net admin)
 dhcp_subnet: 10.15.152.0/24                                     # subnet to use on the above VLAN (see your net admin)
 gateway: '10.15.152.1'                                          # gateway for the above subnet (see your net admin)
 domain_name: hpecloud.org                                       # you can keep this

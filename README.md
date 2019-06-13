@@ -38,7 +38,7 @@ The playbooks also creates the following VM which provides additional infrastruc
 | VM                | OS and Sizing | Comments                                                |
 | ----------------- | ------------- | ------------------------------------------------------- |
 | 1 x load balancer | Red Hat 7.6   | Only one LB allowed with this version of the playbooks  |
-| 1 x Infra         | Red Hat 7.6   | VM providing DHCP and DNS services on the internal VLAN |
+| n x Infra         | Red Hat 7.6   | One or two VMs providing DHCP and DNS services on the internal VLAN. Configure two for HA purposes |
 
 
 
@@ -166,11 +166,9 @@ Make a copy of hosts.sample (name the copy **hosts**) and make the modification 
 
 - use your own IP addresses and not those coming from the sample file
 
-- verify that the IP addresses you allocate to the OCP VMs are inside the **dhcp_scope** you define in **group_vars/all/vars.yml**
+- Configure one or two machines in the infrastructure group. Configure two VMs if you want HA.
 
-- Only configure one machine in the infrastructure group. If you configure two machines, you will end up having two DHCP servers on your VLAN (future rev will implement ISC DHCP failover)
-
-- Only configure one machine in the loadbalancer group. Future rev will implement 2 LBs and virtual IPs (similar to what we have done for Docker EE)
+- Only configure one machine in the loadbalancer group. Future rev will implement 2 LBs and virtual IPs.
 
 - Load balancers need to have two IP addresses. One on the internal network designated by **vm_portgroup** in group_vars/all/vars.yml and specified with the ansible_host variable. A second address for the frontend network designated by **frontend_ipaddr** in the inventory. frontend_ipaddr should be specified in CIDR notation (for example 10.10.174.165/22).
 
@@ -230,7 +228,6 @@ Note that the kubeconfig and kubeadmin-password files are located in the **auth*
 | ocp_installer_path     | /kits/openshift-install               | The Openshift Installer is expected to be at this location   |
 | pull_secret            | '{{ vault.pull_secret }}'             | Indirection to the pull secret stored in group_vars/all/vault.yml. Use the example value as it is. |
 | vm_portgroup           | hpeOpenshift                          | portgroup that the VMs connect to. Must be a proxy free VLAN with an access to the internet |
-| dhcp_scope             | '10.15.152.201 10.15.152.254'         | 'startaddr endaddr' scope that DHCP will manage. Of course this must be inside the **dhcp_subnet** (See below) |
 | dhcp_subnet            | 10.15.152.0/24                        | subnet to use on the VLAN/network connected to the **vm_portgroup**. CIDR notation |
 | gateway                | 10.15.152.1                           | gateway for the **dhcp_subnet** subnet.                      |
 | domain_name            | hpecloud.org                          | base DNS domain name used for the cluster |
@@ -289,16 +286,16 @@ The environment consists of a 4-node SimpliVity cluster running the latest OmniS
 | IP or key     | value                       | Comment                                                      |
 | ------------- | --------------------------- | ------------------------------------------------------------ |
 | dhcp_subnet   | 10.15.152.0/24              | Subnet on the  proxy free VLAN.  Assigned by the network admins |
-| dhcp_scope    | 10.15.152.201 10.15.152.254 | The DHCP service manages the IP addresses in this scope. The IP addresses you allocate to the OCP VMs (VMS in groups master, bootstrap and worker must be in this range.. defined by you but must be in **dhcp_subnet**. |
 | gateway       | 10.15.152.1                 | Gateway for **dhcp_subnet**.                                 |
 | hpe-ansible   | 10.15.152.4                 | This is the Ansible box. Also hosting the bootstrap.ign file |
-| hpe-infra1    | 10.15.152.5                 | Machine hosting DNS and DHCP. Note that the IP address is inside **dhcp_subnet** but outside **dhcp_scope**. |
-| hpe-lb1       | 10.15.152.7                 | Ioad balancer. Also (for now) api and api-int IP addresses. Note that this is outside the **dhcp_scope** but inside **dhcp_subnet**.. |
-| hpe-bootstrap | 10.15.152.209               | OCP Bootstrap machine. Note that this IP address is inside the **dhcp_scope**. (a reservation will be made by the playbooks) |
-| hpe-master0   | 10.15.152.210               | OCP master machine. Note that this IP address is inside the **dhcp_scope**. (a reservation will be made by the playbooks) |
-| hpe-master1   | 10.15.152.211               | OCP master machine. Note that this IP address is inside the **dhcp_scope**. (a reservation will be made by the playbooks) |
-| hpe-master2   | 10.15.152.212               | OCP master machine. Note that this IP address is inside the **dhcp_scope**. (a reservation will be made by the playbooks) |
-| hpe-worker0   | 10.15.152.213               | OCP worker machine. Note that this IP address is inside the **dhcp_scope**. (a reservation will be made by the playbooks) |
-| hpe-worker1   | 10.15.152.214               | OCP worker machine. Note that this IP address is inside the **dhcp_scope**. (a reservation will be made by the playbooks) |
+| hpe-infra1    | 10.15.152.5                 | Machine hosting DNS and DHCP. |
+| hpe-infra2    | 10.15.152.6                 | Machine hosting DNS and DHCP. |
+| hpe-lb1       | 10.15.152.7                 | Ioad balancer. Also (for now) api and api-int IP addresses. |
+| hpe-bootstrap | 10.15.152.209               | OCP Bootstrap machine. |
+| hpe-master0   | 10.15.152.210               | OCP master machine. |
+| hpe-master1   | 10.15.152.211               | OCP master machine. |
+| hpe-master2   | 10.15.152.212               | OCP master machine. |
+| hpe-worker0   | 10.15.152.213               | OCP worker machine. |
+| hpe-worker1   | 10.15.152.214               | OCP worker machine. |
 
 

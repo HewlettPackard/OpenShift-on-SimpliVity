@@ -14,6 +14,16 @@
 # limitations under the License.
 ### 
 ---
+# configure ntp
+
+- name: Open ports in the firewall
+  become: true
+  firewalld:
+    port: "{{ item }}"
+    permanent: yes
+    state: enabled
+  with_items:
+    "{{ dhcpd_ports }}"
 
 - name: Install DHCP package
   become: true
@@ -42,3 +52,4 @@
     src: dhcpd.conf.j2
     dest: /etc/dhcp/dhcpd.conf
   notify: restart DHCP
+
