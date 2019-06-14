@@ -16,6 +16,19 @@
 ---
 #######################################################################
 #
+# Play: Configure DRS Rules
+#
+#######################################################################
+- name: Configure DRS rules
+  hosts: localhost
+  gather_facts: no
+  roles:
+  - role: drs
+    vars:
+      provision: yes
+
+#######################################################################
+#
 # Play: Configure Infrastructure Nodes
 #
 #######################################################################
@@ -31,13 +44,12 @@
 
 #######################################################################
 #
-# Play 2: Load Balancers
+# Play: Load Balancers
 #
 #######################################################################
 - name: Configure Load Balancer
   hosts: loadbalancer
   gather_facts: false
-
   roles:
   - role: loadbalancer
     vars:

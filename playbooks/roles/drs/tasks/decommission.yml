@@ -13,6 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ### 
----
-- include_tasks: provision_template.yml
-- include_tasks: provision_vm.yml
+
+- include_tasks: decommission_drs.yml
+  vars:
+    drs_group: master
+
+- include_tasks: decommission_drs.yml
+  vars:
+    drs_group: infrastructure
+
+- include_tasks: decommission_drs.yml
+  vars:
+    drs_group: loadbalancer

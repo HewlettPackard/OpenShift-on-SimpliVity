@@ -9,8 +9,9 @@ The **site.yml** playbook does the following:
 1. runs the Openshift Installer to generate the ignition data required by the OpenShift virtual machines
 2. provisions the virtual machines listed in the Ansible inventory and powers up the non-OCP virtual machines
 3. configures the services running on the non-OCP virtual machines including DNS and DHCP services.
-4. powers up the OCP virtual machines
-5. wait for the Openshift API to come up on the master nodes
+4. Configure anti affinity DRS rules for the virtual machines (master VMs should run on separate hosts as well as the infrastructure (DNS and DHCP services) and load balancer VMs (for now only one LB supported)
+5. powers up the OCP virtual machines
+6. wait for the Openshift API to come up on the master nodes
 
 
 
@@ -175,6 +176,8 @@ Make a copy of hosts.sample (name the copy **hosts**) and make the modification 
 
 
 ## run the playbooks
+
+**WARNING**: Make sure you run the site.yml playbook form the top-level directory of the git repository. The repository comes with an ansible.cfg file and a number of options which are required.
 
 Perform the following commands on your Ansible machine
 

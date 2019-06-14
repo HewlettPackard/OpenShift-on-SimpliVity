@@ -15,9 +15,6 @@
 ### 
 ---
 
-- include_tasks: template.yml
-  when: provision is defined
-
 - include_tasks: provision.yml
   when: provision is defined
 
