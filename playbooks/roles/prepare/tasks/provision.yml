@@ -21,6 +21,19 @@
   failed_when: res.stat.exists == false
   with_items:
     - "{{ ocp_installer_path }}"
+    - "{{ ocp_oc_path }}"
+    - "{{ ocp_kubectl_path }}"
+
+- name: Install client tools
+  become: true
+  copy:
+    src: "{{ item }}"
+    dest: /usr/local/bin/
+    mode: u=rwx,g=rx,o=rx
+  with_items:
+    - "{{ ocp_oc_path }}"
+    - "{{ ocp_kubectl_path }}"
+  
 
 - name: Create Infra Folder
   vcenter_folder:

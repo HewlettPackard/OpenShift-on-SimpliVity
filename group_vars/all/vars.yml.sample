@@ -1,9 +1,11 @@
 ---
 #
-# OCP installer related settins
+# Openshift 4.1 artifacts
 #
-install_dir: "{{ playbook_dir }}/../../.ocp"                    # OCP installation folder this folder must exist
+install_dir: "{{ playbook_dir }}/../../.ocp"                    # OCP installation dir
 ocp_installer_path: /kits/openshift-install                     # Path to the OCP installer
+ocp_oc_path: /kits/oc                                           # Path to the oc client 
+ocp_kubectl_path: /kits/kubectl                                 # Path to kubectl client
 pull_secret: '{{ vault.pull_secret }}'                          # pull secret
 
 #
