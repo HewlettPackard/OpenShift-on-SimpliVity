@@ -21,5 +21,3 @@
 - include_tasks: configure.yml
   when: configure is defined
 
-- include_tasks: poweron.yml
-  when: poweron is defined

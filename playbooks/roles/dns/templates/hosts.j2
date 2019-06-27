@@ -15,3 +15,8 @@
 {% for host in groups.ocp %}
 {{ hostvars[host].ansible_host }} {{ host }}
 {% endfor %}
+{% if groups.nfs is defined %}
+{% for host in groups.nfs %}
+{{ hostvars[host].ansible_host }} {{ host }}
+{% endfor %}
+{% endif %}

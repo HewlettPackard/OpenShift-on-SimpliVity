@@ -35,6 +35,7 @@
 - name: Configure Infrastructure Nodes
   hosts: infrastructure
   roles:
+  - role: disks
   - role: dns
     vars: 
       configure: yes
@@ -51,7 +52,20 @@
   hosts: loadbalancer
   gather_facts: false
   roles:
+  - role: disks
   - role: loadbalancer
     vars:
       configure: yes
-
+#######################################################################
+#
+# Play: Configure NFS node
+#
+#######################################################################
+- name: Configure NFS
+  hosts: nfs
+  gather_facts: false
+  roles:
+  - role: disks
+  - role: nfs
+    vars:
+      configure: yes

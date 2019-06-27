@@ -1,0 +1,120 @@
+###
+# Copyright (2017) Hewlett Packard Enterprise Development LP
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# You may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+### 
+
+- name: Install k8s module prereq
+  become: true
+  package:
+    name: python3-openshift
+    state: present
+
+- name: run Openshift installer and wait-for bootstrap-complete
+  shell: |
+   {{ ocp_installer_path }} --dir {{ install_dir }} wait-for bootstrap-complete
+  register: res
+
+- name: Get CSRs
+  k8s_facts:
+    api_version: certificates.k8s.io/v1beta1
+    kind: CertificateSigningRequest
+  register: res
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+
+- name: Build the list of Pending CSRs
+  set_fact:
+    pending_csr: "{{ res.resources | json_query(query) }}"
+  vars:
+    query:  '[?status.conditions[?type==`Pending`]].{"name": metadata.name, "conditions": status.conditions}'
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+
+# this portion of the code untested as I have never seen Pending CSRs except in the beta
+- name: Approve Pending CSRs (if any)
+  shell: |
+     oc adm certificate approve {{ item }} 
+  with_items:
+    "{{ pending_csr }}"
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+
+- name: Wait for the image-registry operator to show up
+  k8s_facts:
+    kind: ClusterOperator
+    name: image-registry
+  register: res
+  retries: "{{ ( ocpinstaller_clusteroperators_timeout / 10 ) | int }}"
+  until: res.resources | count > 0
+
+- name: Create PV for Image Registry
+  k8s:
+    state: present
+    definition:
+      api_version: v1
+      kind: PersistentVolume
+      metadata:
+        name: share0
+      spec:
+        storageClassName: nfs
+        capacity:
+          storage: 100Gi
+        accessModes:
+        - ReadWriteMany
+        nfs:
+          path: /srv/share0
+          server: "{{ hostvars[groups['nfs'].0].ansible_host }}"
+        persistentVolumeReclaimPolicy: Retain
+  register: res
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+
+- name: Create PVC for Image Registry
+  k8s:
+    state: present
+    definition:
+      apiVersion: "v1"
+      kind: "PersistentVolumeClaim"
+      metadata:
+        namespace: openshift-image-registry
+        name: "image-registry-storage-nfs"
+      spec:
+        storageClassName: nfs
+        accessModes:
+          - "ReadWriteMany"
+        resources:
+          requests:
+            storage: "100Gi"
+
+- name: Configure Image Registry (NFS persistent volume )
+  shell: |
+    oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch '{"spec":{"storage":{"pvc":{"claim":"image-registry-storage-nfs"}}}}'
+  register: res
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+
+- name: Verify that all cluster operators are available 
+  shell: |
+    /tmp/watch_operators.sh
+  register: res
+  delay: 10
+  retries: "{{ ( ocpinstaller_clusteroperators_timeout / 10 ) | int }}"
+  until: res.stdout_lines | count == 0
+ 
+- name: run openshift installer and wait-for install-complete
+  shell: |
+   {{ ocp_installer_path }} --dir {{ install_dir }} wait-for install-complete
+  register: res
+
+- debug: var=res

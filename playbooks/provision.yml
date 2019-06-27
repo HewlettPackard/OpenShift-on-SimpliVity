@@ -23,9 +23,9 @@
   hosts: localhost
   gather_facts: yes 
   roles:
-  - role: ignition
+  - role: ocpinstaller
     vars:
-      provision: yes
+      create_ignition: yes
 
 #######################################################################
 #
@@ -46,7 +46,7 @@
 #
 #######################################################################
 - name: Prepare cloud-init data 
-  hosts: loadbalancer:infrastructure
+  hosts: loadbalancer:infrastructure:nfs
   gather_facts: false 
   roles:
   - role: cloudinit
@@ -59,7 +59,7 @@
 #
 #######################################################################
 - name: Provision Load Balancers
-  hosts: loadbalancer:infrastructure
+  hosts: loadbalancer:infrastructure:nfs
   gather_facts: false
   roles:
   - role: vspherevm

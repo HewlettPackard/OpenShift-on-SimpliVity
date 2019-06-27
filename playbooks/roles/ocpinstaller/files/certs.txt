@@ -1,0 +1,346 @@
+{
+    "changed": false,
+    "failed": false,
+    "resources": [
+        {
+            "metadata": {
+                "creationTimestamp": "2019-06-17T09:48:07Z",
+                "generateName": "csr-",
+                "name": "csr-2cftn",
+                "resourceVersion": "1682",
+                "selfLink": "/apis/certificates.k8s.io/v1beta1/certificatesigningrequests/csr-2cftn",
+                "uid": "026b6077-90e5-11e9-bf07-00505681bdaf"
+            },
+            "spec": {
+                "groups": [
+                    "system:nodes",
+                    "system:authenticated"
+                ],
+                "request": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURSBSRVFVRVNULS0tLS0KTUlJQkpEQ0J5Z0lCQURBNU1SVXdFd1lEVlFRS0V3eHplWE4wWlcwNmJtOWtaWE14SURBZUJnTlZCQU1URjNONQpjM1JsYlRwdWIyUmxPbWh3WlMxdFlYTjBaWEl5TUZrd0V3WUhLb1pJemowQ0FRWUlLb1pJemowREFRY0RRZ0FFCmZBeUxURFhPWjlKdjN5M0ZxSHhJaTJvMjNpZUtudlBRSmlGTWxCc2dweDZFZzRVNWNxOXp3UzE2RHptMVhRQXcKcm1ETENqY3plYjZiQ29yd0J6T3BJS0F2TUMwR0NTcUdTSWIzRFFFSkRqRWdNQjR3SEFZRFZSMFJCQlV3RTRJTAphSEJsTFcxaGMzUmxjaktIQkFvUG1OUXdDZ1lJS29aSXpqMEVBd0lEU1FBd1JnSWhBTUptT3kwcEFsMkpMR283CllCSnQ1bDJlai8xTFZkb2hOWndzaWdLY3dCVEdBaUVBMCtEa2JwakZjQ3JXcEFnbUNtRnBHR2xFSjhreTZabVEKUmVWVUxxQjhHRXc9Ci0tLS0tRU5EIENFUlRJRklDQVRFIFJFUVVFU1QtLS0tLQo=",
+                "usages": [
+                    "digital signature",
+                    "key encipherment",
+                    "server auth"
+                ],
+                "username": "system:node:hpe-master2"
+            },
+            "status": {
+                "certificate": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUN2akNDQWFhZ0F3SUJBZ0lVUGRCTnR4KzE3bmZaUkc0bk1LYlFQdVc1NG5Vd0RRWUpLb1pJaHZjTkFRRUwKQlFBd0xURVNNQkFHQTFVRUN4TUpiM0JsYm5Ob2FXWjBNUmN3RlFZRFZRUURFdzVyZFdKbGJHVjBMWE5wWjI1bApjakFlRncweE9UQTJNVGN3T1RRek1EQmFGdzB4T1RBMk1UZ3dOekUyTWpSYU1Ea3hGVEFUQmdOVkJBb1RESE41CmMzUmxiVHB1YjJSbGN6RWdNQjRHQTFVRUF4TVhjM2x6ZEdWdE9tNXZaR1U2YUhCbExXMWhjM1JsY2pJd1dUQVQKQmdjcWhrak9QUUlCQmdncWhrak9QUU1CQndOQ0FBUjhESXRNTmM1bjBtL2ZMY1dvZkVpTGFqYmVKNHFlODlBbQpJVXlVR3lDbkhvU0RoVGx5cjNQQkxYb1BPYlZkQURDdVlNc0tOek41dnBzS2l2QUhNNmtnbzRHVU1JR1JNQTRHCkExVWREd0VCL3dRRUF3SUZvREFUQmdOVkhTVUVEREFLQmdnckJnRUZCUWNEQVRBTUJnTlZIUk1CQWY4RUFqQUEKTUIwR0ExVWREZ1FXQkJRVmpiNzVhTmRyYm50OUgvVTZVeDFQbmNFT2NqQWZCZ05WSFNNRUdEQVdnQlNhalAxagpndVk1OUpOR0ZNL2pUdXJjTHN2WHlUQWNCZ05WSFJFRUZUQVRnZ3RvY0dVdGJXRnpkR1Z5TW9jRUNnK1kxREFOCkJna3Foa2lHOXcwQkFRc0ZBQU9DQVFFQUlNc3QvU1BrOTlBc2hNMzBrUnhKVGQwc3UvdW9vcENmbkJ3OGZDYlkKTmdkU0NUc2RCWmJFamlsWnV6OUdwcU9xajZFWkd3NmRzVm1UQVQ3UkowbHcyRXZSWloyQWxQOFplc0RQMnNqSQpUdk9WZG9WbDFMUFZqL09UWDVZZWdCR3A3SVdKY3FCL0xFdEJwc2s2N002a01lSEI4OElqRzd3ZUFPN2hDdUdkClVoVDIwTjZpdFovcHo2T3dSd3NDUG5lREJWMmNyR2VKMytqdUNucE5mdVRnSmNQNmNCUWdZMGhNVFErVkNrelAKZEJaajZnQ2FVUXdVM1IrakczS1lWaXhibDRISHZ5ZVBwV3daNENUbzVYMUVGSG51SUVhbUVVaUpuMThYK2x0QgovZVlJSkFmSlI0YlRHZjdCbGRhcUcvaUVDd1JURjFZSkMwajdvOUg3Wk45bEVnPT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=",
+                "conditions": [
+                    {
+                        "lastUpdateTime": "2019-06-17T09:48:19Z",
+                        "message": "This CSR was approved by kubectl certificate approve.",
+                        "reason": "KubectlApprove",
+                        "type": "Approved"
+                    }
+                ]
+            }
+        },
+        {
+            "metadata": {
+                "creationTimestamp": "2019-06-17T09:47:37Z",
+                "generateName": "csr-",
+                "name": "csr-7sbsf",
+                "resourceVersion": "360",
+                "selfLink": "/apis/certificates.k8s.io/v1beta1/certificatesigningrequests/csr-7sbsf",
+                "uid": "f0649dcf-90e4-11e9-bf07-00505681bdaf"
+            },
+            "spec": {
+                "groups": [
+                    "system:serviceaccounts:openshift-machine-config-operator",
+                    "system:authenticated"
+                ],
+                "request": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURSBSRVFVRVNULS0tLS0KTUlIMU1JR2JBZ0VBTURreEZUQVRCZ05WQkFvVERITjVjM1JsYlRwdWIyUmxjekVnTUI0R0ExVUVBeE1YYzNsegpkR1Z0T201dlpHVTZhSEJsTFcxaGMzUmxjakF3V1RBVEJnY3Foa2pPUFFJQkJnZ3Foa2pPUFFNQkJ3TkNBQVFGCml5UnMxWE1iczR4cDhwUXh4YmorMzBiUmU2UU1selRYeU5rWnR2WnJQVGI0NTV2L1dpcXZjaTNrNzZUT2sydXcKYTdTaVNTN0lvdHhBN211bDZjZjJvQUF3Q2dZSUtvWkl6ajBFQXdJRFNRQXdSZ0loQUlaK1JvSW1xUkVLL1NDdQpkcyttSDBCcTlVKzJrY0xJdmJJa3cyU1BVM0lGQWlFQXJ3SFZ3bE42U29MNERzRUZYeVpHSll0TVFYRGdIeThmCkNxcGI5Q3prbEFRPQotLS0tLUVORCBDRVJUSUZJQ0FURSBSRVFVRVNULS0tLS0K",
+                "usages": [
+                    "digital signature",
+                    "key encipherment",
+                    "client auth"
+                ],
+                "username": "system:serviceaccount:openshift-machine-config-operator:node-bootstrapper"
+            },
+            "status": {
+                "certificate": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUNuakNDQVlhZ0F3SUJBZ0lVSTdpSFlYM2h3eHl2MWJxTmxCSG9XUW9NVXBzd0RRWUpLb1pJaHZjTkFRRUwKQlFBd0xURVNNQkFHQTFVRUN4TUpiM0JsYm5Ob2FXWjBNUmN3RlFZRFZRUURFdzVyZFdKbGJHVjBMWE5wWjI1bApjakFlRncweE9UQTJNVGN3T1RRek1EQmFGdzB4T1RBMk1UZ3dOekUzTUROYU1Ea3hGVEFUQmdOVkJBb1RESE41CmMzUmxiVHB1YjJSbGN6RWdNQjRHQTFVRUF4TVhjM2x6ZEdWdE9tNXZaR1U2YUhCbExXMWhjM1JsY2pBd1dUQVQKQmdjcWhrak9QUUlCQmdncWhrak9QUU1CQndOQ0FBUUZpeVJzMVhNYnM0eHA4cFF4eGJqKzMwYlJlNlFNbHpUWAp5TmtadHZaclBUYjQ1NXYvV2lxdmNpM2s3NlRPazJ1d2E3U2lTUzdJb3R4QTdtdWw2Y2YybzNVd2N6QU9CZ05WCkhROEJBZjhFQkFNQ0JhQXdFd1lEVlIwbEJBd3dDZ1lJS3dZQkJRVUhBd0l3REFZRFZSMFRBUUgvQkFJd0FEQWQKQmdOVkhRNEVGZ1FVbGdhbkl5RURDa3NybDU5dmhIbmMydUN2TFo4d0h3WURWUjBqQkJnd0ZvQVVtb3o5WTRMbQpPZlNUUmhUUDQwN3EzQzdMMThrd0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFLcE1JOUhVOGw5eE9hZWZvckE3Ck9QVk1qVjNFeHZ1RWtNalQvVGFJUHNIMWhQM1dwd1VxU1I0RVJWelM2SCtFYmwyUnovVS9VOEpja2RwcWlzVXQKYTNpTUVLM2xPWjI0MXV3NzZUdFNRWXVxdi9YOXZLQ0xIbllNanplVlpzbEdnOXI2M2dSMS9OMGNGYkdyQnZ3SAo4dU5Scjg0Wjc5WmJEODBmaTV6U2NLbWg4aVdkTFlxSWFVMjhJbnpLUTNqdnJmaXpoNE9OVXZDMkNiUTB1dzNRCjczYXhacGlRVE9zNFJzWGErVHZFY00zQ3VVNy9mQ1JOKzdiTkFaQlMwVEhWM2NsTEVFbkJrblgrSTR4K1BZR2gKMExNbWZ5eGd2K2k3NW52MzkrYWZWT1FFTXFhT1M0dExGZmovUGJ2VjVOb3lGQzdOb0ZIamxtekxMZ3B6QW9sdQo3R2s9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K",
+                "conditions": [
+                    {
+                        "lastUpdateTime": "2019-06-17T09:47:38Z",
+                        "message": "This CSR was approved by kubectl certificate approve.",
+                        "reason": "KubectlApprove",
+                        "type": "Approved"
+                    }
+                ]
+            }
+        },
+        {
+            "metadata": {
+                "creationTimestamp": "2019-06-17T09:47:39Z",
+                "generateName": "csr-",
+                "name": "csr-8jjgq",
+                "resourceVersion": "618",
+                "selfLink": "/apis/certificates.k8s.io/v1beta1/certificatesigningrequests/csr-8jjgq",
+                "uid": "f1d2fcd6-90e4-11e9-bf07-00505681bdaf"
+            },
+            "spec": {
+                "groups": [
+                    "system:serviceaccounts:openshift-machine-config-operator",
+                    "system:authenticated"
+                ],
+                "request": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURSBSRVFVRVNULS0tLS0KTUlIek1JR2JBZ0VBTURreEZUQVRCZ05WQkFvVERITjVjM1JsYlRwdWIyUmxjekVnTUI0R0ExVUVBeE1YYzNsegpkR1Z0T201dlpHVTZhSEJsTFhkdmNtdGxjakV3V1RBVEJnY3Foa2pPUFFJQkJnZ3Foa2pPUFFNQkJ3TkNBQVJrCjB6VzkrZ3pjUjhPTkJaNEJLSVNvTTd3U1RrcCsvSC93YkdTcWdRcm5rb2VQQXNheExJOW1jMkMrYVk2TWhHdUIKSXRLa240YmlPYVl2YmtBVW84NnhvQUF3Q2dZSUtvWkl6ajBFQXdJRFJ3QXdSQUlnQkFpVW5kOTRnRGNmdDdEUwpHZE90blViTjNzL3RDSWV6bjdjRVFSWEJYWklDSUNpTkw5QllYMTRhbFNVYWM2MTZHQ2R0bzkyclV6RmJydXBzCjdiVml2VDJoCi0tLS0tRU5EIENFUlRJRklDQVRFIFJFUVVFU1QtLS0tLQo=",
+                "usages": [
+                    "digital signature",
+                    "key encipherment",
+                    "client auth"
+                ],
+                "username": "system:serviceaccount:openshift-machine-config-operator:node-bootstrapper"
+            },
+            "status": {
+                "certificate": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUNuakNDQVlhZ0F3SUJBZ0lVSWU1bWQxWndIWlA3YVlDaFoyaGQ5UzZCUUNjd0RRWUpLb1pJaHZjTkFRRUwKQlFBd0xURVNNQkFHQTFVRUN4TUpiM0JsYm5Ob2FXWjBNUmN3RlFZRFZRUURFdzVyZFdKbGJHVjBMWE5wWjI1bApjakFlRncweE9UQTJNVGN3T1RRek1EQmFGdzB4T1RBMk1UZ3dOekUyTkRWYU1Ea3hGVEFUQmdOVkJBb1RESE41CmMzUmxiVHB1YjJSbGN6RWdNQjRHQTFVRUF4TVhjM2x6ZEdWdE9tNXZaR1U2YUhCbExYZHZjbXRsY2pFd1dUQVQKQmdjcWhrak9QUUlCQmdncWhrak9QUU1CQndOQ0FBUmswelc5K2d6Y1I4T05CWjRCS0lTb003d1NUa3ArL0gvdwpiR1NxZ1FybmtvZVBBc2F4TEk5bWMyQythWTZNaEd1Qkl0S2tuNGJpT2FZdmJrQVVvODZ4bzNVd2N6QU9CZ05WCkhROEJBZjhFQkFNQ0JhQXdFd1lEVlIwbEJBd3dDZ1lJS3dZQkJRVUhBd0l3REFZRFZSMFRBUUgvQkFJd0FEQWQKQmdOVkhRNEVGZ1FVSTIwYUphMk05U2ZEa2VDZEFNd0FEM1JnRWpZd0h3WURWUjBqQkJnd0ZvQVVtb3o5WTRMbQpPZlNUUmhUUDQwN3EzQzdMMThrd0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFCKzlUMnhjTzY1MmdWMW1QSjBYCkFhc1hXR3lvWFNGbjVKQTB5VFhCeTUzZCs2RStxK2ZjQ2V0L0ZkNTJuVEpGVVNqSUFrNkoxc2RqYThvcGVUV1oKbkxpL3Q3NTRkTkVVbGgxKzZyYVQrS2NLak1yb2hOdUdFUGQreC9MbzRhT3J0Z0lSSW81Z0NaTVB2T2paVVZucwpFaUU2SnZmVm8rMmI4Vm9LeWZLb2FmUmQxRzRtM3hCSGp1YWtPVzBOaGFzcHNUNy9OQU1NckZiTXEvZ0tuZkhiCkIyMGZsSVl6SzhlanRsN3dXUTZKUDlXNXM4dVNCbTlNcHZOVS8rRGlNRzJVYnN4ZjVadnpXaU1LZXlTdnFqVWQKWjd5RnZqbXZ0bDVTbGg0Yi9jL05MUTh5cnJSN1NUNW4xVUpSeGk1dy9lZURhVTd2SENRUXZ1ZFJPMlVmK0ZjTwppd009Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K",
+                "conditions": [
+                    {
+                        "lastUpdateTime": "2019-06-17T09:47:58Z",
+                        "message": "This CSR was approved by kubectl certificate approve.",
+                        "reason": "KubectlApprove",
+                        "type": "Approved"
+                    }
+                ]
+            }
+        },
+        {
+            "metadata": {
+                "creationTimestamp": "2019-06-17T09:47:50Z",
+                "generateName": "csr-",
+                "name": "csr-b8vh5",
+                "resourceVersion": "621",
+                "selfLink": "/apis/certificates.k8s.io/v1beta1/certificatesigningrequests/csr-b8vh5",
+                "uid": "f899320d-90e4-11e9-bf07-00505681bdaf"
+            },
+            "spec": {
+                "groups": [
+                    "system:nodes",
+                    "system:authenticated"
+                ],
+                "request": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURSBSRVFVRVNULS0tLS0KTUlJQkpEQ0J5Z0lCQURBNU1SVXdFd1lEVlFRS0V3eHplWE4wWlcwNmJtOWtaWE14SURBZUJnTlZCQU1URjNONQpjM1JsYlRwdWIyUmxPbWh3WlMxM2IzSnJaWEl3TUZrd0V3WUhLb1pJemowQ0FRWUlLb1pJemowREFRY0RRZ0FFCjUvR3JHSHFmQ2E2MXJ5Y2llRm5UMGp6Z0JPS0tlT2VEMU1UcUVNVWVJdDY0dWJMUm1OMUlvZC8rYXM3SHFEMHQKcnNpOUdnTGJ6VFl1TmZQYk9neXN3YUF2TUMwR0NTcUdTSWIzRFFFSkRqRWdNQjR3SEFZRFZSMFJCQlV3RTRJTAphSEJsTFhkdmNtdGxjakNIQkFvUG1OVXdDZ1lJS29aSXpqMEVBd0lEU1FBd1JnSWhBTzZnWWQzcmY1c1hwMThHCjZQaFJnSmlYcHhzbTFLYU9EQmxDTS9EOWxIUnNBaUVBOTRjTzNoczM3ZFNoRXMrUGxjSWcxU3U5N1dXYzFhVW4KeitNalY0NG5zaUU9Ci0tLS0tRU5EIENFUlRJRklDQVRFIFJFUVVFU1QtLS0tLQo=",
+                "usages": [
+                    "digital signature",
+                    "key encipherment",
+                    "server auth"
+                ],
+                "username": "system:node:hpe-worker0"
+            },
+            "status": {
+                "certificate": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUN2akNDQWFhZ0F3SUJBZ0lVZUNKdXNCZzFsN3E1ZTBHMlVMaEVEZjZLZm5vd0RRWUpLb1pJaHZjTkFRRUwKQlFBd0xURVNNQkFHQTFVRUN4TUpiM0JsYm5Ob2FXWjBNUmN3RlFZRFZRUURFdzVyZFdKbGJHVjBMWE5wWjI1bApjakFlRncweE9UQTJNVGN3T1RRek1EQmFGdzB4T1RBMk1UZ3dOekUyTkRWYU1Ea3hGVEFUQmdOVkJBb1RESE41CmMzUmxiVHB1YjJSbGN6RWdNQjRHQTFVRUF4TVhjM2x6ZEdWdE9tNXZaR1U2YUhCbExYZHZjbXRsY2pBd1dUQVQKQmdjcWhrak9QUUlCQmdncWhrak9QUU1CQndOQ0FBVG44YXNZZXA4SnJyV3ZKeUo0V2RQU1BPQUU0b3A0NTRQVQp4T29ReFI0aTNyaTVzdEdZM1VpaDMvNXF6c2VvUFMydXlMMGFBdHZOTmk0MTg5czZES3pCbzRHVU1JR1JNQTRHCkExVWREd0VCL3dRRUF3SUZvREFUQmdOVkhTVUVEREFLQmdnckJnRUZCUWNEQVRBTUJnTlZIUk1CQWY4RUFqQUEKTUIwR0ExVWREZ1FXQkJSbTJ6SXBRWWRacitJcFFMR3VQekpONzZHT0RUQWZCZ05WSFNNRUdEQVdnQlNhalAxagpndVk1OUpOR0ZNL2pUdXJjTHN2WHlUQWNCZ05WSFJFRUZUQVRnZ3RvY0dVdGQyOXlhMlZ5TUljRUNnK1kxVEFOCkJna3Foa2lHOXcwQkFRc0ZBQU9DQVFFQWRodGdNcmdYaTBSQTlxK0xYQlVsVVZtVXNSUGRRc29aczc4aTdsekMKeDh1UEFxYVpORVVCQ2xqNk93UkdWRXd0bEtFWkcvYXNVbkRHQzFGcnhMY0k4SCtlcHJyQXZsNnJuTTUvUHBCYwpBUHZhblpxTmt1cUJXdFpoWkdmckNreDRiWWc3djhIcVhtZllGUDNpMGlPaEk1d3hoanVFcmFla1NGcWRXZVplClBrUGMrMFhvZXpZRitHbndRRUF6dFE3UVNicVRlWWZxOFpHMU9pbWU1bmUza0ZZblRBVmtJNVJMY05WYjFEK1AKbnI5aWQ1djdNVWJ3dDRRRGY0YW1ldzNDNWF4Z2hxUi9nMUFSR1NPeEVwZEJlWXZpWHh0M1JjUURFelNvSFhvZApCRkl0QWNIRjU4a1hPYytkZXdSQnFJakFjcW92ckdzaEJ3Y05WbzB2QzZUa1pBPT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=",
+                "conditions": [
+                    {
+                        "lastUpdateTime": "2019-06-17T09:47:58Z",
+                        "message": "This CSR was approved by kubectl certificate approve.",
+                        "reason": "KubectlApprove",
+                        "type": "Approved"
+                    }
+                ]
+            }
+        },
+        {
+            "metadata": {
+                "creationTimestamp": "2019-06-17T09:47:35Z",
+                "generateName": "csr-",
+                "name": "csr-bqz67",
+                "resourceVersion": "359",
+                "selfLink": "/apis/certificates.k8s.io/v1beta1/certificatesigningrequests/csr-bqz67",
+                "uid": "ef7f7a02-90e4-11e9-bf07-00505681bdaf"
+            },
+            "spec": {
+                "groups": [
+                    "system:serviceaccounts:openshift-machine-config-operator",
+                    "system:authenticated"
+                ],
+                "request": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURSBSRVFVRVNULS0tLS0KTUlIME1JR2JBZ0VBTURreEZUQVRCZ05WQkFvVERITjVjM1JsYlRwdWIyUmxjekVnTUI0R0ExVUVBeE1YYzNsegpkR1Z0T201dlpHVTZhSEJsTFhkdmNtdGxjakF3V1RBVEJnY3Foa2pPUFFJQkJnZ3Foa2pPUFFNQkJ3TkNBQVFUCmQrcjM1NVNuUVhTUzBOZ2NCUUxBUk5HQTV4M3Q1OVVIaFdkdyt5aUp1TGRMYzhJczFpN0pwRittM2c5L3JwN3EKRVQ5a2N5UFVqOEpNL1RWN2lzYnFvQUF3Q2dZSUtvWkl6ajBFQXdJRFNBQXdSUUlnWXpZLzZZbDhMU2dhN3dEUwpLUlc5LzVZT0JkdlVtQjJOSFFPbTdWVStLUVlDSVFDWE5ZSGRsL09YNEdvdDhzK04rL3BDc0Z6MDZ1UHRsOFFOCjgrc2hDRmZiakE9PQotLS0tLUVORCBDRVJUSUZJQ0FURSBSRVFVRVNULS0tLS0K",
+                "usages": [
+                    "digital signature",
+                    "key encipherment",
+                    "client auth"
+                ],
+                "username": "system:serviceaccount:openshift-machine-config-operator:node-bootstrapper"
+            },
+            "status": {
+                "certificate": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUNuakNDQVlhZ0F3SUJBZ0lVUGVNdjhzeFpJWXNUSUJLSnVUZWVFR0lNOXlZd0RRWUpLb1pJaHZjTkFRRUwKQlFBd0xURVNNQkFHQTFVRUN4TUpiM0JsYm5Ob2FXWjBNUmN3RlFZRFZRUURFdzVyZFdKbGJHVjBMWE5wWjI1bApjakFlRncweE9UQTJNVGN3T1RRek1EQmFGdzB4T1RBMk1UZ3dOekUzTUROYU1Ea3hGVEFUQmdOVkJBb1RESE41CmMzUmxiVHB1YjJSbGN6RWdNQjRHQTFVRUF4TVhjM2x6ZEdWdE9tNXZaR1U2YUhCbExYZHZjbXRsY2pBd1dUQVQKQmdjcWhrak9QUUlCQmdncWhrak9QUU1CQndOQ0FBUVRkK3IzNTVTblFYU1MwTmdjQlFMQVJOR0E1eDN0NTlVSApoV2R3K3lpSnVMZExjOElzMWk3SnBGK20zZzkvcnA3cUVUOWtjeVBVajhKTS9UVjdpc2JxbzNVd2N6QU9CZ05WCkhROEJBZjhFQkFNQ0JhQXdFd1lEVlIwbEJBd3dDZ1lJS3dZQkJRVUhBd0l3REFZRFZSMFRBUUgvQkFJd0FEQWQKQmdOVkhRNEVGZ1FVT2dDR01GT0FzMXpuZGxyaU9FMGhYOUJBWERrd0h3WURWUjBqQkJnd0ZvQVVtb3o5WTRMbQpPZlNUUmhUUDQwN3EzQzdMMThrd0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFFSGVvSVlzV1BIMkNVTW9LUmtsCmNieFN3dGhnRWxoellTeit5QWwwN2ExaVNIVFV2MFlqbEpTdU43VTUwOFpmWDlmV0FpclhVd2w2cTBJODZTZU8KbmYwb05GcFpBS1EwRkE3Qnh0MFFJY0puQmlkaWJDTjg1TUd6dlY5UUdDYVY2YjVwOHZXYzdtZ3poYzFsOEJuSgpCekhoMUJMNEhnMXJycmx4czY1ZytFNTZBZGVkS2dsblhkU3pCZGFEakF4U3BRaVVxUisxTXFSS3dMTnl2blF4CmZpQk53YmlweXptQUZ2dEtJcnNEak1ZbklqaEVWb0JaaURpOFdxc3Y3blBCSlhPK1ByRk1uSFVwbklPdnZ4eWEKM2piMCs0QnRBUUdoZjBud0hRY0NYYzRtL2lHU1g4eXZtMUkyMjF5OWw2eGlWSmJSdzBuRFNIcFVVc2RBVlVjSApmcVk9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K",
+                "conditions": [
+                    {
+                        "lastUpdateTime": "2019-06-17T09:47:38Z",
+                        "message": "This CSR was approved by kubectl certificate approve.",
+                        "reason": "KubectlApprove",
+                        "type": "Approved"
+                    }
+                ]
+            }
+        },
+        {
+            "metadata": {
+                "creationTimestamp": "2019-06-17T09:47:39Z",
+                "generateName": "csr-",
+                "name": "csr-bws8n",
+                "resourceVersion": "623",
+                "selfLink": "/apis/certificates.k8s.io/v1beta1/certificatesigningrequests/csr-bws8n",
+                "uid": "f20058ef-90e4-11e9-bf07-00505681bdaf"
+            },
+            "spec": {
+                "groups": [
+                    "system:serviceaccounts:openshift-machine-config-operator",
+                    "system:authenticated"
+                ],
+                "request": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURSBSRVFVRVNULS0tLS0KTUlIME1JR2JBZ0VBTURreEZUQVRCZ05WQkFvVERITjVjM1JsYlRwdWIyUmxjekVnTUI0R0ExVUVBeE1YYzNsegpkR1Z0T201dlpHVTZhSEJsTFcxaGMzUmxjakl3V1RBVEJnY3Foa2pPUFFJQkJnZ3Foa2pPUFFNQkJ3TkNBQVRTClcrWXVwWnBLRU9Wc0FXdUJDTmpzVEgwSDdzVDMyTHJEYUl6MlN4REFxWThpSWFjL2IreWNTRTRpVDZCR1N5VU0KRFExRWJWaFY2MjVjQjJEYURwWlRvQUF3Q2dZSUtvWkl6ajBFQXdJRFNBQXdSUUlnWGUwaFk0TUt3K1RtZ2UyMApvTkdHNGw4a09pQmVoajhNbzdjbkE5NUw1NW9DSVFEeEhWWm9aMjVwbFhWTStGdXNla1gwOFlkRVNncG9wYkRHCnlBTjVKWWdCZUE9PQotLS0tLUVORCBDRVJUSUZJQ0FURSBSRVFVRVNULS0tLS0K",
+                "usages": [
+                    "digital signature",
+                    "key encipherment",
+                    "client auth"
+                ],
+                "username": "system:serviceaccount:openshift-machine-config-operator:node-bootstrapper"
+            },
+            "status": {
+                "certificate": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUNuakNDQVlhZ0F3SUJBZ0lVUzZ1ZFNUcjRwK0ViLzVYTTc5UVQwM3RSVWZzd0RRWUpLb1pJaHZjTkFRRUwKQlFBd0xURVNNQkFHQTFVRUN4TUpiM0JsYm5Ob2FXWjBNUmN3RlFZRFZRUURFdzVyZFdKbGJHVjBMWE5wWjI1bApjakFlRncweE9UQTJNVGN3T1RRek1EQmFGdzB4T1RBMk1UZ3dOekUyTkRWYU1Ea3hGVEFUQmdOVkJBb1RESE41CmMzUmxiVHB1YjJSbGN6RWdNQjRHQTFVRUF4TVhjM2x6ZEdWdE9tNXZaR1U2YUhCbExXMWhjM1JsY2pJd1dUQVQKQmdjcWhrak9QUUlCQmdncWhrak9QUU1CQndOQ0FBVFNXK1l1cFpwS0VPVnNBV3VCQ05qc1RIMEg3c1QzMkxyRAphSXoyU3hEQXFZOGlJYWMvYit5Y1NFNGlUNkJHU3lVTURRMUViVmhWNjI1Y0IyRGFEcFpUbzNVd2N6QU9CZ05WCkhROEJBZjhFQkFNQ0JhQXdFd1lEVlIwbEJBd3dDZ1lJS3dZQkJRVUhBd0l3REFZRFZSMFRBUUgvQkFJd0FEQWQKQmdOVkhRNEVGZ1FVWkdGZWlLenFNdzVpR0FsSnNGK0VvV3c1M0V3d0h3WURWUjBqQkJnd0ZvQVVtb3o5WTRMbQpPZlNUUmhUUDQwN3EzQzdMMThrd0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFCaVRjMWdEMjg4RUQ0RW5UbkF1CmxxbzV2cWJsdjdoNzhjU1BJeGxDM3ptbVBNNUI3Zk50K25aMENCdDNvQlppZmFiai96Vzl2MEhIamo3TXpMN0QKdFl6RTgrcDRTSUJGWGVsbXJ5K041djRraXJialNpc2RvcDArZ3JxNm9pb29BTEUyQWZGYkt5S2N4REkzblZ2Qwo3Zmw5L0x2RUkrb2t5OFRYNm1CYlhkMkRndjNFVVFrY1BGVGliWVRXOFBod3krRWtPajE1c0JZeVlaNExSbXNPCk1ydTZwcDRwYlhqVVJ3aFlOMmNUa3dJVGoyTG96M0l3MExucUFFZ3FQT0xnZG1qNkRaNVp5RFlQd21OWmdJSFcKQTRFT3VwWU5OWjR0bEdobWIzOVMxVUU2ZnpWUTI2bkFZTXZ3MGVHTkFCWWZwRFpOb0pSeVdJNXR1RSs0b2taRQptRGM9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K",
+                "conditions": [
+                    {
+                        "lastUpdateTime": "2019-06-17T09:47:58Z",
+                        "message": "This CSR was approved by kubectl certificate approve.",
+                        "reason": "KubectlApprove",
+                        "type": "Approved"
+                    }
+                ]
+            }
+        },
+        {
+            "metadata": {
+                "creationTimestamp": "2019-06-17T09:47:50Z",
+                "generateName": "csr-",
+                "name": "csr-k4d7d",
+                "resourceVersion": "626",
+                "selfLink": "/apis/certificates.k8s.io/v1beta1/certificatesigningrequests/csr-k4d7d",
+                "uid": "f860375f-90e4-11e9-bf07-00505681bdaf"
+            },
+            "spec": {
+                "groups": [
+                    "system:nodes",
+                    "system:authenticated"
+                ],
+                "request": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURSBSRVFVRVNULS0tLS0KTUlJQkpEQ0J5Z0lCQURBNU1SVXdFd1lEVlFRS0V3eHplWE4wWlcwNmJtOWtaWE14SURBZUJnTlZCQU1URjNONQpjM1JsYlRwdWIyUmxPbWh3WlMxdFlYTjBaWEl3TUZrd0V3WUhLb1pJemowQ0FRWUlLb1pJemowREFRY0RRZ0FFCjlxdUNPR3Rub1VRdEtYYURSV2VsR2VncitCQStJLzFpRUhBUGRVK2VNdC9EbStoRzVrZWpTVVlQQmZqRkFhd2cKd0NyUndqcFJ5Z25XSFIvSGs4eE9wcUF2TUMwR0NTcUdTSWIzRFFFSkRqRWdNQjR3SEFZRFZSMFJCQlV3RTRJTAphSEJsTFcxaGMzUmxjakNIQkFvUG1OSXdDZ1lJS29aSXpqMEVBd0lEU1FBd1JnSWhBTWlKRFB5cmhMbDJqakJVCklWWHVrdmZPY29Dd2xmRTN5NTJydUE0U3VwOTRBaUVBN3BqeGxuYkNIbGRtMFlQMXU5cUdkMU5sWWlkZUNrS3EKRUR3c0o2TU5wRzg9Ci0tLS0tRU5EIENFUlRJRklDQVRFIFJFUVVFU1QtLS0tLQo=",
+                "usages": [
+                    "digital signature",
+                    "key encipherment",
+                    "server auth"
+                ],
+                "username": "system:node:hpe-master0"
+            },
+            "status": {
+                "certificate": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUN2akNDQWFhZ0F3SUJBZ0lVVk5RTnlQaHE5cXlyRDQyNDBVOWUvRUVwRVRFd0RRWUpLb1pJaHZjTkFRRUwKQlFBd0xURVNNQkFHQTFVRUN4TUpiM0JsYm5Ob2FXWjBNUmN3RlFZRFZRUURFdzVyZFdKbGJHVjBMWE5wWjI1bApjakFlRncweE9UQTJNVGN3T1RRek1EQmFGdzB4T1RBMk1UZ3dOekUyTkRWYU1Ea3hGVEFUQmdOVkJBb1RESE41CmMzUmxiVHB1YjJSbGN6RWdNQjRHQTFVRUF4TVhjM2x6ZEdWdE9tNXZaR1U2YUhCbExXMWhjM1JsY2pBd1dUQVQKQmdjcWhrak9QUUlCQmdncWhrak9QUU1CQndOQ0FBVDJxNEk0YTJlaFJDMHBkb05GWjZVWjZDdjRFRDRqL1dJUQpjQTkxVDU0eTM4T2I2RWJtUjZOSlJnOEYrTVVCckNEQUt0SENPbEhLQ2RZZEg4ZVR6RTZtbzRHVU1JR1JNQTRHCkExVWREd0VCL3dRRUF3SUZvREFUQmdOVkhTVUVEREFLQmdnckJnRUZCUWNEQVRBTUJnTlZIUk1CQWY4RUFqQUEKTUIwR0ExVWREZ1FXQkJTelhuaks3WFUrbCtUaFJMR2Q5aGlsL1I4N0pUQWZCZ05WSFNNRUdEQVdnQlNhalAxagpndVk1OUpOR0ZNL2pUdXJjTHN2WHlUQWNCZ05WSFJFRUZUQVRnZ3RvY0dVdGJXRnpkR1Z5TUljRUNnK1kwakFOCkJna3Foa2lHOXcwQkFRc0ZBQU9DQVFFQVoyYUpMNFZNRnFObUltVS9hRVkzRUxPOHE5WEV2WVh1ZTZMbzMwY0EKTWdWMnlNSXErSUVIaHJNMWFKOEJ4SERPeWd6akFYb1pCM3lhVWtRWDZVMzNGa2d3MkRVdGhsakdYNkVjVXQ3cQo1S0U1Ykw1VEFKV1N3WXpDRTVlbUVmZnJVRXhKOW50NUZLZ1hPQm4vNG1qdXhpTncyRnBzRmZpZSszdnRRbEpWCnFhaWdZZVNtK3p5akFxNGJwN1B5OWRKUE9vaWlWamZIMnRya0ptd1k1UzRrVkF3aDZWdUNJbThlZFgyNXhCSUkKUi95d3Q2L0pQcmgyZy9kR0NvK1pWOWpGbTlLM042bjc5clBRUjY5Y0Evb0MzTU1EWHJRNlVhOGJSRS9PcnViVQp5UGl2ampoU1J1R0RXaVZxbGZGNk84WWFYN0c2WlVtUlJYRjZLS2FDMk9lQXpnPT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=",
+                "conditions": [
+                    {
+                        "lastUpdateTime": "2019-06-17T09:47:58Z",
+                        "message": "This CSR was approved by kubectl certificate approve.",
+                        "reason": "KubectlApprove",
+                        "type": "Approved"
+                    }
+                ]
+            }
+        },
+        {
+            "metadata": {
+                "creationTimestamp": "2019-06-17T09:48:06Z",
+                "generateName": "csr-",
+                "name": "csr-mxrqj",
+                "resourceVersion": "1683",
+                "selfLink": "/apis/certificates.k8s.io/v1beta1/certificatesigningrequests/csr-mxrqj",
+                "uid": "0215a067-90e5-11e9-bf07-00505681bdaf"
+            },
+            "spec": {
+                "groups": [
+                    "system:nodes",
+                    "system:authenticated"
+                ],
+                "request": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURSBSRVFVRVNULS0tLS0KTUlJQklqQ0J5Z0lCQURBNU1SVXdFd1lEVlFRS0V3eHplWE4wWlcwNmJtOWtaWE14SURBZUJnTlZCQU1URjNONQpjM1JsYlRwdWIyUmxPbWh3WlMxM2IzSnJaWEl4TUZrd0V3WUhLb1pJemowQ0FRWUlLb1pJemowREFRY0RRZ0FFCjZib1R3WGwyUSsrNndKNmN6dkwyN0VSZDNYTFlrOXdkZGFnNXEyY2IwcTZMZzZPWHBGWWttWVRUK2wxMHZRQjIKWXB2cy9sVGJCLzZ0ZzFDbU5mZWV4YUF2TUMwR0NTcUdTSWIzRFFFSkRqRWdNQjR3SEFZRFZSMFJCQlV3RTRJTAphSEJsTFhkdmNtdGxjakdIQkFvUG1OWXdDZ1lJS29aSXpqMEVBd0lEUndBd1JBSWdkTHRGM01xSWswdGVEWlVlCi95QkYybVM4dVZyRkgxY1VPeDdHT1RQZkErb0NJRVJ5b2NONjNtRnhXVXJaUFk3VHJoN1dNanJzVEd6OE1nUDEKZkpSSDNCRXoKLS0tLS1FTkQgQ0VSVElGSUNBVEUgUkVRVUVTVC0tLS0tCg==",
+                "usages": [
+                    "digital signature",
+                    "key encipherment",
+                    "server auth"
+                ],
+                "username": "system:node:hpe-worker1"
+            },
+            "status": {
+                "certificate": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUN2akNDQWFhZ0F3SUJBZ0lVR2V4MzYwSE9uUkozNTVIUHpHb1JlQTVaeGdrd0RRWUpLb1pJaHZjTkFRRUwKQlFBd0xURVNNQkFHQTFVRUN4TUpiM0JsYm5Ob2FXWjBNUmN3RlFZRFZRUURFdzVyZFdKbGJHVjBMWE5wWjI1bApjakFlRncweE9UQTJNVGN3T1RRek1EQmFGdzB4T1RBMk1UZ3dOekUyTWpSYU1Ea3hGVEFUQmdOVkJBb1RESE41CmMzUmxiVHB1YjJSbGN6RWdNQjRHQTFVRUF4TVhjM2x6ZEdWdE9tNXZaR1U2YUhCbExYZHZjbXRsY2pFd1dUQVQKQmdjcWhrak9QUUlCQmdncWhrak9QUU1CQndOQ0FBVHB1aFBCZVhaRDc3ckFucHpPOHZic1JGM2RjdGlUM0IxMQpxRG1yWnh2U3JvdURvNWVrVmlTWmhOUDZYWFM5QUhaaW0reitWTnNIL3EyRFVLWTE5NTdGbzRHVU1JR1JNQTRHCkExVWREd0VCL3dRRUF3SUZvREFUQmdOVkhTVUVEREFLQmdnckJnRUZCUWNEQVRBTUJnTlZIUk1CQWY4RUFqQUEKTUIwR0ExVWREZ1FXQkJTTHo1Z2dQVjFjRzFvNXZUWm93ZjBTQy9kd2p6QWZCZ05WSFNNRUdEQVdnQlNhalAxagpndVk1OUpOR0ZNL2pUdXJjTHN2WHlUQWNCZ05WSFJFRUZUQVRnZ3RvY0dVdGQyOXlhMlZ5TVljRUNnK1kxakFOCkJna3Foa2lHOXcwQkFRc0ZBQU9DQVFFQW4vTGxQQ2E5Ky9PcEx6VVpZUjZNZnRNRW80SnlCcE80MXVaTy9Id1QKN1p4ZVFza1NJNW0zM2F2TkJ0TXpRTGdDVFhrbWdGYWE2U0tZb2hYdzJSN28wOGRXdzJ0SExuczV4QjhpdDM3Rwp1RXVsUElFQ2x0Umc4eGRZdWJNTlRIaEhzNHcvUjRXaGdyNTluTXlMK2FMNHZKU3p3SlUwY0tSbVo3NSswZ2RRCkxxR2U5YlVxODNZVmh5Um5zUkR5M0Npb1R1MFNTNE90MEZUejBZMGlpL2U3dHpRSmVTSE1YbjI5T3RUYldZdU8KeVcydHpYTjJuZzRSSFJXaDFMcjl2eDJUUUF1bjltempiZ0R1YWVDTzRnRnhydDRnYkpXZHlKUFBTdGxuLzVaUApZdU1OQk9TVzEvVDVpWFF6VWdydHgzZkd3VjRoSzRLVnZIZm1Iem0ra2Jta2J3PT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=",
+                "conditions": [
+                    {
+                        "lastUpdateTime": "2019-06-17T09:48:19Z",
+                        "message": "This CSR was approved by kubectl certificate approve.",
+                        "reason": "KubectlApprove",
+                        "type": "Approved"
+                    }
+                ]
+            }
+        },
+        {
+            "metadata": {
+                "creationTimestamp": "2019-06-17T09:47:41Z",
+                "generateName": "csr-",
+                "name": "csr-t2v5x",
+                "resourceVersion": "627",
+                "selfLink": "/apis/certificates.k8s.io/v1beta1/certificatesigningrequests/csr-t2v5x",
+                "uid": "f2c1c9b6-90e4-11e9-bf07-00505681bdaf"
+            },
+            "spec": {
+                "groups": [
+                    "system:serviceaccounts:openshift-machine-config-operator",
+                    "system:authenticated"
+                ],
+                "request": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURSBSRVFVRVNULS0tLS0KTUlIME1JR2JBZ0VBTURreEZUQVRCZ05WQkFvVERITjVjM1JsYlRwdWIyUmxjekVnTUI0R0ExVUVBeE1YYzNsegpkR1Z0T201dlpHVTZhSEJsTFcxaGMzUmxjakV3V1RBVEJnY3Foa2pPUFFJQkJnZ3Foa2pPUFFNQkJ3TkNBQVQ5CjdCNk9RY3BTYkVuL0ZjVkEvTC9lRXU4NFZYaVJVbmRqTnZBY2N2eEtSblRmUTRxSkxlbTNaOGdSbTFyVTliOGQKVlpSYWRlZDZ4aXhWRGhURnorVktvQUF3Q2dZSUtvWkl6ajBFQXdJRFNBQXdSUUlnTkVUa3VrWHI0R0RqYXlHUQphTGQvNndMT2tIcXN6RWtTY2tEYlFoY1NaUXdDSVFDTHpQSWpQOEY4eUszRTRVeVdGZHNienlRVXpsNVVkb0s5Cjh3Vlg5MUx2dHc9PQotLS0tLUVORCBDRVJUSUZJQ0FURSBSRVFVRVNULS0tLS0K",
+                "usages": [
+                    "digital signature",
+                    "key encipherment",
+                    "client auth"
+                ],
+                "username": "system:serviceaccount:openshift-machine-config-operator:node-bootstrapper"
+            },
+            "status": {
+                "certificate": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUNuakNDQVlhZ0F3SUJBZ0lVT1o2NHVPOU9SVERmejBPU0ZJbzlWYlBvWkdvd0RRWUpLb1pJaHZjTkFRRUwKQlFBd0xURVNNQkFHQTFVRUN4TUpiM0JsYm5Ob2FXWjBNUmN3RlFZRFZRUURFdzVyZFdKbGJHVjBMWE5wWjI1bApjakFlRncweE9UQTJNVGN3T1RRek1EQmFGdzB4T1RBMk1UZ3dOekUyTkRWYU1Ea3hGVEFUQmdOVkJBb1RESE41CmMzUmxiVHB1YjJSbGN6RWdNQjRHQTFVRUF4TVhjM2x6ZEdWdE9tNXZaR1U2YUhCbExXMWhjM1JsY2pFd1dUQVQKQmdjcWhrak9QUUlCQmdncWhrak9QUU1CQndOQ0FBVDk3QjZPUWNwU2JFbi9GY1ZBL0wvZUV1ODRWWGlSVW5kagpOdkFjY3Z4S1JuVGZRNHFKTGVtM1o4Z1JtMXJVOWI4ZFZaUmFkZWQ2eGl4VkRoVEZ6K1ZLbzNVd2N6QU9CZ05WCkhROEJBZjhFQkFNQ0JhQXdFd1lEVlIwbEJBd3dDZ1lJS3dZQkJRVUhBd0l3REFZRFZSMFRBUUgvQkFJd0FEQWQKQmdOVkhRNEVGZ1FVNUFhSWRCOEFsS3gwdzhjVHpxam1aczRtdjg4d0h3WURWUjBqQkJnd0ZvQVVtb3o5WTRMbQpPZlNUUmhUUDQwN3EzQzdMMThrd0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFKbDNldkhjZm1Ubnl3SGZrNWR6CllEM3pETVVRdXNVUTRuSzkrckMzQlJpMDN4L0FTV1U1TjVkaUo3bVFyWUlpZ2YxdDZqczRiNzBpQXZWUUltREsKbEZ4WFFhSi9pZFJwc0RReVF6clFjamFzaHRXZG1NOXJhQlVJL3ltdE5kVmR0S1h3cG94L3g3YUxTclBTcFhQZApTNmRtVFJqSUNXSGc4S3V2M21lY0hlU29ITHJhRkpnR0lqdHExOWhZS2lpd2ozcHRBZUh6c0pMTUhkZjNZWGd4CmhRTmNwT05WbnVSRjdTVXY3cFFMRUR1YzZKMUgxT2J2TU9KeUM5cDBDQ0U1VDBEcWNjdVA5cFpoS2lxcTlCMmcKcGFpNWthWWNsOW1lTFdGZVJqTGdlQmt5RGtKakhsV254YVFhd3ZrWHdvajZwajBXQmtGeDhhaFdEeVVJYkttYQpvbFE9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K",
+                "conditions": [
+                    {
+                        "lastUpdateTime": "2019-06-17T09:47:58Z",
+                        "message": "This CSR was approved by kubectl certificate approve.",
+                        "reason": "KubectlApprove",
+                        "type": "Approved"
+                    }
+                ]
+            }
+        },
+        {
+            "metadata": {
+                "creationTimestamp": "2019-06-17T09:48:07Z",
+                "generateName": "csr-",
+                "name": "csr-t782b",
+                "resourceVersion": "1685",
+                "selfLink": "/apis/certificates.k8s.io/v1beta1/certificatesigningrequests/csr-t782b",
+                "uid": "027f0aae-90e5-11e9-bf07-00505681bdaf"
+            },
+            "spec": {
+                "groups": [
+                    "system:nodes",
+                    "system:authenticated"
+                ],
+                "request": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURSBSRVFVRVNULS0tLS0KTUlJQkl6Q0J5Z0lCQURBNU1SVXdFd1lEVlFRS0V3eHplWE4wWlcwNmJtOWtaWE14SURBZUJnTlZCQU1URjNONQpjM1JsYlRwdWIyUmxPbWh3WlMxdFlYTjBaWEl4TUZrd0V3WUhLb1pJemowQ0FRWUlLb1pJemowREFRY0RRZ0FFCi9PTmsrSkw5c1gzaWxTK0VQNUFUajU2RlR3eVJTSGRJMDVBaURMNWN5SGI4ZmszT0MxRjh1M21sd0dlenBTcW4KY0RQQS9oazlDbGduSzVEc1BTUTNoS0F2TUMwR0NTcUdTSWIzRFFFSkRqRWdNQjR3SEFZRFZSMFJCQlV3RTRJTAphSEJsTFcxaGMzUmxjakdIQkFvUG1OTXdDZ1lJS29aSXpqMEVBd0lEU0FBd1JRSWdEb3BCc3hSOHdjZlpCY1B4CkdWTkdKWW9ZTFo5TWlSc2M3a1FuWjd0NERlMENJUUNqQ2FlcWQ4YlNBZHdrbEhTNmlBUVZJdGNEQnIxbjNpaGIKZGY1UmhVYm5OZz09Ci0tLS0tRU5EIENFUlRJRklDQVRFIFJFUVVFU1QtLS0tLQo=",
+                "usages": [
+                    "digital signature",
+                    "key encipherment",
+                    "server auth"
+                ],
+                "username": "system:node:hpe-master1"
+            },
+            "status": {
+                "certificate": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUN2akNDQWFhZ0F3SUJBZ0lVTGRPUEowVFdrZ1dLbHhxS3V4dUxHK2wyTll3d0RRWUpLb1pJaHZjTkFRRUwKQlFBd0xURVNNQkFHQTFVRUN4TUpiM0JsYm5Ob2FXWjBNUmN3RlFZRFZRUURFdzVyZFdKbGJHVjBMWE5wWjI1bApjakFlRncweE9UQTJNVGN3T1RRek1EQmFGdzB4T1RBMk1UZ3dOekUyTWpSYU1Ea3hGVEFUQmdOVkJBb1RESE41CmMzUmxiVHB1YjJSbGN6RWdNQjRHQTFVRUF4TVhjM2x6ZEdWdE9tNXZaR1U2YUhCbExXMWhjM1JsY2pFd1dUQVQKQmdjcWhrak9QUUlCQmdncWhrak9QUU1CQndOQ0FBVDg0MlQ0a3YyeGZlS1ZMNFEva0JPUG5vVlBESkZJZDBqVAprQ0lNdmx6SWR2eCtUYzRMVVh5N2VhWEFaN09sS3Fkd004RCtHVDBLV0NjcmtPdzlKRGVFbzRHVU1JR1JNQTRHCkExVWREd0VCL3dRRUF3SUZvREFUQmdOVkhTVUVEREFLQmdnckJnRUZCUWNEQVRBTUJnTlZIUk1CQWY4RUFqQUEKTUIwR0ExVWREZ1FXQkJUM3F5ZEo4blFLeXk3VGkvNDJ6bldRcWk4czNEQWZCZ05WSFNNRUdEQVdnQlNhalAxagpndVk1OUpOR0ZNL2pUdXJjTHN2WHlUQWNCZ05WSFJFRUZUQVRnZ3RvY0dVdGJXRnpkR1Z5TVljRUNnK1kwekFOCkJna3Foa2lHOXcwQkFRc0ZBQU9DQVFFQWUxT1BwdFBCWEVwL3FsaU1aTkpVMXp0SlBDaGRkOVhPOTU5L3lzRlcKb3F1SXVmSGtPK3VkTm8rb0x1R3d1TWttU0FtNFZWOW83OE10dUFhMWZCZUpDU2tyUXgydHQ4Uit4UmVxQlcyYgpxRU5zL3A0YXlqdUtKblE4M3JsK2JrZXFIZWluTGdSWlRKdkpSd0VCRDgwNm5sandMWHB3UWZJazl5M29XQm9lClVqamFpaDBwSXZVdjNJUlhKelhQTDdDYWZJQTdmaDlJbW9UZmgrVXpzTEZWRnNENXMrSTRjdmdONll2ZGFZZnAKSGhpVmJHV0VTMmlWWTFtTDlmNFZsRndVbWtCM2ZNNWdZV1ZDT0F4T2ZKa2lyWmtvZThxamZhZkhkcHl2T0h5dApWZnEzL1ViVTYxYWxIMlI3Q0phb3M0TDNGdEtMZGRTU3cwd2dQZEorWHJpVUpnPT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=",
+                "conditions": [
+                    {
+                        "lastUpdateTime": "2019-06-17T09:48:19Z",
+                        "message": "This CSR was approved by kubectl certificate approve.",
+                        "reason": "KubectlApprove",
+                        "type": "Approved"
+                    }
+                ]
+            }
+        }
+    ]
+}

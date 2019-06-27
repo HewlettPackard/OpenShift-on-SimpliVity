@@ -1,0 +1,3 @@
+---
+# defaults file for nfs
+nfs_share: /srv/share

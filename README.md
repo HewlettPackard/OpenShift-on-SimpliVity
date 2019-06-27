@@ -12,6 +12,10 @@ The **site.yml** playbook does the following:
 4. Configure anti affinity DRS rules for the virtual machines (master VMs should run on separate hosts as well as the infrastructure (DNS and DHCP services) and load balancer VMs (for now only one LB supported)
 5. powers up the OCP virtual machines
 6. wait for the Openshift API to come up on the master nodes
+7. create a PV from an NFS share and a PVC for use by the Openshift Registry
+8. Configure the OpenShift Registry
+9. wait for all Cluster Operators to be availble
+10. run the final step of the Openshift Installation (wait-for installation-complete)
 
 
 
@@ -36,10 +40,11 @@ The playbooks creates OCP VMs according to the following sizing:
 
 The playbooks also creates the following VM which provides additional infrastructure services required by OCP
 
-| VM                | OS and Sizing | Comments                                                |
-| ----------------- | ------------- | ------------------------------------------------------- |
-| 1 x load balancer | Red Hat 7.6   | Only one LB allowed with this version of the playbooks  |
+| VM                | OS and Sizing | Comments                                                     |
+| ----------------- | ------------- | ------------------------------------------------------------ |
+| 1 x load balancer | Red Hat 7.6   | Only one LB allowed with this version of the playbooks       |
 | n x Infra         | Red Hat 7.6   | One or two VMs providing DHCP and DNS services on the internal VLAN. Configure two for HA purposes |
+| 1 x NFS           | Red Hat 7.6   | one NFS VM to hold the OpenShift Registry images             |
 
 
 
@@ -208,13 +213,13 @@ You can monitor the progress of the ignition process in several places:
 
 - Several minutes after all the VMS have been powered on (you don’t have anything to do), the bootkube.service service completes successfully. You can view this using the same journalctl command as in the previous step from the bootstrap VM.
 - It may take a while before all the endpoints are up in the Load Balancer Stats screen. The site.yml playbook finishes when all these endpoints are successfully polled. Note that the openshift-api-server and machine-config-server endpoints for the bootstrap machine are down. This is expected,
-- typical ellapsed time for the sites.yml playbook to finish is between 16mn and 20mns.
-
-
+- typical elapsed time for the sites.yml playbook to finish is between 16mn and 20mns.
 
 # Finish the installation
 
-The installation is NOT finished. You need to continue with the steps described here:  <https://docs.openshift.com/container-platform/4.1/installing/installing_vsphere/installing-vsphere.html#cli-logging-in-kubeadmin_installing-vsphere> paragraph **Logging into the cluster**.
+The installation is NOT finished. You need to continue with the steps described here:  
+
+https://docs.openshift.com/container-platform/4.1/installing/install_config/customizations.html#customizations
 
 Note that the kubeconfig and kubeadmin-password files are located in the **auth** folder under your **install_dir** directory (key is specified in group_vars/all/vars.yml). The kubeconfig file is used to set environment variables needed to access the OCP cluster via the command-line.  The kubeadmin-password file contains the password for the "kubeadmin" user, which may be useful for logging into the OCP cluster via the web console.  The playbook does not install the oc utility (yet).
 
@@ -222,35 +227,11 @@ Note that the kubeconfig and kubeadmin-password files are located in the **auth*
 
 # Appendix: variable files
 
-## <a id="vars_yml"></a>group_vars/vars.yml
+## <a id="vars_yml"></a>group_vars/all/vars.yml
 
+The file group_vars/all/vars.sample contains the list of ansible variables that you should configure to match your environment.  This file comes with plenty of comments 
 
-| key                    | example value                         | comments                                                     |
-| :--------------------- | :------------------------------------ | :----------------------------------------------------------- |
-| install_dir            | "{{ playbook_dir }}/../../.ocp"       | this is where the ignition files and the kubeconfig file will be stored. If you cloned the repo in ~/ocpsvt, the default value will create a folder ~/.ocp. The kubeconfig file is located in {{ install_dir }}/auth |
-| ocp_installer_path     | /kits/openshift-install               | The Openshift Installer is expected to be at this location   |
-| pull_secret            | '{{ vault.pull_secret }}'             | Indirection to the pull secret stored in group_vars/all/vault.yml. Use the example value as it is. |
-| vm_portgroup           | hpeOpenshift                          | portgroup that the VMs connect to. Must be a proxy free VLAN with an access to the internet |
-| dhcp_subnet            | 10.15.152.0/24                        | subnet to use on the VLAN/network connected to the **vm_portgroup**. CIDR notation |
-| gateway                | 10.15.152.1                           | gateway for the **dhcp_subnet** subnet.                      |
-| domain_name            | hpecloud.org                          | base DNS domain name used for the cluster |
-| vcenter_hostname       | vcentergen10.em2.cloudra.local        | Name of your vCenter server. Must be resolvable by the Ansible box |
-| vcenter_username:      | Administrator@vsphere.local           | Admin account in your vCenter infrastructure. The password is specified in group_vars/all/vault.yml (encrypted or not) |
-| vcenter_password       | '{{ vault.vcenter_password }}'        | indirection to password in vault file, don't change it       |
-| vcenter_validate_certs | false                                 |                                                              |
-| vcenter_cluster        | Docker                                | the name of your SimpliVity cluster                          |
-| datacenter             | DEVOPS                                | datacenter where all the vCenter artifact can be found (including the vcenter_cluster, the templates etc) |
-| datastores             | ['Openshift_HPE']                     | Name of the Datastore which will receive all the VMs. Must exist (for now) |
-| infra_folder           | hpeInfra                              | folder where the non-OCP VMs and templates will be deployed. This folder is created if it does not exist |
-| master_ova_path        | "/kits/rhcos-4.1.0-x86_64-vmware.ova" | Path to RHCOS OVA (name and location of the file Red Hat CoreOS OVA you downloaded from Red Hat) |
-| worker_ova_path        | "{{ master_ova_path }}"               | Path to the OVA file used to create the VM template for OCP worker nodes. The proposed value configures the same ova as master nodes. |
-| infra_ova_path         | "/kits/hpe-rhel760.ova"               | Path to the OVA file used to create the VM template for infra machines (LBs etc) |
-| master_template        | hpe-rhcos                             | VMware template name for OCP master nodes.You don't need to create this template, the playbook will do it for you |
-| worker_template        | "{{ master_template }}"               | VMware template name for OCP worker nodes (same as master nodes by default, ie RH CoreOS) |
-| infra_template         | hpe-rhel760                           | VMware template name for non OCP Vms (such as LBs etc)       |
-| ssh_key                | '{{ vault.ssh_key }}'                 | indirection to SSH public key stored in group_vars/all/vault.yml (note: it is a public key, there is no reason to store it in vault, will change this in the next revision of the playbooks) |
-| frontend_vm_portgroup  | 'VM Network'                          | Name of the portgroup connected to the access/public network |
-| frontend_gateway       | '10.10.172.1'                         | Access network gateway                                       |
+https://github.com/chris7444/ocpsvt/blob/master/group_vars/all/vars.yml.sample
 
 
 
@@ -271,6 +252,12 @@ all keys here are properties of the dictionary called **vault.**
 
 
 
+# **Appendix: Inventory**
+
+The file https://github.com/chris7444/ocpsvt/blob/master/hosts.sample contains an example inventory. The IP used in this inventory are inline with the settings documented in the group_vars/all/vars.yml.sample (dhcp_subnet and gateway)
+
+
+
 # **Appendix: Environment**
 
 The environment consists of a 4-node SimpliVity cluster running the latest OmniStack bits at the time of testing
@@ -282,23 +269,6 @@ The environment consists of a 4-node SimpliVity cluster running the latest OmniS
 
 
 
-# **Appendix: Sample IP allocation scheme (used in the sample files)**
-
-
-
-| IP or key     | value                       | Comment                                                      |
-| ------------- | --------------------------- | ------------------------------------------------------------ |
-| dhcp_subnet   | 10.15.152.0/24              | Subnet on the  proxy free VLAN.  Assigned by the network admins |
-| gateway       | 10.15.152.1                 | Gateway for **dhcp_subnet**.                                 |
-| hpe-ansible   | 10.15.152.4                 | This is the Ansible box. Also hosting the bootstrap.ign file |
-| hpe-infra1    | 10.15.152.5                 | Machine hosting DNS and DHCP. |
-| hpe-infra2    | 10.15.152.6                 | Machine hosting DNS and DHCP. |
-| hpe-lb1       | 10.15.152.7                 | Ioad balancer. Also (for now) api and api-int IP addresses. |
-| hpe-bootstrap | 10.15.152.209               | OCP Bootstrap machine. |
-| hpe-master0   | 10.15.152.210               | OCP master machine. |
-| hpe-master1   | 10.15.152.211               | OCP master machine. |
-| hpe-master2   | 10.15.152.212               | OCP master machine. |
-| hpe-worker0   | 10.15.152.213               | OCP worker machine. |
-| hpe-worker1   | 10.15.152.214               | OCP worker machine. |
+# 
 
 
