@@ -9,13 +9,13 @@ The **site.yml** playbook does the following:
 1. runs the Openshift Installer to generate the ignition data required by the OpenShift virtual machines
 2. provisions the virtual machines listed in the Ansible inventory and powers up the non-OCP virtual machines
 3. configures the services running on the non-OCP virtual machines including DNS and DHCP services.
-4. Configure anti affinity DRS rules for the virtual machines (master VMs should run on separate hosts as well as the infrastructure (DNS and DHCP services) and load balancer VMs (for now only one LB supported)
+4. configures anti affinity DRS rules for the virtual machines (master VMs should run on separate hosts as well as the infrastructure (DNS and DHCP services) and load balancer VMs (for now only one LB supported)
 5. powers up the OCP virtual machines
-6. wait for the Openshift API to come up on the master nodes
-7. create a PV from an NFS share and a PVC for use by the Openshift Registry
-8. Configure the OpenShift Registry
-9. wait for all Cluster Operators to be availble
-10. run the final step of the Openshift Installation (wait-for installation-complete)
+6. waits for the Openshift API to come up on the master nodes
+7. creates a PV from an NFS share and a PVC for use by the Openshift Registry
+8. configures the OpenShift Registry
+9. waits for all Cluster Operators to be available
+10. runs the final step of the Openshift Installation (wait-for installation-complete)
 
 
 
@@ -31,22 +31,18 @@ The **site.yml** playbook does the following:
 The playbooks creates OCP VMs according to the following sizing:
 
 | VM                                           | OS and Sizing                            | Comments                                     |
-| -------------------------------------------- | ---------------------------------------- | -------------------------------------------- |
-| 1 x bootstrap machine                        | CoreOS 4xCPU, 16GN RAM, 120GB disk space | This is the RH minimum requirement           |
-| 3 x master machines                          | CoreOS 4xCPU, 16GN RAM, 120GB disk space | This is the RH minimum requirement           |
-| N x worker machines (depending on inventory) | CoreOS 2xCPU, 16GN RAM, 120GB disk space | This is two times the RH minimum requirement |
+| :------------------------------------------- | ---------------------------------------- | -------------------------------------------- |
+| 1 x bootstrap machine                        | CoreOS 4xCPU, 16GB RAM, 120GB disk space | This is the RH minimum requirement           |
+| 3 x master machines                          | CoreOS 4xCPU, 16GB RAM, 120GB disk space | This is the RH minimum requirement           |
+| n x worker machines (depending on inventory) | CoreOS 2xCPU, 16GB RAM, 120GB disk space | This is two times the RH minimum requirement |
 
-
-
-The playbooks also creates the following VM which provides additional infrastructure services required by OCP
+The playbooks also creates the following VMs which provide additional infrastructure services required by OCP
 
 | VM                | OS and Sizing | Comments                                                     |
 | ----------------- | ------------- | ------------------------------------------------------------ |
 | 1 x load balancer | Red Hat 7.6   | Only one LB allowed with this version of the playbooks       |
-| n x Infra         | Red Hat 7.6   | One or two VMs providing DHCP and DNS services on the internal VLAN. Configure two for HA purposes |
+| 1 or 2 x Infra    | Red Hat 7.6   | One or two VMs providing DHCP and DNS services on the internal VLAN. Configure two for HA purposes |
 | 1 x NFS           | Red Hat 7.6   | one NFS VM to hold the OpenShift Registry images             |
-
-
 
 ## Prepare an Ansible box
 
@@ -68,7 +64,7 @@ The load balancer(s) and the infrastructure nodes are cloned from a RHEL7 templa
 - one disk, prefer thin provisioning. 50G is enough
 - guest OS family Linux/RHEL 7 64-bits
 - configure CD/DVD to connect to the RHEL7 ISO image at power on
-- take note of the name you give to the VM. (eg *hpe-rhel760*). You will document this name with the Ansible variable **group_vars/all/vars.yml:rhel_template:**
+- take note of the name you give to the VM. (eg hpe-rhel760). You will document this name with the Ansible variable `group_vars/all/vars.yml:rhel_template:`
 
 Power on the template and connect to the VM's console
 
@@ -83,7 +79,7 @@ While the installation runs configure a password for the root account. You don't
 
 Once the installation is finished, log in the VM (root account) and perform the following tasks:
 
-- change the hostname of the template giving it a name that you will recognize in your Red Hat Account :
+- change the hostname of the template giving it a name that you will recognize in your Red Hat Account (for example) :
 
   `nmcli general hostname=hpe-rhel760`
 
@@ -109,23 +105,23 @@ Once the installation is finished, log in the VM (root account) and perform the 
 
 **Note:** The playbooks have been tested with CentOS 7.6 as well. If you use CentOS you don't have to run the subscription-manager command above.
 
-Finally, make sure the name of this template match the variable group_vars/all/vars.yml:infra_template.
+Finally, make sure the name of this template matches the variable `group_vars/all/vars.yml:infra_template`.
 
 ## **Prepare an OVA file (optional)**
 
-It is possible to deploy the infra_template from an OVA. To create the OVA proceed as indicated below:
+It is possible to deploy the `infra_template` from an OVA. To create the OVA proceed as indicated below:
 
 - **make sure** the one network interface of the template is connected to the network named 'VM Network'
-- set the CD/DVD for the template to client device (vs ISO in Datastore)
+- set the CD/DVD for the template to client device (vs an ISO image in a Datastore)
 - Select the template and export it as an OVF template
 - Create a tar archive of **all** the files that where downloaded. The extension MUST be .ova (and not .tar)
-- Copy the OVA file to a location that the Ansible user can access and use the ansible_variable **group_vars/all/vars.yml:infra_ova_path:** to tell the playbooks where you stored the OVA file.
+- Copy the OVA file to a location that the Ansible user can access and use the ansible_variable `group_vars/all/vars.yml:infra_ova_path:` to tell the playbooks where you stored the OVA file.
 
-**note:** If a template with the name specified by **group_vars/all/vars.yml:infra_template** is found in the vCenter Datacenter, the OVA file will not be deployed and the existing template will be used to deploy non-CoreOS VMS. If the template is not found, the OVA file is deployed and the template is given the name documented by **infra_template**.
+note: If a template with the name specified by `group_vars/all/vars.yml:infra_template` is found in the vCenter Datacenter, the OVA file will not be deployed and the existing template will be used to deploy non-CoreOS VMS. If the template is not found, the OVA file is deployed and the template is given the name documented by `infra_template`.
 
 ## **Download Required Files**
 
-You need to copy a number of files to the Ansible box. We need the Linux installer, the Linux client and the rhcos OVA. Note that these are the released versions of OCP 4.1.
+You need to copy a number of files to the Ansible box. We need the Linux installer, the Linux client and the Red Hat CoreOS OVA. Note that these are the released versions of OCP 4.1.
 
 ```
 mkdir /kits
@@ -139,7 +135,7 @@ tar -xvf openshift-install-linux-4.1.0.tar.gz
 
 Download your pull secret from this page: <https://cloud.redhat.com/openshift/install/vsphere/user-provisioned>.  You will use your pull secret to set a value to the variable **group_vars/all/vault.yml:vault.pull_secret**
 
-If the account you use on the Ansible box does not have a default SSH keypair, create one (using ssh-keygen). If you configure a passphrase on the private key, make sure the key is added to your SSH agent. The content of the file ~/.ssh/id_rsa.pub should be used to configure the key **group_vars/all/vault.yml:vault.ssh_key**
+If the account you use on the Ansible box does not have a default SSH keypair, create one (using ssh-keygen). If you configure a passphrase on the private key, make sure the key is added to your SSH agent. The content of the file ~/.ssh/id_rsa.pub should be used to configure the key `group_vars/all/vault.yml:vault.ssh_key`
 
 More info on variables later.
 
@@ -155,16 +151,16 @@ git clone https://github.com/chris7444/ocpsvt.git
 
 ### Configure the playbooks
 
-- Copy group_vars/all/vars.yml.sample to group_vars/all/vars.yml
-- Edit vars.yml to match your environment. More details can be found [here](#vars_yml)
-- Copy group_vars/all/vault.yml.sample to group_vars/all/vault.yml
-- Edit vault.yml to match your environment. More details can be found [here](#vault-yml) 
+- Copy `group_vars/all/vars.yml.sample` to `group_vars/all/vars.yml`
+- Edit `group_vars/all/vars.yml` to match your environment. More details can be found [here](#vars_yml)
+- Copy `group_vars/all/vault.yml.sample` to `group_vars/all/vault.yml`
+- Edit `group_vars/all/vault.yml` to match your environment. More details can be found [here](#vault-yml) 
 
-**Note**: you don’t need to edit the group files
+**Note**: you don’t need to edit the group files (such as `group_vars/master.yml`) unless you want the sizing of the VMs.
 
 ### Create your inventory
 
-Make a copy of hosts.sample (name the copy **hosts**) and make the modification needed to match your environment:
+Make a copy of the file `hosts.sample` to  - say - `hosts`. This will be your inventory. Modify `hosts` to match your environment:
 
 - use unique names in the vCenter environment, recommended VM names in the form xxx-master0, xxx-lb1 etc, where xxx is the name of your cluster.
 
@@ -172,26 +168,26 @@ Make a copy of hosts.sample (name the copy **hosts**) and make the modification 
 
 - use your own IP addresses and not those coming from the sample file
 
-- Configure one or two machines in the infrastructure group. Configure two VMs if you want HA.
+- Configure one or two machines in the `[infrastructure]` group. Configure two VMs if you want HA. Configure only one if you don't need HA.
 
-- Only configure one machine in the loadbalancer group. Future rev will implement 2 LBs and virtual IPs.
+- Only configure one machine in the `[loadbalancer]` group. Future rev will implement 2 load balancers and virtual IPs.
 
-- Load balancers need to have two IP addresses. One on the internal network designated by **vm_portgroup** in group_vars/all/vars.yml and specified with the ansible_host variable. A second address for the frontend network designated by **frontend_ipaddr** in the inventory. frontend_ipaddr should be specified in CIDR notation (for example 10.10.174.165/22).
+- Load balancers need to have two IP addresses. One on the internal network designated by  `group_vars/all/vars.yml:vm_portgroup` and specified with the `ansible_host` variable. A second address for the frontend network designated by the variable `frontend_ipaddr` in the inventory. `frontend_ipaddr` should be specified in CIDR notation (for example 10.10.174.165/22).
 
 
 
 ## run the playbooks
 
-**WARNING**: Make sure you run the site.yml playbook form the top-level directory of the git repository. The repository comes with an ansible.cfg file and a number of options which are required.
+**WARNING**: Make sure you run the `site.yml` playbook from the top-level directory of the git repository. The repository comes with an `ansible.cfg` file and a number of options which are required.
 
-Perform the following commands on your Ansible machine
+Provided you clones the repository under `~/ocpsvt`, perform the following commands on your Ansible machine:
 
 ```
 cd ~/ocpsvt
 ansible-playbook –i hosts site.yml
 ```
 
-Depending on your hardware and the load, it takes approximately 20mns for the playbook to finish successfully.
+Depending on your hardware and the load, it takes approximately 30mns for the playbook to finish successfully. 
 
 ## Monitoring the progresses
 
@@ -211,17 +207,25 @@ You can monitor the progress of the ignition process in several places:
 
   When something is wrong, the bootstrap VM waits endlessly for the etcd cluster to come online. The documentation gives a few hints on how to troubleshoot ignition.
 
-- Several minutes after all the VMS have been powered on (you don’t have anything to do), the bootkube.service service completes successfully. You can view this using the same journalctl command as in the previous step from the bootstrap VM.
-- It may take a while before all the endpoints are up in the Load Balancer Stats screen. The site.yml playbook finishes when all these endpoints are successfully polled. Note that the openshift-api-server and machine-config-server endpoints for the bootstrap machine are down. This is expected,
-- typical elapsed time for the sites.yml playbook to finish is between 16mn and 20mns.
+- Several minutes after all the VMS have been powered on (you don’t have anything to do), the `bootkube.service` service completes successfully. You can view this using the same `journalctl` command as in the previous step from the bootstrap VM.
+- It may take a while before all the endpoints are up in the Load Balancer Stats screen. The `site.yml` playbook finishes when all these endpoints are successfully polled. Note that the `openshift-api-server` and `machine-config-server` endpoints for the bootstrap machine are down. This is expected,
+- typical elapsed time for the `site.yml` playbook to finish is 30mns.
+
+## Persistent Storage
+
+The Openshift Image Registry is configured to use a kubernetes Persistent Volume backed by an NFS Share to store the images. Everything is configured by the playbooks.
+
+A default Storage Class is also configured that leverages the vSphere Cloud Provider (VCP). It supports dynamic volume provisioning.
+
+**Note**: the reason why the Registry does not use a vsphere volume is that because VCP does not support the ReadWriteMany access mode .
+
+ 
 
 # Finish the installation
 
-The installation is NOT finished. You need to continue with the steps described here:  
+The installation of the control plane is finished. You are ready to start the customization of your deployment as explained here:  https://docs.openshift.com/container-platform/4.1/installing/install_config/customizations.html#customizations
 
-https://docs.openshift.com/container-platform/4.1/installing/install_config/customizations.html#customizations
-
-Note that the kubeconfig and kubeadmin-password files are located in the **auth** folder under your **install_dir** directory (key is specified in group_vars/all/vars.yml). The kubeconfig file is used to set environment variables needed to access the OCP cluster via the command-line.  The kubeadmin-password file contains the password for the "kubeadmin" user, which may be useful for logging into the OCP cluster via the web console.  The playbook does not install the oc utility (yet).
+Note The kubeconfig and kubeadmin-password files are located in the auth folder under your `install_dir` directory (specified in `group_vars/all/vars.yml`). The kubeconfig file is used to set environment variables needed to access the OCP cluster via the command-line.  The kubeadmin-password file contains the password for the "kubeadmin" user, which may be useful for logging into the OCP cluster via the web console.  
 
 
 
