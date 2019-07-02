@@ -14,5 +14,8 @@
 # limitations under the License.
 ### 
 ---
-- debug:
-    msg: "Nothing to decommission"
+- name: Remove the Installation directory
+  delegate_to: localhost
+  file:
+    path: "{{ install_dir }}"
+    state: absent

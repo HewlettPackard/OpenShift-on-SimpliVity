@@ -144,7 +144,7 @@ More info on variables later.
 From the Ansible box (user core)
 
 ```
-git clone https://github.com/chris7444/ocpsvt.git
+git clone https://github.com/HewlettPackard/OpenShift-on-SimpliVity.git
 ```
 
 ## **Prepare to run the playbooks**
@@ -180,10 +180,10 @@ Make a copy of the file `hosts.sample` to  - say - `hosts`. This will be your in
 
 **WARNING**: Make sure you run the `site.yml` playbook from the top-level directory of the git repository. The repository comes with an `ansible.cfg` file and a number of options which are required.
 
-Provided you clones the repository under `~/ocpsvt`, perform the following commands on your Ansible machine:
+Provided you clones the repository under `~/OpenShift-on-SimpliVity`, perform the following commands on your Ansible machine:
 
 ```
-cd ~/ocpsvt
+cd ~/OpenShift-on-SimpliVity
 ansible-playbook –i hosts site.yml
 ```
 
@@ -235,7 +235,7 @@ Note The kubeconfig and kubeadmin-password files are located in the auth folder 
 
 The file group_vars/all/vars.sample contains the list of ansible variables that you should configure to match your environment.  This file comes with plenty of comments 
 
-https://github.com/chris7444/ocpsvt/blob/master/group_vars/all/vars.yml.sample
+https://github.com/HewlettPackard/OpenShift-on-SimpliVity/blob/master/group_vars/all/vars.yml.sample
 
 
 
@@ -258,7 +258,7 @@ all keys here are properties of the dictionary called **vault.**
 
 # **Appendix: Inventory**
 
-The file https://github.com/chris7444/ocpsvt/blob/master/hosts.sample contains an example inventory. The IP used in this inventory are inline with the settings documented in the group_vars/all/vars.yml.sample (dhcp_subnet and gateway)
+The file https://github.com/HewlettPackard/OpenShift-on-SimpliVity/blob/master/hosts.sample contains an example inventory. The IP used in this inventory are inline with the settings documented in the group_vars/all/vars.yml.sample (dhcp_subnet and gateway)
 
 
 
@@ -274,5 +274,3 @@ The environment consists of a 4-node SimpliVity cluster running the latest OmniS
 
 
 # 
-
-
