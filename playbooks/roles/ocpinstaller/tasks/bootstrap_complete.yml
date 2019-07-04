@@ -57,6 +57,8 @@
   register: res
   retries: "{{ ( ocpinstaller_clusteroperators_timeout / 10 ) | int }}"
   until: res.resources | count > 0
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 
 - name: Create PV for Image Registry
   k8s:
@@ -96,13 +98,21 @@
         resources:
           requests:
             storage: "100Gi"
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 
-- name: Configure Image Registry (NFS persistent volume )
+- name: Configure Image Registry (NFS persistent volume)
   shell: |
     oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch '{"spec":{"storage":{"pvc":{"claim":"image-registry-storage-nfs"}}}}'
   register: res
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+
+- name: Stage watch_operators.sh script
+  template:
+    src: watch_operators.sh.j2
+    dest: /tmp/watch_operators.sh
+    mode: u=rx,g=r,o=r
 
 - name: Verify that all cluster operators are available 
   shell: |
@@ -117,4 +127,5 @@
    {{ ocp_installer_path }} --dir {{ install_dir }} wait-for install-complete
   register: res
 
-- debug: var=res
+- debug:
+    var: res

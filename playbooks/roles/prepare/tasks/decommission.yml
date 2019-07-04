@@ -14,5 +14,13 @@
 # limitations under the License.
 ### 
 ---
-- debug:
-    msg: "Nothing to decommission"
+- name: Check for Installation directory
+  delegate_to: localhost
+  stat:
+    path: "{{ install_dir }}"
+  register: ins_dir
+
+- name: Rename the Installation directory with timestamp
+  delegate_to: localhost
+  command: mv {{ install_dir }} {{ install_dir }}.{{ lookup('pipe','date +%Y-%m-%d-%H-%M-%S') }}
+  when: ins_dir.stat.exists
