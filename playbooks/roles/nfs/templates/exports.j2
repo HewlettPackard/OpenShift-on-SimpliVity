@@ -1,4 +1,4 @@
-{% for index in range(22) %}
+{% for index in range( number_of_nfs_shares ) %}
 {% for host in groups.ocp %}
 {{ nfs_share }}{{ index }} {{ hostvars[host].ansible_host | ipaddr('address') }}(rw,sync,no_root_squash,no_all_squash) 
 {% endfor %}
