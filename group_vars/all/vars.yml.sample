@@ -60,3 +60,9 @@ rhn_pass: '{{ vault.rhn_pass }}'                                # not used for n
 #
 frontend_vm_portgroup: 'VM Network'                             # Name of the portgroup connected to the access/public network
 frontend_gateway: '10.10.172.1'                                 # Access network gateway
+
+#
+# Number of NFS Shares to create, you can use these shares to create Persistent Volumes
+#
+number_of_nfs_shares: 5						# The image registry requires one NFS share, shares are named /srv/share0, /srv/share1 etc..
+
