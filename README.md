@@ -4,23 +4,23 @@
 
 The OCP 4.1 installer supports two deployments scenarios: IPI and UPI. **I**nstaller‑**P**rovisioned **I**nfrastructure (IPI) is only supported on AWS for now. Because we deploy on vSphere, we use the **U**ser-**P**rovisioned **I**nfrastructure (UPI) scenario which means we need to provision... the infrastructure (surprise!).
 
-The **site.yml** playbook does the following:
+The `site.yml` playbook does the following:
 
-1. runs the Openshift Installer to generate the ignition data required by the OpenShift virtual machines
+1. runs the OpenShift Installer to generate the ignition data required by the OpenShift virtual machines
 2. provisions the virtual machines listed in the Ansible inventory and powers up the non-OCP virtual machines
 3. configures the services running on the non-OCP virtual machines including DNS and DHCP services.
 4. configures anti affinity DRS rules for the virtual machines (master VMs should run on separate hosts as well as the infrastructure (DNS and DHCP services) and load balancer VMs (for now only one LB supported)
 5. powers up the OCP virtual machines
-6. waits for the Openshift API to come up on the master nodes
-7. creates a PV from an NFS share and a PVC for use by the Openshift Registry
+6. waits for the OpenShift API to come up on the master nodes
+7. creates a PV from an NFS share and a PVC for use by the OpenShift Registry
 8. configures the OpenShift Registry
 9. waits for all Cluster Operators to be available
-10. runs the final step of the Openshift Installation (wait-for installation-complete)
+10. runs the final step of the OpenShift Installation (wait-for installation-complete)
 
 
 
 | Requirement (1)                                              | Choice Made                                               | Comment                                                      |
-| ------------------------------------------------------------ | --------------------------------------------------------- | ------------------------------------------------------------ |
+| :------------------------------------------------------------ | :--------------------------------------------------------- | :------------------------------------------------------------ |
 | vCenter Infra 6.7U1                                          |                                                           | You need admin credentials                                   |
 | ESXi cluster of three machines                               |                                                           | If you want HA you need three machines in the cluster and you need to deploy 3 masters |
 | One proxy-free VLAN with access to Internet (to pull Red Hat artifacts) | a portgroup connected to all machines in your ESX cluster | The playbooks install DHCP services on this VLAN so no other DHCP service should be running on this VLAN |
@@ -31,7 +31,7 @@ The **site.yml** playbook does the following:
 The playbooks creates OCP VMs according to the following sizing:
 
 | VM                                           | OS and Sizing                            | Comments                                     |
-| :------------------------------------------- | ---------------------------------------- | -------------------------------------------- |
+| :------------------------------------------- | :---------------------------------------- | :-------------------------------------------- |
 | 1 x bootstrap machine                        | CoreOS 4xCPU, 16GB RAM, 120GB disk space | This is the RH minimum requirement           |
 | 3 x master machines                          | CoreOS 4xCPU, 16GB RAM, 120GB disk space | This is the RH minimum requirement           |
 | n x worker machines (depending on inventory) | CoreOS 2xCPU, 16GB RAM, 120GB disk space | This is two times the RH minimum requirement |
@@ -39,7 +39,7 @@ The playbooks creates OCP VMs according to the following sizing:
 The playbooks also creates the following VMs which provide additional infrastructure services required by OCP
 
 | VM                | OS and Sizing | Comments                                                     |
-| ----------------- | ------------- | ------------------------------------------------------------ |
+| :----------------- | :------------- | :------------------------------------------------------------ |
 | 1 x load balancer | Red Hat 7.6   | Only one LB allowed with this version of the playbooks       |
 | 1 or 2 x Infra    | Red Hat 7.6   | One or two VMs providing DHCP and DNS services on the internal VLAN. Configure two for HA purposes |
 | 1 x NFS           | Red Hat 7.6   | one NFS VM to hold the OpenShift Registry images             |
@@ -121,19 +121,19 @@ note: If a template with the name specified by `group_vars/all/vars.yml:infra_te
 
 ## **Download Required Files**
 
-You need to copy a number of files to the Ansible box. We need the Linux installer, the Linux client and the Red Hat CoreOS OVA. Note that these are the released versions of OCP 4.1.
+You need to copy a number of files to the Ansible box. We need the Linux installer, the Linux client and the Red Hat CoreOS OVA. The exact file names reflect the version of the release. At the time of writing, the latest version available for the OpenShift installer and the client tools was 4.1.4, and 4.1.0 for the Red Hat CoreOS VMware template. The ultimate reference for downloading required files is [here](https://cloud.redhat.com/openshift/install/vsphere/user-provisioned).
 
 ```
 mkdir /kits
 cd /kits
-wget https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux-4.1.0.tar.gz
-wget https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-install-linux-4.1.0.tar.gz
+wget https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux-4.1.4.tar.gz
+wget https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-install-linux-4.1.4.tar.gz
 wget https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/4.1/latest/rhcos-4.1.0-x86_64-vmware.ova
-tar -xvf openshift-client-linux-4.1.0.tar.gz
-tar -xvf openshift-install-linux-4.1.0.tar.gz
+tar -xvf openshift-client-linux-4.1.4.tar.gz
+tar -xvf openshift-install-linux-4.1.4.tar.gz
 ```
 
-Download your pull secret from this page: <https://cloud.redhat.com/openshift/install/vsphere/user-provisioned>.  You will use your pull secret to set a value to the variable **group_vars/all/vault.yml:vault.pull_secret**
+Download your pull secret from this page: <https://cloud.redhat.com/openshift/install/vsphere/user-provisioned>.  You will use your pull secret to set a value to the variable `group_vars/all/vault.yml:vault.pull_secret`
 
 If the account you use on the Ansible box does not have a default SSH keypair, create one (using ssh-keygen). If you configure a passphrase on the private key, make sure the key is added to your SSH agent. The content of the file ~/.ssh/id_rsa.pub should be used to configure the key `group_vars/all/vault.yml:vault.ssh_key`
 
@@ -178,7 +178,7 @@ Make a copy of the file `hosts.sample` to  - say - `hosts`. This will be your in
 
 ### About Persistent Storage
 
-By default the Openshift installer configures a default storage class which uses the vSphere Cloud Provider. This provider does not support the [ReadWriteMany](https://docs.openshift.com/container-platform/4.1/installing/installing_vsphere/installing-vsphere.html#installation-registry-storage-config_installing-vsphere) access mode which is required by the Image Registry. For this reason, the `site.yml` playbook deploys an NFS virtual machine which exports a number of NFS shares. The Image Registry service will use one of these. The number of shares that the playbooks creates can be customized using the variable `group_vars/all/vars.yml/num_nfs_shares`. Only one share is required by the Image Registry service. Use vSphere volumes in your apps if you don't need ReadWriteMany access mode
+By default the OpenShift installer configures a default storage class which uses the vSphere Cloud Provider. This provider does not support the [ReadWriteMany](https://docs.openshift.com/container-platform/4.1/installing/installing_vsphere/installing-vsphere.html#installation-registry-storage-config_installing-vsphere) access mode which is required by the Image Registry. For this reason, the `site.yml` playbook deploys an NFS virtual machine which exports a number of NFS shares. The Image Registry service will use one of these. The number of shares that the playbooks creates can be customized using the variable `group_vars/all/vars.yml/num_nfs_shares`. Only one share is required by the Image Registry service. Use vSphere volumes in your apps if you don't need ReadWriteMany access mode
 
 ## run the playbooks
 
@@ -203,7 +203,7 @@ You can monitor the progress of the ignition process in several places:
 
   **Note:** In my environment, the playbook finishes at 70 / 60 retries remaining.
 
-- You should see the openshift-api-server and the machine-config-server endpoints available on the bootstrap machine. Use the Load Balancer stats screen to check this out (url [http://your‑lb-ip-address:9000](http://yourlb-ip-address:9000/))
+- You should see the `openshift-api-server` and the `machine-config-server` endpoints available on the bootstrap machine. Use the Load Balancer stats screen to check this out (url [http://your‑lb-ip-address:9000](http://yourlb-ip-address:9000/))
   
 - SSH to the bootstrap VM and run the following command:
 
@@ -217,11 +217,11 @@ You can monitor the progress of the ignition process in several places:
 
 ## Persistent Storage
 
-The Openshift Image Registry is configured to use a kubernetes Persistent Volume backed by an NFS Share to store the images. Everything is configured by the playbooks.
+The OpenShift Image Registry is configured to use a kubernetes Persistent Volume backed by an NFS Share to store the images. Everything is configured by the playbooks.
 
 A default Storage Class is also configured that leverages the vSphere Cloud Provider (VCP). It supports dynamic volume provisioning.
 
-**Note**: the reason why the Registry does not use a vsphere volume is that because VCP does not support the ReadWriteMany access mode .
+**Note**: the reason why the Registry does not use a vSphere volume is that because VCP does not support the ReadWriteMany access mode .
 
  
 
@@ -257,12 +257,9 @@ all keys here are properties of the dictionary called **vault.**
 | ssh_key             | 'yourSSHpublickeyhere' | see the about [pull secret and ssh key](https://confluence.simplivt.local/display/PE/Installing+OCP+4.1+released+version#InstallingOCP4.1releasedversion-pullsecret) |
 
 
-
 # **Appendix: Inventory**
 
 The file https://github.com/HewlettPackard/OpenShift-on-SimpliVity/blob/master/hosts.sample contains an example inventory. The IP used in this inventory are inline with the settings documented in the group_vars/all/vars.yml.sample (dhcp_subnet and gateway)
-
-
 
 # **Appendix: Environment**
 
@@ -272,7 +269,5 @@ The environment consists of a 4-node SimpliVity cluster running the latest OmniS
 - OmniStack 3.7.8.232 (PSI16)
 - ESXi 6.7 EP 05 10764712
 - vCenter 6.7U1b (build 11726888)
-
-
 
 # 
