@@ -1,9 +1,9 @@
-cpus: 2
-ram: 8192
-disk1_size: 50
+cpus: 2                                                 # Number of vCPUs
+ram: 8192                                               # RAM size in MBs
+disk1_size: 50                                          # Disk size in Gbs
 folder: "{{ infra_folder }}"                            # Where the VM template is stored
-template: "{{ infra_template }}"			# Name of the template
-ova_path: "{{ infra_ova_path }}"			# Name of the OVA used to import the template
+template: "{{ infra_template }}"                        # Name of the template
+ova_path: "{{ infra_ova_path }}"                        # Name of the OVA used to import the template
 
 #
 # with cloud init_data:

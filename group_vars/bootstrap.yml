@@ -1,12 +1,12 @@
-cpus: '4'						# Number of vCPUs
-ram: 16384						# RAM size in MBs
-disk1_size: '120'					# Disk size in Gbs
-folder: "{{ cluster_name }}"				# Where the VM will be stored
-template: "{{ master_template }}"			# Override the default CoreOS template
-ova_path: "{{ master_ova_path }}"			# Name of the OVA used to import the template
-ignition_file: '{{ install_dir }}/append-bootstrap.ign'	# location of the ignition data
-initial_port_check: 22					# this is the SSH port, 
-initial_port_check_timeout: 10				# delay in seconds we wait for port 22 to be open on the bootstrap node after intial power on 
+cpus: '4'                                               # Number of vCPUs
+ram: 16384                                              # RAM size in MBs
+disk1_size: '120'                                       # Disk size in Gbs
+folder: "{{ cluster_name }}"                            # Where the VM will be stored
+template: "{{ master_template }}"                       # Override the default CoreOS template
+ova_path: "{{ master_ova_path }}"                       # Name of the OVA used to import the template
+ignition_file: '{{ install_dir }}/append-bootstrap.ign' # location of the ignition data
+initial_port_check: 22                                  # this is the SSH port
+initial_port_check_timeout: 10                          # delay in seconds we wait for port 22 to be open on the bootstrap node after intial power on
 
 customvalues:
   - key: disk.EnableUUID
@@ -23,4 +23,3 @@ disks_specs:
   - size_gb:  '{{ disk1_size }}'
     type: thin
     datastore: "{{ datastores | random }}"
-
