@@ -29,7 +29,7 @@
 
 #######################################################################
 #
-# Play: Provision Openshit nodes
+# Play: Provision Openshift nodes
 #
 #######################################################################
 - name: Provision Openshift nodes

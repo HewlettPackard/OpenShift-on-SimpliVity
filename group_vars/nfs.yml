@@ -1,9 +1,9 @@
-cpus: '2'						# number of vCPUs
-ram: '4096'						# RAM size in MBs
-disk1_size: '500'					# disk size in Gbs
-folder: "{{ infra_folder }}"				# Where the VM will be stored
-template: "{{ infra_template }}"			# Override the default CoreOS template
-ova_path: "{{ infra_ova_path }}"			# Name of the OVA used to import the template
+cpus: '2'                                               # Number of vCPUs
+ram: '4096'                                             # RAM size in MBs
+disk1_size: '500'                                       # Disk size in Gbs
+folder: "{{ infra_folder }}"                            # Where the VM will be stored
+template: "{{ infra_template }}"                        # Override the default CoreOS template
+ova_path: "{{ infra_ova_path }}"                        # Name of the OVA used to import the template
 
 #
 # cloud-init
