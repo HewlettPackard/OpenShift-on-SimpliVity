@@ -4,6 +4,8 @@
 
 The OCP 4.1 installer supports two deployments scenarios: IPI and UPI. **I**nstaller‑**P**rovisioned **I**nfrastructure (IPI) is only supported on AWS for now. Because we deploy on vSphere, we use the **U**ser-**P**rovisioned **I**nfrastructure (UPI) scenario which means we need to provision... the infrastructure (surprise!).
 
+They are currently two top-level playbooks that you can use, `site.yml` and `playbooks/ldap.yml`
+
 The `site.yml` playbook does the following:
 
 1. runs the OpenShift Installer to generate the ignition data required by the OpenShift virtual machines
@@ -18,6 +20,10 @@ The `site.yml` playbook does the following:
 10. runs the final step of the OpenShift Installation (wait-for installation-complete)
 
 
+
+The playbook `playbooks/ldap.yml` illustrates how to integrate an LDAP service into the cluster as an identity provider. The default custom resource provided (as a file) was tested against a Microsoft Active Directory. You will probably have to adapt this file to match your environment
+
+## Requirements
 
 | Requirement (1)                                              | Choice Made                                               | Comment                                                      |
 | :------------------------------------------------------------ | :--------------------------------------------------------- | :------------------------------------------------------------ |
@@ -180,7 +186,7 @@ Make a copy of the file `hosts.sample` to  - say - `hosts`. This will be your in
 
 By default the OpenShift installer configures a default storage class which uses the vSphere Cloud Provider. This provider does not support the [ReadWriteMany](https://docs.openshift.com/container-platform/4.1/installing/installing_vsphere/installing-vsphere.html#installation-registry-storage-config_installing-vsphere) access mode which is required by the Image Registry. For this reason, the `site.yml` playbook deploys an NFS virtual machine which exports a number of NFS shares. The Image Registry service will use one of these. The number of shares that the playbooks creates can be customized using the variable `group_vars/all/vars.yml/num_nfs_shares`. Only one share is required by the Image Registry service. Use vSphere volumes in your apps if you don't need ReadWriteMany access mode
 
-## run the playbooks
+## run the playbook site.yml
 
 **WARNING**: Make sure you run the `site.yml` playbook from the top-level directory of the git repository. The repository comes with an `ansible.cfg` file and a number of options which are required.
 
@@ -230,6 +236,84 @@ A default Storage Class is also configured that leverages the vSphere Cloud Prov
 The installation of the control plane is finished. You are ready to start the customization of your deployment as explained here:  https://docs.openshift.com/container-platform/4.1/installing/install_config/customizations.html#customizations
 
 Note The kubeconfig and kubeadmin-password files are located in the auth folder under your `install_dir` directory (specified in `group_vars/all/vars.yml`). The kubeconfig file is used to set environment variables needed to access the OCP cluster via the command-line.  The kubeadmin-password file contains the password for the "kubeadmin" user, which may be useful for logging into the OCP cluster via the web console.  
+
+## LDAP Integration
+
+This repository comes with a playbook that will help you configure your LDAP services as an identity provider for the cluster you deployed with `site.yml`. The playbook was tested with a Microsoft Active Directory service.
+
+This section assumes that you have some basic knowledge of LDAP. If you don't, you will probably need to read some literature on the subject. As a minimum, you will need to understand what RFC 2255 URLs are and how to build them to query your LDAP environment.
+
+### Requirements
+
+Before you attempt to integrate with your LDAP you need to understand the following:
+
+- Which users in the LDAP tree you want to be able to login in the OpenShift cluster
+- How to you "filter" these users
+- A user (with credentials) in the LDAP tree that you will use to "bind" with the LDAP service (the playbook implements simple binding and so does the Openshift Identity Provider)
+- If using secure ldap (`ldaps`) - which is highly recommended - you will need the certificate of the CA which signed the certificate or your LDAP server
+
+### Preparation Steps
+
+Here is what you should do before running the playbook:
+
+1.  edit the file `group_vars/all/vars.yml` and specify the Distinguished Name of the LDAP user you want to use to bind with the LDAP service. For this purpose configure the variable `ldap_bind_user_dn:` The password of this account is specified with the variable `ldap_bind_user_password` using an indirection (to follow the best practice). The actual value of this password is stored in the file `group_vars/all/vault.yml` which you should encrypt with `ansible-vault`. In the **example** below, the user `adreader` (which must exists) will be used to bind with the LDAP service. Make sure you leave the variable `ldap_bind_user_password` unchanged.
+
+   `ldap_bind_user_dn: "cn=adreader,cn=Users,dc=am2,dc=cloudra,dc=local"`
+
+   `ldap_bind_user_password: "{{ vault.ldap_bind_user_password }}"`
+
+   **Note**: The playbook will create a secret to store the password for the binding user.
+
+2. edit the vault file located in `group_vars/all/vault.yml` (preferably  using `ansible-vault` because you want this file to be encrypted) and configure the variable `vault.ldap_bind_user_password:`  This is the password for the LDAP user you use for binding with the LDAP service. 
+
+   `vault:`
+     `ldap_bind_user_password: 'YourpasswordHere'`
+
+3. The playbook supports LDAPS which means you need to configure the identity provider with the certificate of the Root CA which signed the LDAP service certificate. How you can retrieve this Root CA certificate will depend on your environment. In any case, you need to deposit this certificate under the name `ca.pem` in `playbooks/roles/ldap/files`.
+
+   **Note**: the playbook will create a ConfigMap to store this certificate.
+
+4. Edit the file named `ldap_cr.yml` under `playbooks/roles/ldap/vars`. The OpenShift 4.1 documentation explains how to populate this file [here](https://docs.openshift.com/container-platform/4.1/authentication/identity_providers/configuring-ldap-identity-provider.html) .  Because the content of this file is highly customizable we did not try to parameterize it. As a minimum you will want to modify the url specified in the default file. This URL and how it is built is described in [RFC 2255](https://tools.ietf.org/html/rfc2255). 
+
+**Note:** Before you attempt to run `playbooks/ldap.yml` it is highly recommended you test your settings with a tool like `ldapsearch` (for example). If you cannot query your LDAP with the user (and creds) and CA certificate your configured earlier then  the Identity provider that the playbook configures will fail to interact with your LDAP service. An example of query is shown below where we bind with the user `adreader` to query a user called `john`.
+
+`ldapsearch  -H ldaps://mars-adds.am2.cloudra.local -\`
+                  `x -w '(redacted)' -D "cn=adreader,cn=Users,dc=am2,dc=cloudra,dc=local" \`
+                 `-b "cn=Users,dc=am2,dc=cloudra,dc=local"  \`
+                 `"(&(objectClass=person)(sAMAccountName=john))"`
+
+The query above is similar to the query that the Identity provider will run against the LDAP service whenever someone wanted to log in as `john` and the following URL is specified in `ldap_cr.yml`.
+
+`ldaps://mars-adds.am2.cloudra.local/CN=Users,DC=am2,DC=cloudra,DC=local?sAMAccountName??(objectClass=person)`
+
+You may want to use `ldapsearch` using insecure connections first (if your LDAP server allows these type of connections) then configure `ldapsearch` with the CA certificate that signed the certificate of your LDAP server and use `ldaps` connections. It is highly recommended to use secure LDAP connections (`ldaps`) in a production environment.
+
+### Running the playbook
+
+Once you are ready with the preparation steps above, you can run the ldap.yml playbook
+
+`cd <folder of repo>`
+`ansible-playbook -i hosts playbooks/ldap.yml`
+
+### Verification
+
+After the playbook is finished running, try to login using the new Identity provider. You can do it using the CLI or the console. A sample session is shown below
+
+`[core@hpe-ansible pictures]$ oc login -u ocpuser1`
+`Authentication required for https://api.hpe.hpecloud.org:6443 (openshift)`
+`Username: ocpuser1`
+`Password:`
+`Login successful.`
+
+`You don't have any projects. You can try to create a new project, by running`
+
+    oc new-project <projectname>
+
+`[core@hpe-ansible pictures]$ oc whoami`
+`ocpuser1`
+`[core@hpe-ansible pictures]$`
+
+
 
 # Appendix: variable files
 

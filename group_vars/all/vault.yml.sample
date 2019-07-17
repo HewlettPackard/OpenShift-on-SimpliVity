@@ -8,3 +8,4 @@ vault:
   rhn_pass: 'YourRHNpassword'
   pull_secret: '...  replace with your pull secret  ...'
   ssh_key: '...  replace with your ssh public key  ...'
+  ldap_bind_user_password: 'password of LDAP user used for binding with LDAP'
