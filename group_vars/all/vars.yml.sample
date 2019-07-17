@@ -64,5 +64,10 @@ frontend_gateway: '10.10.172.1'                                 # Access network
 #
 # Number of NFS Shares to create, you can use these shares to create Persistent Volumes
 #
-number_of_nfs_shares: 5						# The image registry requires one NFS share, shares are named /srv/share0, /srv/share1 etc..
+number_of_nfs_shares: 5                                         # The image registry requires one NFS share, shares are named /srv/share0, /srv/share1 etc..
 
+#
+# LDAP integration
+#
+ldap_bind_user_dn: "cn=adreader,cn=Users,dc=am2,dc=cloudra,dc=local"       # DN of the user you use to bind with the LDAP service
+ldap_bind_user_password: "{{ vault.ldap_bind_user_password }}"             # password for the user above, the real password is encrypted in the vaul file
