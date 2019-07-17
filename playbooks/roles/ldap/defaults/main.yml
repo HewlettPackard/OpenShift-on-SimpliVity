@@ -3,5 +3,4 @@
 ldap_provider_name: msad
 ldap_bind_user_dn: "cn=adreader,cn=Users,dc=am2,dc=cloudra,dc=local"
 ldap_bind_user_password: "{{ vault.ldap_bind_user_password }}"
-ldap_url: "ldaps://mars-adds.am2.cloudra.local/CN=Users,DC=am2,DC=cloudra,DC=local?sAMAccountName??(objectClass=person)"
 ldap_ca_cert: ca.pem 
