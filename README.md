@@ -432,4 +432,6 @@ ldap://host:port/basedn?attribute?scope?filter
 | scope         | ( no value)                         | we use the default scope which is **sub**. (search the LDAP tree starting at the basedn including branches) |
 | filter        | (objectClass=person)                | We will only look for objects corresponding to users in the Directory. |
 
+Below is the corresponding LDAP tree. 
 
+![1563454212570](pics/ldap_tree)
