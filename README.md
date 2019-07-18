@@ -286,17 +286,20 @@ Here is what you should do before running the playbook:
 
 An example of query is shown below where we bind with the user `adreader` to query a user called `john`, the directory service being hosted by a server named `mars-adds.am2.cloudra.local`.
 
-`# ldapsearch  -H ldaps://mars-adds.am2.cloudra.local \`
+`
 
-​      `-x -w '(redacted)' -D "cn=adreader,cn=Users,dc=am2,dc=cloudra,dc=local"  \`
-
-​      `-b "cn=Users,dc=am2,dc=cloudra,dc=local" \`
-
-​     `"(&(objectClass=person)(sAMAccountName=john))"`
+```bash
+# ldapsearch  -H ldaps://mars-adds.am2.cloudra.local \
+         -x -w '(redacted)' -D "cn=adreader,cn=Users,dc=am2,dc=cloudra,dc=local"  \
+         -b "cn=Users,dc=am2,dc=cloudra,dc=local" \
+         "(&(objectClass=person)(sAMAccountName=john))"`
+```
 
 The query above is similar to the query that the Identity provider will run against the LDAP service whenever someone wanted to log in as `john` would the `ldap_cr.yml` specify the following URL:
 
-`ldaps://mars-adds.am2.cloudra.local/CN=Users,DC=am2,DC=cloudra,DC=local?sAMAccountName??(objectClass=person)`
+```
+ldaps://mars-adds.am2.cloudra.local/CN=Users,DC=am2,DC=cloudra,DC=local?sAMAccountName??(objectClass=person)
+```
 
 You may want to use `ldapsearch` using insecure connections first (if your LDAP server allows these type of connections) then configure `ldapsearch` with the CA certificate that signed the certificate of your LDAP server and use `ldaps` connections. It is highly recommended to use secure LDAP connections (`ldaps`) in a production environment.
 
@@ -304,8 +307,10 @@ You may want to use `ldapsearch` using insecure connections first (if your LDAP 
 
 Once you are ready with the preparation steps above, you can run the ldap.yml playbook
 
-`cd <folder of repo>`
-`ansible-playbook -i hosts playbooks/ldap.yml`
+```
+cd <folder of repo>
+ansible-playbook -i hosts playbooks/ldap.yml
+```
 
 ### Verification
 
@@ -313,21 +318,24 @@ After the playbook is finished running, try to login using the new Identity prov
 
 **Note**: You may have to wait a few seconds before the `authentication` cluster operator is available. 
 
-`[core@hpe-ansible pictures]$ oc login -u ocpuser1`
-`Authentication required for https://api.hpe.hpecloud.org:6443 (openshift)`
-`Username: ocpuser1`
-`Password:`
-`Login successful.`
-
-`You don't have any projects. You can try to create a new project, by running`
-
 ```
+[core@hpe-ansible pictures]$ oc login -u ocpuser1
+Authentication required for https://api.hpe.hpecloud.org:6443 (openshift)
+Username: ocpuser1
+Password:
+Login successful.
+
+You don't have any projects. You can try to create a new project, by running
+​```
 oc new-project <projectname>
+​```
 ```
 
-`[core@hpe-ansible pictures]$ oc whoami`
-`ocpuser1`
-`[core@hpe-ansible pictures]$`
+```
+[core@hpe-ansible pictures]$ oc whoami
+ocpuser1
+[core@hpe-ansible pictures]$
+```
 
 
 
