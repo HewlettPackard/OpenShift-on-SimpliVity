@@ -265,16 +265,21 @@ Here is what you should do before running the playbook:
 
 1. edit the file `group_vars/all/vars.yml` and specify the bind DN you want to use to traverse the LDAP tree. For this purpose configure the variable `ldap_bind_user_dn:` The Bind Password is specified with the variable `ldap_bind_user_password`, using an indirection to follow the best practice. The actual value of this password is stored in the file `group_vars/all/vault.yml` which you should encrypt with `ansible-vault`. In the **example** below, the user `adreader` (which must exists) will be used to bind with the LDAP service. Make sure you leave the variable `ldap_bind_user_password` unchanged.
 
-   `ldap_bind_user_dn: "cn=adreader,cn=Users,dc=am2,dc=cloudra,dc=local"`
-
-   `ldap_bind_user_password: "{{ vault.ldap_bind_user_password }}"`
+   ```
+   ldap_bind_user_dn: "cn=adreader,cn=Users,dc=am2,dc=cloudra,dc=local"
+   ldap_bind_user_password: "{{ vault.ldap_bind_user_password }}"
+   ```
 
    **Note**: The playbook will create a secret to store the password for the binding user.
 
 2. edit `group_vars/all/vault.yml` (preferably using `ansible-vault` because you want this file to be encrypted) and configure the variable `vault.ldap_bind_user_password:`  This is the password for the LDAP user you use for binding with the LDAP service. 
 
-   `vault:`
-     `ldap_bind_user_password: 'YourpasswordHere'`
+   ```
+   vault:
+     ldap_bind_user_password: 'YourpasswordHere
+   ```
+
+   
 
 3. The playbook supports secure LDAP which means you need to configure the identity provider with the CA Bundle of the LDAP server. This bundle should be exported in PEM format.  How you retrieve this CA bundle depends on your environment and is beyond the scope of this documentation. In any case, you **MUST** deposit this bundle under the name `ca.pem` in `playbooks/roles/ldap/files`. **The default bundle that comes with the repository will not work** but we leave it here for you to see which format is needed.
 
@@ -285,8 +290,6 @@ Here is what you should do before running the playbook:
 **Note:** Before you attempt to run `playbooks/ldap.yml` you may want to test your settings with a tool like `ldapsearch` (for example). If you cannot query your LDAP with the Bind DN, Bind password and CA Bundle your configured earlier then the identity provider that the playbook configures will fail to interact with your LDAP service. 
 
 An example of query is shown below where we bind with the user `adreader` to query a user called `john`, the directory service being hosted by a server named `mars-adds.am2.cloudra.local`.
-
-`
 
 ```bash
 # ldapsearch  -H ldaps://mars-adds.am2.cloudra.local \
@@ -353,16 +356,17 @@ https://github.com/HewlettPackard/OpenShift-on-SimpliVity/blob/master/group_vars
 
 all keys here are properties of the dictionary called **vault.**
 
-| key                 | example value          | comment                                                      |
-| :------------------ | :--------------------- | :----------------------------------------------------------- |
-| vcenter_password    | 'yourpassword'         | this is the password for the vCenter admin user specified with vcenter_username in group_vars/all/vars.yml |
-| simplivity_password | 'yourpassword'         | typically the same as above                                  |
-| rhn_org_id          | 'not used for now'     |                                                              |
-| rhn_key             | 'not used for now'     |                                                              |
-| rhn_user            | 'not used for now'     |                                                              |
-| rhn_pass            | 'not used for now'     |                                                              |
-| pull_secret         | 'yourpullsecrethere'   | see the about [pull secret and ssh key](https://confluence.simplivt.local/display/PE/Installing+OCP+4.1+released+version#InstallingOCP4.1releasedversion-pullsecret) |
-| ssh_key             | 'yourSSHpublickeyhere' | see the about [pull secret and ssh key](https://confluence.simplivt.local/display/PE/Installing+OCP+4.1+released+version#InstallingOCP4.1releasedversion-pullsecret) |
+| key                     | example value          | comment                                                      |
+| :---------------------- | :--------------------- | :----------------------------------------------------------- |
+| vcenter_password        | 'yourpassword'         | this is the password for the vCenter admin user specified with vcenter_username in group_vars/all/vars.yml |
+| simplivity_password     | 'yourpassword'         | typically the same as above                                  |
+| rhn_org_id              | 'not used for now'     |                                                              |
+| rhn_key                 | 'not used for now'     |                                                              |
+| rhn_user                | 'not used for now'     |                                                              |
+| rhn_pass                | 'not used for now'     |                                                              |
+| pull_secret             | 'yourpullsecrethere'   | see the about [pull secret and ssh key](https://confluence.simplivt.local/display/PE/Installing+OCP+4.1+released+version#InstallingOCP4.1releasedversion-pullsecret) |
+| ssh_key                 | 'yourSSHpublickeyhere' | see the about [pull secret and ssh key](https://confluence.simplivt.local/display/PE/Installing+OCP+4.1+released+version#InstallingOCP4.1releasedversion-pullsecret) |
+| ldap_bind_user_password | 'BindPassword'         | The password of the Bind DN user when integrating with an LDAP Directory |
 
 # **Appendix: Inventory**
 
@@ -383,13 +387,13 @@ The environment consists of a 4-node SimpliVity cluster running the latest OmniS
 
 This appendix describes the sample `ldap_cr.yml`  shipped with this repository and explains it. Remember that this file will not work in your environment so you will have to edit it.  The example was using Active Directory as the directory service.
 
-![1563440126831](C:\Users\LehyC\OneDrive - Hewlett Packard Enterprise\Documents\OpenShift-on-SimpliVity\pics\ldap_cr.png)
+![ldap_cr](pics/ldap_cr.png)
 
 line 7: this is the name you want to give to the identity provider.  This name if prefixed to the returned user ID to form an identity name. This is shown in the screenshot below:
 
 ![1563444551282](pics/1563444551282.png)
 
-line 8: `mappingMethod`: claim.  Provisions a user with the identity’s preferred user name. Fails if a user with that user name is already mapped to another identity. 
+line 8: `mappingMethod`: claim.  Provisions a user with the identity’s preferred user name. Fails if a user with that user name is already mapped to another identity.  Refer to the OpenShift documentation to see which other options are available.
 
 line 13: The `name` attribute in the Directory is used as the identity (base64 encoded). You can see this in the screenshot above. 
 
