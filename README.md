@@ -184,11 +184,11 @@ Make a copy of the file `hosts.sample` to  - say - `hosts`. This will be your in
 
 By default the OpenShift installer configures a default storage class which uses the vSphere Cloud Provider. This provider does not support the [ReadWriteMany](https://docs.openshift.com/container-platform/4.1/installing/installing_vsphere/installing-vsphere.html#installation-registry-storage-config_installing-vsphere) access mode which is required by the Image Registry. For this reason, the `site.yml` playbook deploys an NFS virtual machine which exports a number of NFS shares. The Image Registry service will use one of these. The number of shares that the playbooks creates can be customized using the variable `group_vars/all/vars.yml/num_nfs_shares`. Only one share is required by the Image Registry service. Use vSphere volumes in your apps if you don't need ReadWriteMany access mode
 
-## Run the playbook site.yml
+## Deploy the Control Plane
 
 **WARNING**: Make sure you run the `site.yml` playbook from the top-level directory of the git repository. The repository comes with an `ansible.cfg` file and a number of options which are required.
 
-Provided you clones the repository under `~/OpenShift-on-SimpliVity`, perform the following commands on your Ansible machine:
+Provided you clones the repository under `~/OpenShift-on-SimpliVity`, perform the following commands on your Ansible machine to deploy the OpenShift 4.1 control plane:
 
 ```
 cd ~/OpenShift-on-SimpliVity
