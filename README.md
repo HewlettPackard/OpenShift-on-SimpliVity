@@ -1,25 +1,34 @@
-**Version Installed:** OCP 4.1 released!
+Version Installed:** OCP 4.1 released!
 
-## Introduction: Purpose of these playbooks
 
-The OCP 4.1 installer supports two deployments scenarios: IPI and UPI. **I**nstaller‑**P**rovisioned **I**nfrastructure (IPI) is only supported on AWS for now. Because we deploy on vSphere, we use the **U**ser-**P**rovisioned **I**nfrastructure (UPI) scenario which means we need to provision... the infrastructure (surprise!).
 
-They are currently two top-level playbooks that you can use, `site.yml` and `playbooks/ldap.yml`
+[TOC]
 
-The `site.yml` playbook does the following:
 
-1. runs the OpenShift Installer to generate the ignition data required by the OpenShift virtual machines
-2. provisions the virtual machines listed in the Ansible inventory and powers up the non-OCP virtual machines
-3. configures the services running on the non-OCP virtual machines including DNS and DHCP services.
-4. configures anti affinity DRS rules for the virtual machines (master VMs should run on separate hosts as well as the infrastructure (DNS and DHCP services) and load balancer VMs (for now only one LB supported)
-5. powers up the OCP virtual machines
-6. waits for the OpenShift API to come up on the master nodes
-7. creates a PV from an NFS share and a PVC for use by the OpenShift Registry
-8. configures the OpenShift Registry
-9. waits for all Cluster Operators to be available
-10. runs the final step of the OpenShift Installation (wait-for installation-complete)
 
-The playbook `playbooks/ldap.yml` illustrates how to integrate an LDAP service into the cluster as an identity provider. The default custom resource provided (as a file) was tested against a Microsoft Active Directory. You will probably have to adapt this file to match your environment
+# Introduction 
+
+The OCP 4.1 installer supports two deployments scenarios: IPI and UPI. **I**nstaller‑**P**rovisioned **I**nfrastructure (IPI) is only supported on AWS for now. Because we deploy on vSphere, we use the **U**ser-**P**rovisioned **I**nfrastructure (UPI) scenario which means we need to provision... the infrastructure. 
+
+This repository provides you with playbooks that you can use to:
+
+1. Deploy Red Hat OpenShift Container Platform 4.1 on vSphere
+2. Perform other post installation customizations
+
+# Deployment of the control plane
+
+The playbook `site.yml` is used to deploy the control plane, and zero or more CoreOS/RHCOS worker nodes. It does the following:
+
+1. run the OpenShift Installer to generate the ignition data required by the OpenShift virtual machines
+2. provision the virtual machines listed in the Ansible inventory and powers up the non-OCP virtual machines
+3. configure the services running on the non-OCP virtual machines including DNS and DHCP services.
+4. configure anti affinity DRS rules for the virtual machines (master VMs should run on separate hosts as well as the infrastructure (DNS and DHCP services) and load balancer VMs (for now only one LB supported)
+5. power up the OCP virtual machines
+6. wait for the OpenShift API to come up on the master nodes
+7. create a PV from an NFS share and a PVC for use by the OpenShift Registry
+8. configure the OpenShift Image Registry
+9. wait for all Cluster Operators to be available
+10. run the final step of the OpenShift Installation (wait-for installation-complete)
 
 ## Requirements
 
@@ -241,7 +250,7 @@ A number of playbooks are provided which will help you with the customization. L
 
 ## LDAP Integration
 
-This repository comes with a playbook that will help you configure your LDAP services as an identity provider for the cluster you deployed with `site.yml`. The playbook was tested with a Microsoft Active Directory service.
+This repository comes with a playbook that will help you configure your LDAP service as an identity provider for the cluster you deployed with `site.yml`. The playbook was tested with a Microsoft Active Directory service.
 
 This section assumes that you have some basic knowledge of Directory Services. If you don't, you will probably need to read some literature on the subject. You may start with this [tutorial](https://www.digitalocean.com/community/tutorials/understanding-the-ldap-protocol-data-hierarchy-and-entry-components). You will also need to understand what [RFC 2255 URLs](https://tools.ietf.org/html/rfc2255) are and how to build them to query your Directory Services.
 
@@ -340,7 +349,145 @@ ocpuser1
 [core@hpe-ansible pictures]$
 ```
 
+## LDAP Integration, synchronizing groups
 
+The Red Hat Openshift documentation explains perfectly why you would want to synchronize the OCP groups with the groups defined in your Directory Service
+
+> As an OpenShift administrator, you can use groups to manage users, change their permissions, and enhance collaboration. Your organization may have already created user groups and stored them in an LDAP server. OpenShift can sync those LDAP records with internal OpenShift records, enabling you to manage your groups in one place. OpenShift currently supports group sync with LDAP servers using three common schemas for defining group membership: RFC 2307, Active Directory, and augmented Active Directory.
+
+This repository does not come with playbooks to perform this synchronization but rather, we provide a detailed example: 
+
+- Having successfully configured your LDAP Directory as an identity provider you now want to synchronize with two LDAP groups of users: `ocpadmins` and `ocpusers`.
+- You want all users added to the LDAP `ocpadmins` group to be administrators of your OCP cluster.
+
+### Create the sync configuration file
+
+The first thing you need to do is to create a configuration file that the sync tool will use. Let's call this file `active_directory_config.yml.` This is a yaml file as you may have guessed it now and you should respect the indentation when you edit this file. Here is the file we used with our example Active Directory:
+
+```
+kind: LDAPSyncConfig
+apiVersion: v1
+url: ldaps://mars-adds.am2.cloudra.local
+ca: ca.pem
+insecure: false
+bindDN: cn=adreader,cn=Users,dc=am2,dc=cloudra,dc=local
+bindPassword: (redacted)
+groupUIDNameMapping:
+  "CN=ocpusers,CN=Users,DC=am2,DC=cloudra,DC=local": ocpusers
+  "CN=ocpadmins,CN=Users,DC=am2,DC=cloudra,DC=local": ocpadmins
+activeDirectory:
+  usersQuery:
+    baseDN: cn=Users,dc=am2,dc=cloudra,dc=local
+    scope: sub
+    derefAliases: never
+    filter: (objectClass=person)
+    pageSize: 0
+  userNameAttributes: [ sAMAccountName ]
+  groupMembershipAttributes: [ memberOf ]
+
+```
+
+The first two lines should be unchanged.  You should be familiar with the next 6 lines.
+
+- `url`: This is the same url of your LDAP server. Prefer the `ldaps` protocol (vs `ldap`) to make sure the communications with the LDAP server are encrypted.
+- `ca`: This is the same CA bundle as the one you used when configuring the LDAP identity provider. Hence this file should be in `playbooks/roles/ldap/files`.
+- `insecure`: This is set to false because you want to use the LDAP protocol over TLS/SSL (hence the need for a CA Bundle). 
+- `bindDN`: This is the LDAP user which will be used to "bind" with the LDAP directory. This can be the same as the one you used when configuring the identity provider
+- `bindPassword`:  This is the password for the bindDN user.
+
+The next block (`groupUIDNameMapping`)  let you explicitly map LDAP group names with OpenShift group names. In this example, if the group `CN=ocpadmins,CN-Users,DC=am2,DC=cloudra,DC=local` is found, it will be named `ocpadmins` in OpenShift. 
+
+**Note**: The names are case sensitive. Hence `CN=xxx` is not the same as `cn=xxx`  !!!
+
+The last block (`ActiveDirectory`:) tells the sync tool which schema is used for defining group membership. OpenShift supports three schemas, `RFC 2307`, `Active Directory` and `augmented Active Directory`. In our example we use `Active Directory`. The `baseDN` should be something familiar now, this is where the tool will start the search in the LDAP tree. The value for `userNameAttributes` is the same we uses when configuring the identity provider. The `groupMembershipAttributes` for our Active Directory is `memberOf.`
+
+### Synchronize
+
+**Prerequisites**:  You must have the cluster-admin privilege and the oc tool installed
+
+Provided you named the configuration file `active_directory_config.yml` you can use the following command to run the synchronization
+
+```
+oc adm groups sync --sync-config=active_directory_config.yml
+```
+
+The problem with the above command is that it would import all the LDAP groups in OpenShift. Actually it won't because by default, the sync command only performs a dry run. You would need to add the `--confirm` switch to the command line for the synchronization to be done. 
+
+It is possible however to specify which groups you want to import. To import the `ocpadmins` group you can type the following command without the `--confirm` switch first to make sure it will import what you want.
+
+```
+oc adm groups sync \
+    --sync-config=active_directory_config.yml \
+    'CN=ocpadmins,CN=Users,DC=am2,DC=cloudra,DC=local' 
+```
+
+This would output something like that where you can verify the name of the group and the list of users within the group.
+
+![1563538470407](pics/group_sync_1)
+
+
+
+If you are happy with the result, you can enter the same command with the `--confirm` switch 
+
+```
+oc adm groups sync \
+    --sync-config=active_directory_config.yml \
+    'CN=ocpadmins,CN=Users,DC=am2,DC=cloudra,DC=local'  --confirm 
+```
+
+Use the same command to import the `ocpusers` group from LDAP
+
+```
+ oc adm groups sync \
+   --sync-config=active_directory_config.yml \
+   'CN=ocpusers,CN=Users,DC=am2,DC=cloudra,DC=local'  --confirm
+```
+
+### Verifications
+
+You can verify that your groups are here as well as their content with the following commands: (provided you used the same group names)
+
+```
+oc get group ocpadmins -o yaml
+oc get group ocpusers -o yaml
+```
+
+### More information
+
+Currently only the OCP 3.11 documentation covers LDAP groups synchronization. You can find this topic covered [here](https://docs.openshift.com/container-platform/3.11/install_config/syncing_groups_with_ldap.html).
+
+## Adding a cluster Administrator
+
+**Prerequisites:**
+
+1. you have cluster admin credentials. You would typically be using the `kubeconfig` file created during the deployment of the control plane. This kubeconfig file is located in your installation directory (see the variable `group_vars/all/vars.yml:install_dir:`)
+2. You have configured an identity provider
+3. You have created a group called `ocpadmins` and this group is populated with the people which should be cluster administrators
+
+In the remaining of this paragraph, we will continue to use our sample Active Directory integration which means that we have a group called `ocpadmins`.
+
+If your `install_dir`is pointing to the .ocp folder under your home directory, then you should export KUBECONFIG like this:
+
+```
+export KUBECONFIG=~/.ocp/auth/kubeconfig
+```
+
+Make sure you have cluster-admin privilege by login in with `kubeadmin`. The password is stored in `<install_dir>/auth/kubeadmin-password`.
+
+Login with kubeadmin, you will be prompted for the password
+
+`oc login -u kubeadmin`
+
+Assign the cluster-admin role to the `ocpadmins` group
+
+`oc adm policy add-cluster-role-to-group cluster-admin ocpadmins`
+
+Now all users in the `ocpadmins` group are cluster administrators. Red Hat recommends you disable the `kubeadmin` account. It is a good opportunity to test your new cluster admin account. In the example below, we use the `ocpadmin` account which is a member of our `ocpadmins` group.
+
+```
+oc login -u ocpadmin
+oc delete secret kubeadmin -n kube-system
+```
 
 # Appendix: variable files
 
