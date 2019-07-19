@@ -1,5 +1,7 @@
 Version Installed:** OCP 4.1 released!
 
+
+
 [TOC]
 
 
@@ -393,7 +395,7 @@ The first two lines should be unchanged.  You should be familiar with the next 6
 - `bindDN`: This is the LDAP user which will be used to "bind" with the LDAP directory. This can be the same as the one you used when configuring the identity provider
 - `bindPassword`:  This is the password for the bindDN user.
 
-The next block (`groupUIDNameMapping`)  let you explicitly map LDAP group names of OpenShift group names. In this example, if the group `CN=ocpadmins,CN-Users,DC=am2,DC=cloudra,DC=local` is found, it will be named `ocpadmins` in OpenShift. 
+The next block (`groupUIDNameMapping`)  let you explicitly map LDAP group names with OpenShift group names. In this example, if the group `CN=ocpadmins,CN-Users,DC=am2,DC=cloudra,DC=local` is found, it will be named `ocpadmins` in OpenShift. 
 
 **Note**: The names are case sensitive. Hence `CN=xxx` is not the same as `cn=xxx`  !!!
 
@@ -409,9 +411,9 @@ Provided you named the configuration file `active_directory_config.yml` you can 
 oc adm groups sync --sync-config=active_directory_config.yml
 ```
 
-The problem with the above command is that it would import all the LDAP groups in OpenShift. Actually it did not because if the --confirm switch is not specified in the command line, the sync tool performs a dry run.
+The problem with the above command is that it would import all the LDAP groups in OpenShift. Actually it won't because by default, the sync command only performs a dry run. You would need to add the `--confirm` switch to the command line for the synchronization to be done. 
 
-It is possible however to specify which groups you want to import. To import the ocpadmins group you can type the following command without the --confirm switch first to make sure it will import what you want
+It is possible however to specify which groups you want to import. To import the `ocpadmins` group you can type the following command without the `--confirm` switch first to make sure it will import what you want.
 
 ```
 oc adm groups sync \
@@ -425,7 +427,7 @@ This would output something like that where you can verify the name of the group
 
 
 
-If you are happy with the result, you can enter the same command with the --confirm switch 
+If you are happy with the result, you can enter the same command with the `--confirm` switch 
 
 ```
 oc adm groups sync \
@@ -433,7 +435,7 @@ oc adm groups sync \
     'CN=ocpadmins,CN=Users,DC=am2,DC=cloudra,DC=local'  --confirm 
 ```
 
-Use the same command to import the ocpusers group from LDAP
+Use the same command to import the `ocpusers` group from LDAP
 
 ```
  oc adm groups sync \
@@ -450,7 +452,9 @@ oc get group ocpadmins -o yaml
 oc get group ocpusers -o yaml
 ```
 
+### More information
 
+Currently only the OCP 3.11 documentation covers LDAP groups synchronization. You can find this topic covered [here](https://docs.openshift.com/container-platform/3.11/install_config/syncing_groups_with_ldap.html).
 
 ## Adding a cluster Administrator
 
