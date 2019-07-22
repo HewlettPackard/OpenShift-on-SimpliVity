@@ -15,6 +15,38 @@ This repository provides you with playbooks that you can use to:
 1. Deploy Red Hat OpenShift Container Platform 4.1 on vSphere
 2. Perform other post installation customizations
 
+# HA Considerations
+
+## The Control Plane (master nodes)
+
+The playbook responsible for deploying the OCP master nodes configures anti-affinity rules to make sure DRS will distribute the 3 master nodes across the cluster and not have two master nodes running on the same host. This assumes that you deploy 3 master nodes and have at least 3 ESXi hosts in your cluster.
+
+The name of the anti-affinity rule is built according to the following pattern:
+
+`<clustername>-master-anti-affinity-rule-001`
+
+where `<clustername>` is the name of your cluster as specified by `group_vars/all/vars.yml:cluster_name`
+
+## DNS and DHCP services
+
+Internal DNS and DHCP services are hosted by one or two virtual machines inside the inventory group called `[infrastructure]`. If you configure a single VM in this group, you don't have any redundancy other than the one provided by VMware HA . If you configure 2 VMs in this group an anti-affinity rule will be created to have these two VMs run on two different ESXi hosts.
+
+The name of the anti-affinity rule is build according to the following pattern:
+
+`<clustername>-infrastructure-anti-affinity-rule-001`
+
+where `<clustername>` is the name of your cluster as specified by `group_vars/all/vars.yml:cluster_name`
+
+## Load Balancers
+
+HA for the load balancers is provided by mean of floating IP addresses for each load balancer. The load balancers are hosted on the VMs which are members of the inventory group called `[loadbalancer]`. An anti-affinity rule is created for these virtual machines with the name:
+
+`<clustername>-loadbalancer-anti-affinity-rule-001`
+
+where `<clustername>` is the name of your cluster as specified by `group_vars/all/vars.yml:cluster_name`
+
+
+
 # Deployment of the control plane
 
 The playbook `site.yml` is used to deploy the control plane, and zero or more CoreOS/RHCOS worker nodes. It does the following:
