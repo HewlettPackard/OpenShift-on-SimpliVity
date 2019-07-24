@@ -126,7 +126,7 @@ Once the installation is finished, log in the VM (root account) and perform the 
 
 - change the hostname of the template giving it a name that you will recognize in your Red Hat Account (for example) :
 
-  `nmcli general hostname=hpe-rhel760`
+  `nmcli general hostname hpe-rhel760`
 
 - register the system with the Red Hat portal and attach it to a subscription. You can do this using the following command if you have created activations keys. 
 
