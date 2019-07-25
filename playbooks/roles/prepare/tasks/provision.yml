@@ -62,7 +62,15 @@
   blockinfile:
     path: /etc/hosts
     block: |
-      {{ external_lb_vip | ipaddr('address') }} api api.{{ cluster_name }}.{{ domain_name }}
+      {{ loadbalancers.backend.vip | ipaddr('address') }} api-int api-int.{{ cluster_name }}.{{ domain_name }}
+    marker: "# {mark} ANSIBLE MANAGED BLOCK api-int"
+
+- name: Populate /etc/hosts
+  become: true
+  blockinfile:
+    path: /etc/hosts
+    block: |
+      {{ loadbalancers.frontend.vip | ipaddr('address') }} api api.{{ cluster_name }}.{{ domain_name }}
     marker: "# {mark} ANSIBLE MANAGED BLOCK api"
 
 - name: Populate /etc/hosts

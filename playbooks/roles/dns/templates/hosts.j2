@@ -1,8 +1,8 @@
 127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
 ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
 
-{{ external_lb_vip | ipaddr('address') }} api
-{{ internal_lb_vip | ipaddr('address') }} api-int
+{{ loadbalancers.frontend.vip | ipaddr('address') }} api
+{{ loadbalancers.backend.vip  | ipaddr('address') }} api-int
 {% for host in groups.loadbalancer %}
 {{ hostvars[host].ansible_host }} {{ host }}
 {% endfor %}

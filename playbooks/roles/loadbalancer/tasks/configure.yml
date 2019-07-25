@@ -32,17 +32,47 @@
     state: yes
     persistent: yes
 
-- name: Install haproxy
+- name: Install haproxy and keepalived
   become: true
   package:
-    name: haproxy
+    name: "{{ packages }}"
     state: present
+  vars:
+    packages:
+      - psmisc
+      - haproxy
+      - keepalived
 
 - name: Disable firewall for now
   become: true
   systemd:
     name: firewalld
+    enabled: no
     state: stopped
+
+- name: Allow binding on remote IPs
+  become: true
+  sysctl:
+    name: net.ipv4.ip_nonlocal_bind
+    value: 1
+    state: present
+    sysctl_set: yes
+
+- name: Allow routing
+  become: true
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: "1"
+    state: present
+    sysctl_set: yes
+
+- name: Configure rp_filter
+  become: true
+  sysctl:
+    name: net.ipv4.conf.all.rp_filter
+    value: "2"
+    state: present
+    sysctl_set: yes
 
 - name: Update haproxy.cfg
   become: true
@@ -50,4 +80,28 @@
      src: haproxy.cfg.j2
      dest: /etc/haproxy/haproxy.cfg
   notify: Restart haproxy
+
+- name: start haproxy
+  become: true
+  systemd:
+    name: haproxy
+    enabled: yes
+    state: started
+
+- name: Update keepalived.conf
+  become: true
+  template:
+    src: keepalived.conf.j2
+    dest: /etc/keepalived/keepalived.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: Enable and start keepalived service
+
+- name: start haproxy
+  become: true
+  systemd:
+    name: keepalived
+    enabled: yes
+    state: started
 

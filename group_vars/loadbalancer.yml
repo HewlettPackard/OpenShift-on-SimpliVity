@@ -45,4 +45,4 @@ cloud_init_networks:
       - type: static
         address: "{{ hostvars[inventory_hostname].frontend_ipaddr | ipaddr('address') }}"
         netmask: "{{ hostvars[inventory_hostname].frontend_ipaddr | ipaddr('netmask') }}"
-        gateway: "{{ frontend_gateway }}"
+#        gateway: "{{ frontend_gateway }}"

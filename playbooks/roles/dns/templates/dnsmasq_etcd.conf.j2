@@ -1,7 +1,7 @@
 expand-hosts
 domain={{ cluster_name }}.{{ domain_name }}
 resolv-file=/var/lib/dnsmasq/resolv.conf
-address=/apps.{{ cluster_name }}.{{ domain_name }}/{{ resource_plane_vip }}
+address=/apps.{{ cluster_name }}.{{ domain_name }}/{{ loadbalancers.apps.vip }}
 {% for host in groups.master %}
 srv-host=_etcd-server-ssl._tcp.{{ cluster_name }}.{{ domain_name }},etcd-{{ loop.index -1 }}.{{ cluster_name }}.{{ domain_name }},2380,,10
 {% endfor %}
