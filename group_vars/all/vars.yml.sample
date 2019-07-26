@@ -58,8 +58,19 @@ rhn_pass: '{{ vault.rhn_pass }}'                                # not used for n
 #
 # Load balancer
 #
-frontend_vm_portgroup: 'VM Network'                             # Name of the portgroup connected to the access/public network
-frontend_gateway: '10.10.172.1'                                 # Access network gateway
+frontend_vm_portgroup: 'extVLAN2968'                             # Name of the portgroup connected to the access/public network
+frontend_gateway: '10.15.156.1'                                 # Access network gateway
+loadbalancers:
+  apps:
+    vip: 10.15.156.9
+  backend:
+    vip: 10.15.152.9
+    interface: ens192
+    vrrp_router_id: 51
+  frontend:
+    vip: 10.15.156.9
+    interface: ens224
+    vrrp_router_id: 51
 
 #
 # Number of NFS Shares to create, you can use these shares to create Persistent Volumes
@@ -69,5 +80,8 @@ number_of_nfs_shares: 5                                         # The image regi
 #
 # LDAP integration
 #
+ldap_provider_name: msad                                                   # The name you want to give to the identity provider
 ldap_bind_user_dn: "cn=adreader,cn=Users,dc=am2,dc=cloudra,dc=local"       # DN of the user you use to bind with the LDAP service
 ldap_bind_user_password: "{{ vault.ldap_bind_user_password }}"             # password for the user above, the real password is encrypted in the vaul file
+ldap_url: "ldaps://mars-adds.am2.cloudra.local/CN=Users,DC=am2,DC=cloudra,DC=local?sAMAccountName??(objectClass=person)"   # RFC 2255 URL used to find users in LDAP
+ldap_ca_cert: ca.pem                                                       # Path to the certificate of the CA which signed the certificate of the LDAP Server, the default is to search this certificate in the LDAP role
