@@ -1,8 +1,8 @@
 Version Installed:** OCP 4.1 released!
 
-
-
 [TOC]
+
+
 
 
 
@@ -45,7 +45,115 @@ HA for the load balancers is provided by mean of floating IP addresses for each 
 
 where `<clustername>` is the name of your cluster as specified by `group_vars/all/vars.yml:cluster_name`
 
+The possible options are described hereafter.
 
+### Managed Load Balancers with HA
+
+You can configure 2 virtual machines in the inventory group named `[loadbalancer]`.  The two virtual machines are connected to two networks, an external network and an internal network. Both VMs are eligible for hosting two floating IP addresses (FIPs), one for external access to the OCP api and a second for internal access to the OCP api.  The first IP binds to the external network and the second to the internal network. 
+
+**note:** the internal network is the one which connects all the OCP VMs together (this is the network that the variable `group_vars/vars/all.yml:vm_portgroup` designates)
+
+The floating IP addresses are managed with keepalived using the VRRP protocol. These IP addresses and additional settings are configured using the variable `group_vars/all/vars.yml:loadbalancers`.
+
+In the Ansible inventory, each VM can specify the following variables 
+
+`api_int_preferred`: The VM specified with this variable will be the preferred VM for hosting the external VIP for the OCP api,
+
+`api_preferred`: The VM specified with this variable will be the preferred VM for hosting the internal VIP for the OCP api
+
+In the example below, the VM named hpe-lb1 will host the external FIP whereas hpe-lb2 will host the internal FIP.
+
+```
+[loadbalancer]
+hpe-lb1 ansible_host=10.15.152.7 frontend_ipaddr=10.15.156.7/24 api_int_preferred= ...
+hpe-lb2 ansible_host=10.15.152.8 frontend_ipaddr=10.15.156.8/24 api_preferred= ...
+
+```
+
+**note**: You need to enter an equal sign after `api_int_preferred` and `api_preferred`.
+
+The corresponding variables in `group_vars/all/vars.yml` look like the snippet below. 
+
+```
+frontend_vm_portgroup: 'extVLAN2968'                             # Name of the portgroup connected to the access/public network
+frontend_gateway: '10.15.156.1'                                 # Access network gateway
+loadbalancers:
+  apps:
+    vip: 10.15.156.9
+  backend:
+    vip: 10.15.152.9
+    interface: ens192
+    vrrp_router_id: 51
+  frontend:
+    vip: 10.15.156.9
+    interface: ens224
+    vrrp_router_id: 51
+
+```
+
+**note**: The names of the interface are OS dependent and depend on how the VMs are built. 
+
+
+
+### Managed Load Balancers, no HA
+
+If you don't want HA (for demo purposes for example), you can configure a single VM in the [loadbalancer] group and you can delete (or rename, rename is easier) the `loadbalancers` datastructure. 
+
+```
+[loadbalancer]
+hpe-lb1 ansible_host=10.15.152.7 frontend_ipaddr=10.15.156.7/24  ...
+```
+
+The `loadbalancers` datastructure was renamed (and hence is ignored by the playbooks)
+
+```
+frontend_vm_portgroup: 'extVLAN2968'                             # Name of the portgroup connected to the access/public network
+frontend_gateway: '10.15.156.1'                                 # Access network gateway
+Renamedloadbalancers:
+  apps:
+    vip: 10.15.156.9
+  backend:
+    vip: 10.15.152.9
+    interface: ens192
+    vrrp_router_id: 51
+  frontend:
+    vip: 10.15.156.9
+    interface: ens224
+    vrrp_router_id: 51
+
+```
+
+
+
+### Unmanaged Load Balancers
+
+You may use your own load balancing solution by NOT configuring any VM in the loadbalancer group and by documenting the `datastructure loadbalancers` in `group_vars/all/vars.yml`
+
+```
+[loadbalancer]
+# hpe-lb1 ansible_host=10.15.152.7 frontend_ipaddr=10.15.156.7/24 api_int_preferred= ...
+# hpe-lb2 ansible_host=10.15.152.8 frontend_ipaddr=10.15.156.8/24 api_preferred= ...
+
+```
+
+```
+frontend_vm_portgroup: 'extVLAN2968'  
+frontend_gateway: '10.15.156.1'       
+loadbalancers:
+  apps:
+    vip: 10.15.156.9
+  backend:
+    vip: 10.15.152.9
+    interface: ens192
+    vrrp_router_id: 51
+  frontend:
+    vip: 10.15.156.9
+    interface: ens224
+    vrrp_router_id: 51
+
+```
+
+**note**: Do not delete the loadbalancer group from the inventory
 
 # Deployment of the control plane
 
