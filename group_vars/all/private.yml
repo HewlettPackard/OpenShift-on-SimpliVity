@@ -9,6 +9,6 @@ ignition_file: /dev/null
 #
 # api and api_int point to loadbalancer[0] IP if loadbalancers is not defined
 #
-lb_api_ip:      "{{ loadbalancers.frontend.vip | default (hostvars[groups.loadbalancer.0].ansible_host) }}"
-lb_api_int_ip:  "{{ loadbalancers.backend.vip  | default (hostvars[groups.loadbalancer.0].ansible_host) }}"
-lb_apps_ip:     "{{ loadbalancers.apps.vip     | default (hostvars[groups.loadbalancer.0].ansible_host) }}"
+lb_api_ip:      "{% if loadbalancers.frontend.vip is defined %}{{ loadbalancers.frontend.vip }}{% else %}{{ hostvars[groups.loadbalancer.0].ansible_host }}{% endif %}"
+lb_api_int_ip:  "{% if loadbalancers.backend.vip  is defined %}{{ loadbalancers.backend.vip  }}{% else %}{{ hostvars[groups.loadbalancer.0].ansible_host }}{% endif %}"
+lb_apps_ip:     "{% if loadbalancers.apps.vip     is defined %}{{ loadbalancers.apps.vip     }}{% else %}{{ hostvars[groups.loadbalancer.0].ansible_host }}{% endif %}"
