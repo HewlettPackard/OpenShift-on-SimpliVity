@@ -41,7 +41,7 @@ HA for the load balancers is provided by mean of floating IP addresses for each 
 
 where `<clustername>` is the name of your cluster as specified by `group_vars/all/vars.yml:cluster_name`
 
-The possible options are described later in this document.
+The possible options deployment options are described later in this document.
 
 # Deployment of the control plane
 
@@ -273,7 +273,7 @@ Here is a snippet of an Ansible inventory which specifies a unique VM in the `[l
 hpe-lb1 ansible_host=10.15.152.7 frontend_ipaddr=10.15.156.7/24  ...
 ```
 
-The `loadbalancers` datastructure was renamed and hence is ignored by the playbooks. NO FIP will be created and the IP addresses of this VM will be use for the OCP API (in this example, the external endpoint for the OCP api will point to 10.15.156.7 and the internal endpoint will point to 10.15.152.7)
+The `loadbalancers` datastructure was renamed and hence is ignored by the playbooks. No FIP is used and the IP addresses of this VM will be use for the OCP API (in this example, the external endpoint for the OCP api will point to 10.15.156.7 and the internal endpoint will point to 10.15.152.7)
 
 ```
 frontend_vm_portgroup: 'extVLAN2968'  # Name of the portgroup / external network
@@ -307,7 +307,7 @@ In the example Ansible inventory below, the `[loadbalancer]` group is left empty
 
 ```
 
-
+sample `group_vars/all/vars.yml` (snippet)
 
 ```
 frontend_vm_portgroup: 'extVLAN2968'  
@@ -341,7 +341,7 @@ cd ~/OpenShift-on-SimpliVity
 ansible-playbook –i hosts site.yml
 ```
 
-Depending on your hardware and the load, it takes approximately 30mns for the playbook to finish successfully. 
+Depending on your hardware and the load, it takes approximately 30mns for the playbook to finish its work.
 
 ## Monitoring the progresses
 
