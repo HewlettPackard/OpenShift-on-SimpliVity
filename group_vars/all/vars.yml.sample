@@ -62,13 +62,13 @@ frontend_vm_portgroup: 'extVLAN2968'                             # Name of the p
 frontend_gateway: '10.15.156.1'                                 # Access network gateway
 loadbalancers:
   apps:
-    vip: 10.15.156.9
+    vip: 10.15.156.9/24
   backend:
-    vip: 10.15.152.9
+    vip: 10.15.152.9/24
     interface: ens192
     vrrp_router_id: 51
   frontend:
-    vip: 10.15.156.9
+    vip: 10.15.156.9/24
     interface: ens224
     vrrp_router_id: 51
 
