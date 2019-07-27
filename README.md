@@ -1,9 +1,5 @@
 Version Installed:** OCP 4.1 released!
 
-[TOC]
-
-
-
 
 
 # Introduction 
@@ -51,17 +47,16 @@ The possible options are described hereafter.
 
 You can configure 2 virtual machines in the inventory group named `[loadbalancer]`.  The two virtual machines are connected to two networks, an external network and an internal network. Both VMs are eligible for hosting two floating IP addresses (FIPs), one for external access to the OCP api and a second for internal access to the OCP api.  The first IP binds to the external network and the second to the internal network. 
 
-**note:** the internal network is the one which connects all the OCP VMs together (this is the network that the variable `group_vars/vars/all.yml:vm_portgroup` designates)
+**note:** the internal network is the one which connects all the OCP VMs together (this is the network that the variable `group_vars/vars/all.yml:vm_portgroup` designates). The external network is the one designated by the variable `group_vars/all/vars.yml:frontend_vm_portgroup`.
 
-The floating IP addresses are managed with keepalived using the VRRP protocol. These IP addresses and additional settings are configured using the variable `group_vars/all/vars.yml:loadbalancers`.
+The floating IP addresses are managed with `keepalived` using the VRRP protocol. These IP addresses and additional settings are configured using the variable `group_vars/all/vars.yml:loadbalancers`.
 
-In the Ansible inventory, each VM can specify the following variables 
+In the Ansible inventory, each VM can specify the following variables :
 
-`api_int_preferred`: The VM specified with this variable will be the preferred VM for hosting the external VIP for the OCP api,
+- `api_int_preferred`: The VM specified with this variable will be the preferred VM for hosting the external VIP for the OCP api,
+- `api_preferred`: The VM specified with this variable will be the preferred VM for hosting the internal VIP for the OCP api
 
-`api_preferred`: The VM specified with this variable will be the preferred VM for hosting the internal VIP for the OCP api
-
-In the example below, the VM named hpe-lb1 will host the external FIP whereas hpe-lb2 will host the internal FIP.
+For example, in the inventory below, the VM named `hpe-lb1` will host the internal FIP whereas `hpe-lb2` will host the external FIP. If one of these two VMs fails, the FIPs are migrated to the surviving VM.
 
 ```
 [loadbalancer]
@@ -75,8 +70,8 @@ hpe-lb2 ansible_host=10.15.152.8 frontend_ipaddr=10.15.156.8/24 api_preferred= .
 The corresponding variables in `group_vars/all/vars.yml` look like the snippet below. 
 
 ```
-frontend_vm_portgroup: 'extVLAN2968'                             # Name of the portgroup connected to the access/public network
-frontend_gateway: '10.15.156.1'                                 # Access network gateway
+frontend_vm_portgroup: 'extVLAN2968' # Name of the portgroup / external network
+frontend_gateway: '10.15.156.1'      # gateway for the external network
 loadbalancers:
   apps:
     vip: 10.15.156.9
@@ -91,24 +86,26 @@ loadbalancers:
 
 ```
 
-**note**: The names of the interface are OS dependent and depend on how the VMs are built. 
+**note**: The names of the interfaces are OS dependent and depend on how the VMs are built.  If you are using the playbooks of this repository and deploy Red Hat Enterprise 7.6 you should not have to change these names.
 
 
 
 ### Managed Load Balancers, no HA
 
-If you don't want HA (for demo purposes for example), you can configure a single VM in the [loadbalancer] group and you can delete (or rename, rename is easier) the `loadbalancers` datastructure. 
+If you don't want HA (for demo purposes for example), you can configure a single VM in the `[loadbalancer]` group and you can delete (or rename, rename is easier) the `loadbalancers` datastructure. 
+
+Here is a snippet of an Ansible inventory which specifies a unique VM in the `[loadbalancer]` group.
 
 ```
 [loadbalancer]
 hpe-lb1 ansible_host=10.15.152.7 frontend_ipaddr=10.15.156.7/24  ...
 ```
 
-The `loadbalancers` datastructure was renamed (and hence is ignored by the playbooks)
+The `loadbalancers` datastructure was renamed and hence is ignored by the playbooks. NO FIP will be created and the IP addresses of this VM will be use for the OCP API (in this example, the external endpoint for the OCP api will point to 10.15.156.7 and the internal endpoint will point to 10.15.152.7)
 
 ```
-frontend_vm_portgroup: 'extVLAN2968'                             # Name of the portgroup connected to the access/public network
-frontend_gateway: '10.15.156.1'                                 # Access network gateway
+frontend_vm_portgroup: 'extVLAN2968'  # Name of the portgroup / external network
+frontend_gateway: '10.15.156.1'       # gateway for the external network
 Renamedloadbalancers:
   apps:
     vip: 10.15.156.9
@@ -127,7 +124,11 @@ Renamedloadbalancers:
 
 ### Unmanaged Load Balancers
 
-You may use your own load balancing solution by NOT configuring any VM in the loadbalancer group and by documenting the `datastructure loadbalancers` in `group_vars/all/vars.yml`
+You may use your own load balancing solution by NOT configuring any VM in the `[loadbalancer]` group and by documenting the datastructure `loadbalancers` in `group_vars/all/vars.yml`.
+
+`Note`: that these unmanaged load balancers should be configured as explained in the OpenShift 4.1 installation documentation.
+
+In the example Ansible inventory below, the `[loadbalancer]` group is left empty.
 
 ```
 [loadbalancer]
@@ -135,6 +136,8 @@ You may use your own load balancing solution by NOT configuring any VM in the lo
 # hpe-lb2 ansible_host=10.15.152.8 frontend_ipaddr=10.15.156.8/24 api_preferred= ...
 
 ```
+
+
 
 ```
 frontend_vm_portgroup: 'extVLAN2968'  
@@ -153,7 +156,7 @@ loadbalancers:
 
 ```
 
-**note**: Do not delete the loadbalancer group from the inventory
+**note**: Do not delete the `[loadbalancer]`  group from the inventory but leave it empty if you want to use existing external load balancers. 
 
 # Deployment of the control plane
 
