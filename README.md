@@ -41,122 +41,7 @@ HA for the load balancers is provided by mean of floating IP addresses for each 
 
 where `<clustername>` is the name of your cluster as specified by `group_vars/all/vars.yml:cluster_name`
 
-The possible options are described hereafter.
-
-### Managed Load Balancers with HA
-
-You can configure 2 virtual machines in the inventory group named `[loadbalancer]`.  The two virtual machines are connected to two networks, an external network and an internal network. Both VMs are eligible for hosting two floating IP addresses (FIPs), one for external access to the OCP api and a second for internal access to the OCP api.  The first IP binds to the external network and the second to the internal network. 
-
-**note:** the internal network is the one which connects all the OCP VMs together (this is the network that the variable `group_vars/vars/all.yml:vm_portgroup` designates). The external network is the one designated by the variable `group_vars/all/vars.yml:frontend_vm_portgroup`.
-
-The floating IP addresses are managed with `keepalived` using the VRRP protocol. These IP addresses and additional settings are configured using the variable `group_vars/all/vars.yml:loadbalancers`.
-
-In the Ansible inventory, each VM can specify the following variables :
-
-- `api_int_preferred`: The VM specified with this variable will be the preferred VM for hosting the external VIP for the OCP api,
-- `api_preferred`: The VM specified with this variable will be the preferred VM for hosting the internal VIP for the OCP api
-
-For example, in the inventory below, the VM named `hpe-lb1` will host the internal FIP whereas `hpe-lb2` will host the external FIP. If one of these two VMs fails, the FIPs are migrated to the surviving VM.
-
-```
-[loadbalancer]
-hpe-lb1 ansible_host=10.15.152.7 frontend_ipaddr=10.15.156.7/24 api_int_preferred= ...
-hpe-lb2 ansible_host=10.15.152.8 frontend_ipaddr=10.15.156.8/24 api_preferred= ...
-
-```
-
-**note**: You need to enter an equal sign after `api_int_preferred` and `api_preferred`.
-
-The corresponding variables in `group_vars/all/vars.yml` look like the snippet below. 
-
-```
-frontend_vm_portgroup: 'extVLAN2968' # Name of the portgroup / external network
-frontend_gateway: '10.15.156.1'      # gateway for the external network
-loadbalancers:
-  apps:
-    vip: 10.15.156.9
-  backend:
-    vip: 10.15.152.9
-    interface: ens192
-    vrrp_router_id: 51
-  frontend:
-    vip: 10.15.156.9
-    interface: ens224
-    vrrp_router_id: 51
-
-```
-
-**note**: The names of the interfaces are OS dependent and depend on how the VMs are built.  If you are using the playbooks of this repository and deploy Red Hat Enterprise 7.6 you should not have to change these names.
-
-
-
-### Managed Load Balancers, no HA
-
-If you don't want HA (for demo purposes for example), you can configure a single VM in the `[loadbalancer]` group and you can delete (or rename, rename is easier) the `loadbalancers` datastructure. 
-
-Here is a snippet of an Ansible inventory which specifies a unique VM in the `[loadbalancer]` group.
-
-```
-[loadbalancer]
-hpe-lb1 ansible_host=10.15.152.7 frontend_ipaddr=10.15.156.7/24  ...
-```
-
-The `loadbalancers` datastructure was renamed and hence is ignored by the playbooks. NO FIP will be created and the IP addresses of this VM will be use for the OCP API (in this example, the external endpoint for the OCP api will point to 10.15.156.7 and the internal endpoint will point to 10.15.152.7)
-
-```
-frontend_vm_portgroup: 'extVLAN2968'  # Name of the portgroup / external network
-frontend_gateway: '10.15.156.1'       # gateway for the external network
-Renamedloadbalancers:
-  apps:
-    vip: 10.15.156.9
-  backend:
-    vip: 10.15.152.9
-    interface: ens192
-    vrrp_router_id: 51
-  frontend:
-    vip: 10.15.156.9
-    interface: ens224
-    vrrp_router_id: 51
-
-```
-
-
-
-### Unmanaged Load Balancers
-
-You may use your own load balancing solution by NOT configuring any VM in the `[loadbalancer]` group and by documenting the datastructure `loadbalancers` in `group_vars/all/vars.yml`.
-
-`Note`: that these unmanaged load balancers should be configured as explained in the OpenShift 4.1 installation documentation.
-
-In the example Ansible inventory below, the `[loadbalancer]` group is left empty.
-
-```
-[loadbalancer]
-# hpe-lb1 ansible_host=10.15.152.7 frontend_ipaddr=10.15.156.7/24 api_int_preferred= ...
-# hpe-lb2 ansible_host=10.15.152.8 frontend_ipaddr=10.15.156.8/24 api_preferred= ...
-
-```
-
-
-
-```
-frontend_vm_portgroup: 'extVLAN2968'  
-frontend_gateway: '10.15.156.1'       
-loadbalancers:
-  apps:
-    vip: 10.15.156.9
-  backend:
-    vip: 10.15.152.9
-    interface: ens192
-    vrrp_router_id: 51
-  frontend:
-    vip: 10.15.156.9
-    interface: ens224
-    vrrp_router_id: 51
-
-```
-
-**note**: Do not delete the `[loadbalancer]`  group from the inventory but leave it empty if you want to use existing external load balancers. 
+The possible options are described later in this document.
 
 # Deployment of the control plane
 
@@ -194,21 +79,21 @@ The playbooks creates OCP VMs according to the following sizing:
 
 The playbooks also creates the following VMs which provide additional infrastructure services required by OCP
 
-| VM                | OS and Sizing | Comments                                                     |
-| :---------------- | :------------ | :----------------------------------------------------------- |
-| 1 x load balancer | Red Hat 7.6   | Only one LB allowed with this version of the playbooks       |
-| 1 or 2 x Infra    | Red Hat 7.6   | One or two VMs providing DHCP and DNS services on the internal VLAN. Configure two for HA purposes |
-| 1 x NFS           | Red Hat 7.6   | one NFS VM to hold the OpenShift Registry images             |
+| VM                            | OS and Sizing | Comments                                                     |
+| :---------------------------- | :------------ | :----------------------------------------------------------- |
+| 0, 1 or 2  x load balancer(s) | Red Hat 7.6   | The playbooks can deploy one or two virtual machines (two for redundancy purposes) if you don't have an external load balancer. |
+| 1 or 2 x Infra                | Red Hat 7.6   | One or two VMs providing DHCP and DNS services on the internal VLAN. Configure two for HA purposes |
+| 1 x NFS                       | Red Hat 7.6   | one NFS VM to hold the OpenShift Registry images             |
 
 ## Prepare an Ansible box
 
-- I use Fedora 29 and Ansible 2.8 (**REQUIRED**) (dnf update probably necessary)
-- My Ansible box is directly connected to the proxy-free VLAN (I don’t know if this is important or not, I don't think so)
-- the playbooks work from a non privileged account. It will make your life easier if you work from an account named **core** because: 
+- We use Fedora 29 and Ansible 2.8 (**REQUIRED**) (dnf update probably necessary)
+- The Ansible box is directly connected to the proxy-free VLAN.
+- The playbooks work from a non privileged account. It will make your life easier if you work from an account named **core** because: 
   - RH CoreOS builtin account is '**core'**
   - a user with the same name as the user who runs the playbooks on the Ansible box is created on non CoreOS VMs
   - Populate the variable **group_vars/vars/vault.yml:vault.ssh_key** with the default public key of the user who will run the playbooks (~/.ssh/id_rsa.pub)
-- Make sure the user who runs the playbooks can sudo without a password on the Ansible box
+- Make sure the user who runs the playbooks can `sudo` without a password on the Ansible box itself.
   - to be completed (see Linux doc, sudo)
 
 ## **Prepare a RHEL template**
@@ -326,15 +211,124 @@ Make a copy of the file `hosts.sample` to  - say - `hosts`. This will be your in
 
 - Configure one or two machines in the `[infrastructure]` group. Configure two VMs if you want HA. Configure only one if you don't need HA.
 
-- Only configure one machine in the `[loadbalancer]` group. Future rev will implement 2 load balancers and virtual IPs.
-
 - Load balancers need to have two IP addresses. One on the internal network designated by  `group_vars/all/vars.yml:vm_portgroup` and specified with the `ansible_host` variable. A second address for the frontend network designated by the variable `frontend_ipaddr` in the inventory. `frontend_ipaddr` should be specified in CIDR notation (for example 10.10.174.165/22).
 
+More information regarding load balancers is provided in the next paragraph.
+
+### About Load Balancers
+
+#### Managed Load Balancers with HA
+
+You can configure 2 virtual machines in the inventory group named `[loadbalancer]`.  The two virtual machines are connected to two networks, an external network and an internal network. Both VMs are eligible for hosting two floating IP addresses (FIPs), one for external access to the OCP api and a second for internal access to the OCP api.  The first IP binds to the external network and the second to the internal network. 
+
+**note:** the internal network is the one which connects all the OCP VMs together (this is the network that the variable `group_vars/vars/all.yml:vm_portgroup` designates). The external network is the one designated by the variable `group_vars/all/vars.yml:frontend_vm_portgroup`.
+
+The floating IP addresses are managed with `keepalived` using the VRRP protocol. These IP addresses and additional settings are configured using the variable `group_vars/all/vars.yml:loadbalancers`.
+
+In the Ansible inventory, each VM can specify the following variables :
+
+- `api_int_preferred`: The VM specified with this variable will be the preferred VM for hosting the external VIP for the OCP api,
+- `api_preferred`: The VM specified with this variable will be the preferred VM for hosting the internal VIP for the OCP api
+
+For example, in the inventory below, the VM named `hpe-lb1` will host the internal FIP whereas `hpe-lb2` will host the external FIP. If one of these two VMs fails, the FIPs are migrated to the surviving VM.
+
+```
+[loadbalancer]
+hpe-lb1 ansible_host=10.15.152.7 frontend_ipaddr=10.15.156.7/24 api_int_preferred= ...
+hpe-lb2 ansible_host=10.15.152.8 frontend_ipaddr=10.15.156.8/24 api_preferred= ...
+
+```
+
+**note**: You need to enter an equal sign after `api_int_preferred` and `api_preferred`.
+
+#### The corresponding variables in `group_vars/all/vars.yml` look like the snippet below. 
+
+```
+frontend_vm_portgroup: 'extVLAN2968' # Name of the portgroup / external network
+frontend_gateway: '10.15.156.1'      # gateway for the external network
+loadbalancers:
+  apps:
+    vip: 10.15.156.9/24
+  backend:
+    vip: 10.15.152.9/24
+    interface: ens192
+    vrrp_router_id: 51
+  frontend:
+    vip: 10.15.156.9/24
+    interface: ens224
+    vrrp_router_id: 51
+
+```
+
+**note**: The names of the interfaces are OS dependent and depend on how the VMs are built.  If you are using the playbooks of this repository and deploy Red Hat Enterprise 7.6 you should not have to change these names.
+
+#### Managed Load Balancers, no HA
+
+If you don't want HA (for demo purposes for example), you can configure a single VM in the `[loadbalancer]` group and you can delete (or rename, rename is easier) the `loadbalancers` datastructure. 
+
+Here is a snippet of an Ansible inventory which specifies a unique VM in the `[loadbalancer]` group.
+
+```
+[loadbalancer]
+hpe-lb1 ansible_host=10.15.152.7 frontend_ipaddr=10.15.156.7/24  ...
+```
+
+The `loadbalancers` datastructure was renamed and hence is ignored by the playbooks. NO FIP will be created and the IP addresses of this VM will be use for the OCP API (in this example, the external endpoint for the OCP api will point to 10.15.156.7 and the internal endpoint will point to 10.15.152.7)
+
+```
+frontend_vm_portgroup: 'extVLAN2968'  # Name of the portgroup / external network
+frontend_gateway: '10.15.156.1'       # gateway for the external network
+Renamedloadbalancers:
+  apps:
+    vip: 10.15.156.9/24
+  backend:
+    vip: 10.15.152.9/24
+    interface: ens192
+    vrrp_router_id: 51
+  frontend:
+    vip: 10.15.156.9/24
+    interface: ens224
+    vrrp_router_id: 51
+
+```
+
+#### Unmanaged Load Balancers
+
+You may use your own load balancing solution by NOT configuring any VM in the `[loadbalancer]` group and by documenting the datastructure `loadbalancers` in `group_vars/all/vars.yml`.
+
+`Note`: that these unmanaged load balancers should be configured as explained in the OpenShift 4.1 installation documentation.
+
+In the example Ansible inventory below, the `[loadbalancer]` group is left empty.
+
+```
+[loadbalancer]
+# hpe-lb1 ansible_host=10.15.152.7 frontend_ipaddr=10.15.156.7/24 api_int_preferred= ...
+# hpe-lb2 ansible_host=10.15.152.8 frontend_ipaddr=10.15.156.8/24 api_preferred= ...
+
+```
 
 
-### About Persistent Storage
 
-By default the OpenShift installer configures a default storage class which uses the vSphere Cloud Provider. This provider does not support the [ReadWriteMany](https://docs.openshift.com/container-platform/4.1/installing/installing_vsphere/installing-vsphere.html#installation-registry-storage-config_installing-vsphere) access mode which is required by the Image Registry. For this reason, the `site.yml` playbook deploys an NFS virtual machine which exports a number of NFS shares. The Image Registry service will use one of these. The number of shares that the playbooks creates can be customized using the variable `group_vars/all/vars.yml/num_nfs_shares`. Only one share is required by the Image Registry service. Use vSphere volumes in your apps if you don't need ReadWriteMany access mode
+```
+frontend_vm_portgroup: 'extVLAN2968'  
+frontend_gateway: '10.15.156.1'       
+loadbalancers:
+  apps:
+    vip: 10.15.156.9/24
+  backend:
+    vip: 10.15.152.9/24
+    interface: ens192   # unused if external load balancer
+    vrrp_router_id: 51  # unused if external load balancer
+  frontend:
+    vip: 10.15.156.9/24
+    interface: ens224   # unused if external load balancer
+    vrrp_router_id: 51  # unused if external load balancer
+
+```
+
+**note**: Do not delete the `[loadbalancer]`  group from the inventory but leave it empty if you want to use existing external load balancers. 
+
+
 
 ## Deploy the Control Plane
 
@@ -375,13 +369,9 @@ You can monitor the progress of the ignition process in several places:
 
 ## Persistent Storage
 
-The OpenShift Image Registry is configured to use a kubernetes Persistent Volume backed by an NFS Share to store the images. Everything is configured by the playbooks.
+By default the OpenShift installer configures a default storage class which uses the vSphere Cloud Provider. This provider does not support the [ReadWriteMany](https://docs.openshift.com/container-platform/4.1/installing/installing_vsphere/installing-vsphere.html#installation-registry-storage-config_installing-vsphere) access mode which is required by the Image Registry. For this reason, the `site.yml` playbook deploys an NFS virtual machine which exports a number of NFS shares. The Image Registry service will use one of these. The number of shares that the playbooks creates can be customized using the variable `group_vars/all/vars.yml/num_nfs_shares`. Only one share is required by the Image Registry service. Use vSphere volumes in your apps if you don't need `ReadWriteMany` access mode
 
-A default Storage Class is also configured that leverages the vSphere Cloud Provider (VCP). It supports dynamic volume provisioning.
 
-**Note**: the reason why the Registry does not use a vSphere volume is that because VCP does not support the ReadWriteMany access mode .
-
- 
 
 # Customization
 
