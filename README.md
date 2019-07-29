@@ -17,7 +17,6 @@ Version Installed:** OCP 4.1 released!
     - [Create your inventory](#create-your-inventory)
     - [About Load Balancers](#about-load-balancers)
       - [Managed Load Balancers with HA](#managed-load-balancers-with-ha)
-      - [The corresponding variables in `group_vars/all/vars.yml` look like the snippet below.](#the-corresponding-variables-in-groupvarsallvarsyml-look-like-the-snippet-below)
       - [Managed Load Balancers, no HA](#managed-load-balancers-no-ha)
       - [Unmanaged Load Balancers](#unmanaged-load-balancers)
   - [Deploy the Control Plane](#deploy-the-control-plane)
@@ -280,7 +279,7 @@ hpe-lb2 ansible_host=10.15.152.8 frontend_ipaddr=10.15.156.8/24 api_preferred= .
 
 **note**: You need to enter an equal sign after `api_int_preferred` and `api_preferred`.
 
-#### The corresponding variables in `group_vars/all/vars.yml` look like the snippet below. 
+The corresponding variables in `group_vars/all/vars.yml` look like the snippet below. 
 
 ```
 frontend_vm_portgroup: 'extVLAN2968' # Name of the portgroup / external network
