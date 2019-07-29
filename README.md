@@ -1,5 +1,44 @@
 Version Installed:** OCP 4.1 released!
 
+- [Introduction](#introduction)
+- [HA Considerations](#ha-considerations)
+  - [The Control Plane (master nodes)](#the-control-plane-master-nodes)
+  - [DNS and DHCP services](#dns-and-dhcp-services)
+  - [Load Balancers](#load-balancers)
+- [Deployment of the control plane](#deployment-of-the-control-plane)
+  - [Requirements](#requirements)
+  - [Prepare an Ansible box](#prepare-an-ansible-box)
+  - [Prepare a RHEL template](#prepare-a-rhel-template)
+  - [Prepare an OVA file (optional)](#prepare-an-ova-file-optional)
+  - [Download Required Files](#download-required-files)
+  - [Clone the repo](#clone-the-repo)
+  - [Prepare to run the playbooks](#prepare-to-run-the-playbooks)
+    - [Configure the playbooks](#configure-the-playbooks)
+    - [Create your inventory](#create-your-inventory)
+    - [About Load Balancers](#about-load-balancers)
+      - [Managed Load Balancers with HA](#managed-load-balancers-with-ha)
+      - [The corresponding variables in `group_vars/all/vars.yml` look like the snippet below.](#the-corresponding-variables-in-groupvarsallvarsyml-look-like-the-snippet-below)
+      - [Managed Load Balancers, no HA](#managed-load-balancers-no-ha)
+      - [Unmanaged Load Balancers](#unmanaged-load-balancers)
+  - [Deploy the Control Plane](#deploy-the-control-plane)
+  - [Monitoring the progresses](#monitoring-the-progresses)
+  - [Persistent Storage](#persistent-storage)
+- [Customization](#customization)
+  - [LDAP Integration](#ldap-integration)
+    - [Requirements](#requirements-1)
+    - [Preparation Steps](#preparation-steps)
+    - [Running the playbook](#running-the-playbook)
+    - [Verification](#verification)
+  - [LDAP Integration, synchronizing groups](#ldap-integration-synchronizing-groups)
+    - [Create the sync configuration file](#create-the-sync-configuration-file)
+    - [Synchronize](#synchronize)
+    - [Verifications](#verifications)
+    - [More information](#more-information)
+  - [Adding a cluster Administrator](#adding-a-cluster-administrator)
+- [Appendix: variable files](#appendix-variable-files)
+- [Appendix: Inventory](#appendix-inventory)
+- [Appendix: Environment](#appendix-environment)
+- [Appendix: ](#appendix-ldap)
 
 
 # Introduction 
@@ -96,7 +135,7 @@ The playbooks also creates the following VMs which provide additional infrastruc
 - Make sure the user who runs the playbooks can `sudo` without a password on the Ansible box itself.
   - to be completed (see Linux doc, sudo)
 
-## **Prepare a RHEL template**
+## Prepare a RHEL template
 
 The load balancer(s) and the infrastructure nodes are cloned from a RHEL7 template. You need to create this template. Use the following specs:
 
@@ -148,7 +187,7 @@ Once the installation is finished, log in the VM (root account) and perform the 
 
 Finally, make sure the name of this template matches the variable `group_vars/all/vars.yml:infra_template`.
 
-## **Prepare an OVA file (optional)**
+## Prepare an OVA file (optional)
 
 It is possible to deploy the `infra_template` from an OVA. To create the OVA proceed as indicated below:
 
@@ -160,7 +199,7 @@ It is possible to deploy the `infra_template` from an OVA. To create the OVA pro
 
 note: If a template with the name specified by `group_vars/all/vars.yml:infra_template` is found in the vCenter Datacenter, the OVA file will not be deployed and the existing template will be used to deploy non-CoreOS VMS. If the template is not found, the OVA file is deployed and the template is given the name documented by `infra_template`.
 
-## **Download Required Files**
+## Download Required Files
 
 You need to copy a number of files to the Ansible box. We need the Linux installer, the Linux client and the Red Hat CoreOS OVA. The exact file names reflect the version of the release. At the time of writing, the latest version available for the OpenShift installer and the client tools was 4.1.4, and 4.1.0 for the Red Hat CoreOS VMware template. The ultimate reference for downloading required files is [here](https://cloud.redhat.com/openshift/install/vsphere/user-provisioned).
 
@@ -180,7 +219,7 @@ If the account you use on the Ansible box does not have a default SSH keypair, c
 
 More info on variables later.
 
-## **Clone the repo**
+## Clone the repo
 
 From the Ansible box (user core)
 
@@ -188,7 +227,7 @@ From the Ansible box (user core)
 git clone https://github.com/HewlettPackard/OpenShift-on-SimpliVity.git
 ```
 
-## **Prepare to run the playbooks**
+## Prepare to run the playbooks
 
 ### Configure the playbooks
 
@@ -219,9 +258,9 @@ More information regarding load balancers is provided in the next paragraph.
 
 #### Managed Load Balancers with HA
 
-You can configure 2 virtual machines in the inventory group named `[loadbalancer]`.  The two virtual machines are connected to two networks, an external network and an internal network. Both VMs are eligible for hosting two floating IP addresses (FIPs), one for external access to the OCP api and a second for internal access to the OCP api.  The first IP binds to the external network and the second to the internal network. 
+You can configure 2 virtual machines in the inventory group named `[loadbalancer]`.  The two virtual machines are connected to two networks, an external network, also called the frontend network, and an internal network also called the backend network. Both VMs are eligible for hosting two floating IP addresses (FIPs), one for external access to the OCP api and a second for internal access to the OCP api.  The first IP binds to the external network and the second to the internal network. 
 
-**note:** the internal network is the one which connects all the OCP VMs together (this is the network that the variable `group_vars/vars/all.yml:vm_portgroup` designates). The external network is the one designated by the variable `group_vars/all/vars.yml:frontend_vm_portgroup`.
+**note:** the internal network is the one which connects all the OCP VMs together (this is the network that the variable `group_vars/vars/all.yml:vm_portgroup` designates). The external network is the one designated by the variable `group_vars/all/vars.yml:frontend_vm_portgroup`. 
 
 The floating IP addresses are managed with `keepalived` using the VRRP protocol. These IP addresses and additional settings are configured using the variable `group_vars/all/vars.yml:loadbalancers`.
 
@@ -264,7 +303,7 @@ loadbalancers:
 
 #### Managed Load Balancers, no HA
 
-If you don't want HA (for demo purposes for example), you can configure a single VM in the `[loadbalancer]` group and you can delete (or rename, rename is easier) the `loadbalancers` datastructure. 
+If you don't want HA (for demo purposes for example), you can configure a single VM in the `[loadbalancer]` group and you can delete the `vip` properties from the `loadbalancers` datastructure. 
 
 Here is a snippet of an Ansible inventory which specifies a unique VM in the `[loadbalancer]` group.
 
@@ -273,22 +312,17 @@ Here is a snippet of an Ansible inventory which specifies a unique VM in the `[l
 hpe-lb1 ansible_host=10.15.152.7 frontend_ipaddr=10.15.156.7/24  ...
 ```
 
-The `loadbalancers` datastructure was renamed and hence is ignored by the playbooks. No FIP is used and the IP addresses of this VM will be use for the OCP API (in this example, the external endpoint for the OCP api will point to 10.15.156.7 and the internal endpoint will point to 10.15.152.7)
+The `loadbalancers` datastructure does not specify any FIP as shown below. No FIP is used and the IP addresses of this VM will be use for the OCP API. In this example, the external endpoint for the OCP api will point to 10.15.156.7 and the internal endpoint will point to 10.15.152.7)
 
 ```
 frontend_vm_portgroup: 'extVLAN2968'  # Name of the portgroup / external network
 frontend_gateway: '10.15.156.1'       # gateway for the external network
-Renamedloadbalancers:
+loadbalancers:
   apps:
-    vip: 10.15.156.9/24
   backend:
-    vip: 10.15.152.9/24
     interface: ens192
-    vrrp_router_id: 51
   frontend:
-    vip: 10.15.156.9/24
     interface: ens224
-    vrrp_router_id: 51
 
 ```
 
@@ -648,11 +682,11 @@ all keys here are properties of the dictionary called **vault.**
 | ssh_key                 | 'yourSSHpublickeyhere' | see the about [pull secret and ssh key](https://confluence.simplivt.local/display/PE/Installing+OCP+4.1+released+version#InstallingOCP4.1releasedversion-pullsecret) |
 | ldap_bind_user_password | 'BindPassword'         | The password of the Bind DN user when integrating with an LDAP Directory |
 
-# **Appendix: Inventory**
+# Appendix: Inventory
 
 The file https://github.com/HewlettPackard/OpenShift-on-SimpliVity/blob/master/hosts.sample contains an example inventory. The IP used in this inventory are inline with the settings documented in the group_vars/all/vars.yml.sample (dhcp_subnet and gateway)
 
-# **Appendix: Environment**
+# Appendix: Environment
 
 The environment consists of a 4-node SimpliVity cluster running the latest OmniStack bits at the time of testing
 
@@ -661,9 +695,7 @@ The environment consists of a 4-node SimpliVity cluster running the latest OmniS
 - ESXi 6.7 EP 05 10764712
 - vCenter 6.7U1b (build 11726888)
 
-# 
-
-# <a id="ldap_cr_yml"></a>Appendix: LDAP sample ldap_cr.yml
+ #Appendix: LDAP sample ldap_cr.yml <a id="ldap_cr_yml"></a>
 
 This appendix describes the sample `ldap_cr.yml`  shipped with this repository and explains it. Remember that this file will not work in your environment so you will have to edit it.  The example was using Active Directory as the directory service.
 
