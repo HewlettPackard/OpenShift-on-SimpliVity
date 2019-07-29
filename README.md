@@ -38,7 +38,7 @@ Version Installed:** OCP 4.1 released!
 - [Appendix: variable files](#appendix-variable-files)
 - [Appendix: Inventory](#appendix-inventory)
 - [Appendix: Environment](#appendix-environment)
-- [Appendix: ](#appendix-ldap)
+- [Appendix: LDAP Integration](#appendix-ldap-sample-ldap-cr-yml)
 
 
 # Introduction 
@@ -695,7 +695,9 @@ The environment consists of a 4-node SimpliVity cluster running the latest OmniS
 - ESXi 6.7 EP 05 10764712
 - vCenter 6.7U1b (build 11726888)
 
- #Appendix: LDAP sample ldap_cr.yml <a id="ldap_cr_yml"></a>
+#  Appendix: LDAP sample ldap_cr.yml
+
+<a id="ldap_cr_yml"></a>
 
 This appendix describes the sample `ldap_cr.yml`  shipped with this repository and explains it. Remember that this file will not work in your environment so you will have to edit it.  The example was using Active Directory as the directory service.
 
