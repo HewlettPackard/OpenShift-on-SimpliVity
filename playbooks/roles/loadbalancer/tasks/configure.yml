@@ -14,12 +14,72 @@
 # limitations under the License.
 ### 
 ---
-- name: Disable firewall for now
+- name: ENable firewall
   become: true
   systemd:
     name: firewalld
-    enabled: no
-    state: stopped
+    enabled: yes
+    state: started
+
+
+- name: Configure required ports in internal zone
+  become: true
+  firewalld:
+    zone: internal
+    port: "{{ item }}"
+    immediate: true
+    permanent: true
+    state: enabled
+  with_items:
+   - 6443/tcp   # kubernetes API server
+   - 22623/tcp  # Machine config server
+   - 443/tcp    # https traffic
+   - 80/tcp     # http traffic
+
+- name: Add rule for vrrp protocole
+  become: true
+  firewalld:
+    zone: internal
+    rich_rule: 'rule protocol value="vrrp" accept'
+    immediate: true
+    permanent: true
+    state: enabled
+
+- name: Configure internal zone
+  become: true
+  firewalld:
+    zone: internal
+    interface: "{{ loadbalancers.backend.interface }}"
+    state: enabled
+
+- name: Configure required ports in external zone
+  become: true
+  firewalld:
+    zone: external
+    port: "{{ item }}"
+    immediate: true
+    permanent: true
+    state: enabled
+  with_items:
+   - 6443/tcp
+   - 443/tcp
+   - 80/tcp
+
+- name: Add rule for vrrp protocole
+  become: true
+  firewalld:
+    zone: external
+    rich_rule: 'rule protocol value="vrrp" accept'
+    immediate: true
+    permanent: true
+    state: enabled
+
+- name: Configure External zone
+  become: true
+  firewalld:
+    zone: external
+    interface: "{{ loadbalancers.frontend.interface }}"
+    state: enabled
 
 # address issue with multihomed servers
 - name: Configure rp_filter
@@ -29,6 +89,7 @@
     value: "2"
     state: present
     sysctl_set: yes
+
 
 - name: Install Pkgs needed by seboolean module
   become: true
@@ -115,4 +176,4 @@
       enabled: yes
       state: started
 
-  when: loadbalancers is defined
+  when: loadbalancers.backend.vip is defined or loadbalancers.frontend.vip is defined

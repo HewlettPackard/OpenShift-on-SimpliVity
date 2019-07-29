@@ -6,6 +6,7 @@ vrrp_script chk_haproxy {
   weight 2
 }
 
+{% if loadbalancers.backend.vip is defined %}
 vrrp_instance API_INT_VIP {
   state MASTER
   interface {{ loadbalancers.backend.interface }}
@@ -22,7 +23,9 @@ vrrp_instance API_INT_VIP {
     chk_haproxy
   }
 }
+{% endif %}
 
+{% if loadbalancers.frontend.vip is defined %}
 vrrp_instance API_EXT_VIP {
   state MASTER
   interface {{ loadbalancers.frontend.interface }}
@@ -39,3 +42,4 @@ vrrp_instance API_EXT_VIP {
     chk_haproxy
   }
 }
+{% endif %}
