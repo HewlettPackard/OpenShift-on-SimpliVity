@@ -14,7 +14,7 @@
 # limitations under the License.
 ### 
 ---
-- name: ENable firewall
+- name: Enable firewall
   become: true
   systemd:
     name: firewalld
