@@ -130,7 +130,7 @@ The playbooks also creates the following VMs which provide additional infrastruc
 - The playbooks work from a non-privileged account. It will make your life easier if you work from an account named **core** because: 
   - RH CoreOS builtin account is '**core'**
   - a user with the same name as the user who runs the playbooks on the Ansible box is created on non-CoreOS VMs
-  - Populate the variable **group_vars/vars/vault.yml:vault.ssh_key** with the default public key of the user who will run the playbooks (~/.ssh/id_rsa.pub)
+  - Populate the variable **group_vars/all/vault.yml:vault.ssh_key** with the default public key of the user who will run the playbooks (~/.ssh/id_rsa.pub)
 - Make sure the user who runs the playbooks can `sudo` without a password on the Ansible box itself.
   - to be completed (see Linux doc, sudo)
 
