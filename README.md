@@ -300,6 +300,10 @@ loadbalancers:
 
 **note**: The names of the interfaces are OS dependent and depend on how the VMs are built.  If you are using the playbooks of this repository and deploy Red Hat Enterprise 7.6 you should not have to change these names.
 
+The figure below illustrates such a deployment
+
+![1564476178493](pics/haproxy_ha_deployment)
+
 #### Managed Load Balancers, no HA
 
 If you don't want HA (for demo purposes for example), you can configure a single VM in the `[loadbalancer]` group and you can delete the `vip` properties from the `loadbalancers` datastructure. 
@@ -324,6 +328,10 @@ loadbalancers:
     interface: ens224
 
 ```
+
+The figure below illustrates such a deployment:
+
+![1564476406796](pics/haproxy_no_ha)
 
 #### Unmanaged Load Balancers
 
