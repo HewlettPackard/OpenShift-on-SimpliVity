@@ -88,7 +88,7 @@ The playbook `site.yml` is used to deploy the control plane, and zero or more Co
 1. run the OpenShift Installer to generate the ignition data required by the OpenShift virtual machines
 2. provision the virtual machines listed in the Ansible inventory and powers up the non-OCP virtual machines
 3. configure the services running on the non-OCP virtual machines including DNS and DHCP services.
-4. configure anti affinity DRS rules for the virtual machines (master VMs should run on separate hosts as well as the infrastructure (DNS and DHCP services) and load balancer VMs (for now only one LB supported)
+4. configure anti affinity DRS rules for the virtual machines (master VMs should run on separate hosts as well as the infrastructure (DNS and DHCP services) and load balancer VMs
 5. power up the OCP virtual machines
 6. wait for the OpenShift API to come up on the master nodes
 7. create a PV from an NFS share and a PVC for use by the OpenShift Registry
@@ -127,9 +127,9 @@ The playbooks also creates the following VMs which provide additional infrastruc
 
 - We use Fedora 29 and Ansible 2.8 (**REQUIRED**) (dnf update probably necessary)
 - The Ansible box is directly connected to the proxy-free VLAN.
-- The playbooks work from a non privileged account. It will make your life easier if you work from an account named **core** because: 
+- The playbooks work from a non-privileged account. It will make your life easier if you work from an account named **core** because: 
   - RH CoreOS builtin account is '**core'**
-  - a user with the same name as the user who runs the playbooks on the Ansible box is created on non CoreOS VMs
+  - a user with the same name as the user who runs the playbooks on the Ansible box is created on non-CoreOS VMs
   - Populate the variable **group_vars/vars/vault.yml:vault.ssh_key** with the default public key of the user who will run the playbooks (~/.ssh/id_rsa.pub)
 - Make sure the user who runs the playbooks can `sudo` without a password on the Ansible box itself.
   - to be completed (see Linux doc, sudo)
@@ -257,16 +257,16 @@ More information regarding load balancers is provided in the next paragraph.
 
 #### Managed Load Balancers with HA
 
-You can configure 2 virtual machines in the inventory group named `[loadbalancer]`.  The two virtual machines are connected to two networks, an external network, also called the frontend network, and an internal network also called the backend network. Both VMs are eligible for hosting two floating IP addresses (FIPs), one for external access to the OCP api and a second for internal access to the OCP api.  The first IP binds to the external network and the second to the internal network. 
+You can configure 2 virtual machines in the inventory group named `[loadbalancer]`.  The two virtual machines are connected to two networks, an external network, also called the frontend network, and an internal network also called the backend network. Both VMs are eligible for hosting two floating IP addresses (FIPs), one for external access to the OCP API and a second for internal access to the OCP API.  The first IP binds to the external network and the second to the internal network. 
 
 **note:** the internal network is the one which connects all the OCP VMs together (this is the network that the variable `group_vars/vars/all.yml:vm_portgroup` designates). The external network is the one designated by the variable `group_vars/all/vars.yml:frontend_vm_portgroup`. 
 
 The floating IP addresses are managed with `keepalived` using the VRRP protocol. These IP addresses and additional settings are configured using the variable `group_vars/all/vars.yml:loadbalancers`.
 
-In the Ansible inventory, each VM can specify the following variables :
+In the Ansible inventory, each VM can specify the following variables:
 
-- `api_int_preferred`: The VM specified with this variable will be the preferred VM for hosting the external VIP for the OCP api,
-- `api_preferred`: The VM specified with this variable will be the preferred VM for hosting the internal VIP for the OCP api
+- `api_int_preferred`: The VM specified with this variable will be the preferred VM for hosting the internal VIP for the OCP API,
+- `api_preferred`: The VM specified with this variable will be the preferred VM for hosting the external VIP for the OCP API
 
 For example, in the inventory below, the VM named `hpe-lb1` will host the internal FIP whereas `hpe-lb2` will host the external FIP. If one of these two VMs fails, the FIPs are migrated to the surviving VM.
 
@@ -386,7 +386,7 @@ Depending on your hardware and the load, it takes approximately 30mns for the pl
 
 ## Monitoring the progresses
 
-The playbooks that powers on the OCP machines monitors port 22 for the non OCP VMs and port 22623 to assess the successful “ignition” of the OpenShift cluster.
+The playbooks that powers on the OCP machines monitors port 22 for the non-OCP VMs and port 22623 to assess the successful “ignition” of the OpenShift cluster.
 
 You can monitor the progress of the ignition process in several places:
 
