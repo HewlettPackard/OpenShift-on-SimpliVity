@@ -73,13 +73,13 @@ where `<clustername>` is the name of your cluster as specified by `group_vars/al
 
 ## Load Balancers
 
-HA for the load balancers is provided by mean of floating IP addresses for each load balancer. The load balancers are hosted on the VMs which are members of the inventory group called `[loadbalancer]`. An anti-affinity rule is created for these virtual machines with the name:
+In the case of managed load balancers, HA for the two load balancers (internal API and external API) is provided by mean of floating IP addresses managed by keepalived.  The load balancers are hosted on two VMs which are members of the inventory group called `[loadbalancer]`. An anti-affinity rule is created for these virtual machines with the name:
 
 `<clustername>-loadbalancer-anti-affinity-rule-001`
 
 where `<clustername>` is the name of your cluster as specified by `group_vars/all/vars.yml:cluster_name`
 
-The possible options deployment options are described later in this document.
+The possible deployment options for the load balancers are described later in this document.
 
 # Deployment of the control plane
 
