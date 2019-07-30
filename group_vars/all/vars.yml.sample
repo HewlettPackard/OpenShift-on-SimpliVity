@@ -61,7 +61,7 @@ rhn_pass: '{{ vault.rhn_pass }}'                                # not used for n
 frontend_vm_portgroup: 'extVLAN2968'                            # Name of the portgroup connected to the access/public network
 frontend_gateway: '10.15.156.1'                                 # Access network gateway
 loadbalancers:
-  apvs:
+  apps:
     vip: 10.15.156.9/24                                         # if omitted, defaults to the internal IP address of the first load balancer (ie no VIP, no HA)
   backend:
     vip: 10.15.152.9/24                                         # if ommited, defaults to the internal IP address of the first laod balancer (ie no VIP, no HA)
