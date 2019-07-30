@@ -302,7 +302,7 @@ loadbalancers:
 
 The figure below illustrates such a deployment
 
-![1564476178493](pics/haproxy_ha_deployment)
+![1564477304454](pics/haproxy_ha_deployment)
 
 #### Managed Load Balancers, no HA
 
