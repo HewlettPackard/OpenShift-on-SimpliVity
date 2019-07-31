@@ -1,15 +1,14 @@
 #
-# Don;t change anything in this file unless you know what you are doing
+# Don't change anything in this file unless you know what you are doing
 #
-
-#
-# temporary settings (don't change them for now)
-#
-resource_plane_vip: "{{ hostvars[groups.loadbalancer.0].ansible_host }}" # for now, the IP of your unique Load Balancer
-external_lb_vip: "{{ hostvars[groups.loadbalancer.0].ansible_host }}"	# no vip implemented yet
-internal_lb_vip: "{{ hostvars[groups.loadbalancer.0].ansible_host }}"	# no vip implemented yet
-
 #
 # Default value
 #
 ignition_file: /dev/null
+
+#
+# api and api_int point to loadbalancer[0] IP if loadbalancers is not defined
+#
+lb_api_ip:      "{% if loadbalancers.frontend.vip is defined %}{{ loadbalancers.frontend.vip }}{% else %}{{ hostvars[groups.loadbalancer.0].frontend_ipaddr }}{% endif %}"
+lb_api_int_ip:  "{% if loadbalancers.backend.vip  is defined %}{{ loadbalancers.backend.vip  }}{% else %}{{ hostvars[groups.loadbalancer.0].ansible_host }}/{{ dhcp_subnet|ipaddr('prefix') }}{% endif %}"
+lb_apps_ip:     "{% if loadbalancers.apps.vip     is defined %}{{ loadbalancers.apps.vip     }}{% else %}{{ hostvars[groups.loadbalancer.0].frontend_ipaddr }}{% endif %}"

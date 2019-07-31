@@ -14,6 +14,82 @@
 # limitations under the License.
 ### 
 ---
+- name: Enable firewall
+  become: true
+  systemd:
+    name: firewalld
+    enabled: yes
+    state: started
+
+
+- name: Configure required ports in internal zone
+  become: true
+  firewalld:
+    zone: internal
+    port: "{{ item }}"
+    immediate: true
+    permanent: true
+    state: enabled
+  with_items:
+   - 6443/tcp   # kubernetes API server
+   - 22623/tcp  # Machine config server
+   - 443/tcp    # https traffic
+   - 80/tcp     # http traffic
+
+- name: Add rule for vrrp protocole
+  become: true
+  firewalld:
+    zone: internal
+    rich_rule: 'rule protocol value="vrrp" accept'
+    immediate: true
+    permanent: true
+    state: enabled
+
+- name: Configure internal zone
+  become: true
+  firewalld:
+    zone: internal
+    interface: "{{ loadbalancers.backend.interface }}"
+    state: enabled
+
+- name: Configure required ports in external zone
+  become: true
+  firewalld:
+    zone: external
+    port: "{{ item }}"
+    immediate: true
+    permanent: true
+    state: enabled
+  with_items:
+   - 6443/tcp
+   - 443/tcp
+   - 80/tcp
+
+- name: Add rule for vrrp protocole
+  become: true
+  firewalld:
+    zone: external
+    rich_rule: 'rule protocol value="vrrp" accept'
+    immediate: true
+    permanent: true
+    state: enabled
+
+- name: Configure External zone
+  become: true
+  firewalld:
+    zone: external
+    interface: "{{ loadbalancers.frontend.interface }}"
+    state: enabled
+
+# address issue with multihomed servers
+- name: Configure rp_filter
+  become: true
+  sysctl:
+    name: net.ipv4.conf.all.rp_filter
+    value: "2"
+    state: present
+    sysctl_set: yes
+
 
 - name: Install Pkgs needed by seboolean module
   become: true
@@ -35,14 +111,11 @@
 - name: Install haproxy
   become: true
   package:
-    name: haproxy
+    name: "{{ packages }}"
     state: present
-
-- name: Disable firewall for now
-  become: true
-  systemd:
-    name: firewalld
-    state: stopped
+  vars:
+    packages:
+      - haproxy
 
 - name: Update haproxy.cfg
   become: true
@@ -51,3 +124,56 @@
      dest: /etc/haproxy/haproxy.cfg
   notify: Restart haproxy
 
+- name: start haproxy
+  become: true
+  systemd:
+    name: haproxy
+    enabled: yes
+    state: started
+
+- block: # if loadbalancers is defined, we want floating IPs
+
+  - name: Allow binding on remote IPs
+    become: true
+    sysctl:
+      name: net.ipv4.ip_nonlocal_bind
+      value: "1"
+      state: present
+      sysctl_set: yes
+
+  - name: Allow routing
+    become: true
+    sysctl:
+      name: net.ipv4.ip_forward
+      value: "1"
+      state: present
+      sysctl_set: yes
+
+  - name: Install keepalived and required tools
+    become: true
+    package:
+      name: "{{ packages }}"
+      state: present
+    vars:
+      packages:
+        - psmisc
+        - keepalived
+
+  - name: Update keepalived.conf
+    become: true
+    template:
+      src: keepalived.conf.j2
+      dest: /etc/keepalived/keepalived.conf
+      owner: root
+      group: root
+      mode: 0644
+    notify: Enable and start keepalived service
+
+  - name: start keepalived
+    become: true
+    systemd:
+      name: keepalived
+      enabled: yes
+      state: started
+
+  when: loadbalancers.backend.vip is defined or loadbalancers.frontend.vip is defined

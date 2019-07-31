@@ -5,13 +5,12 @@ localhost ansible_connection=local ansible_python_interpreter=/usr/bin/python3 #
 hpe-infra1    ansible_host=10.15.152.5   esxi_host=
 hpe-infra2    ansible_host=10.15.152.6   esxi_host=
 
-
 [loadbalancer]
-hpe-lb1       ansible_host=10.15.152.7   esxi_host= frontend_ipaddr=10.10.174.165/22 
-#hpe-lb2      ansible_host=10.15.152.8   esxi_host= frontend_ipaddr=10.10.174.166/22
+hpe-lb1       ansible_host=10.15.152.7   esxi_host= frontend_ipaddr=10.15.156.7/24 api_int_preferred=
+hpe-lb2       ansible_host=10.15.152.8   esxi_host= frontend_ipaddr=10.15.156.8/24 api_preferred=
 
 [nfs]
-hpe-nfs       ansible_host=10.15.152.9   esxi_host=
+hpe-nfs       ansible_host=10.15.152.10   esxi_host=
 
 [bootstrap]
 hpe-bootstrap ansible_host=10.15.152.209 esxi_host=

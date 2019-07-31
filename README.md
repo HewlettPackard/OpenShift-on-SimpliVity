@@ -1,9 +1,43 @@
 Version Installed:** OCP 4.1 released!
 
-
-
-[TOC]
-
+- [Introduction](#introduction)
+- [HA Considerations](#ha-considerations)
+  - [The Control Plane (master nodes)](#the-control-plane-master-nodes)
+  - [DNS and DHCP services](#dns-and-dhcp-services)
+  - [Load Balancers](#load-balancers)
+- [Deployment of the control plane](#deployment-of-the-control-plane)
+  - [Requirements](#requirements)
+  - [Prepare an Ansible box](#prepare-an-ansible-box)
+  - [Prepare a RHEL template](#prepare-a-rhel-template)
+  - [Prepare an OVA file (optional)](#prepare-an-ova-file-optional)
+  - [Download Required Files](#download-required-files)
+  - [Clone the repo](#clone-the-repo)
+  - [Prepare to run the playbooks](#prepare-to-run-the-playbooks)
+    - [Configure the playbooks](#configure-the-playbooks)
+    - [Create your inventory](#create-your-inventory)
+    - [About Load Balancers](#about-load-balancers)
+      - [Managed Load Balancers with HA](#managed-load-balancers-with-ha)
+      - [Managed Load Balancers, no HA](#managed-load-balancers-no-ha)
+      - [Unmanaged Load Balancers](#unmanaged-load-balancers)
+  - [Deploy the Control Plane](#deploy-the-control-plane)
+  - [Monitoring the progresses](#monitoring-the-progresses)
+  - [Persistent Storage](#persistent-storage)
+- [Customization](#customization)
+  - [LDAP Integration](#ldap-integration)
+    - [Requirements](#requirements-1)
+    - [Preparation Steps](#preparation-steps)
+    - [Running the playbook](#running-the-playbook)
+    - [Verification](#verification)
+  - [LDAP Integration, synchronizing groups](#ldap-integration-synchronizing-groups)
+    - [Create the sync configuration file](#create-the-sync-configuration-file)
+    - [Synchronize](#synchronize)
+    - [Verifications](#verifications)
+    - [More information](#more-information)
+  - [Adding a cluster Administrator](#adding-a-cluster-administrator)
+- [Appendix: variable files](#appendix-variable-files)
+- [Appendix: Inventory](#appendix-inventory)
+- [Appendix: Environment](#appendix-environment)
+- [Appendix: LDAP Integration](#appendix-ldap-sample-ldap-cr-yml)
 
 
 # Introduction 
@@ -39,13 +73,13 @@ where `<clustername>` is the name of your cluster as specified by `group_vars/al
 
 ## Load Balancers
 
-HA for the load balancers is provided by mean of floating IP addresses for each load balancer. The load balancers are hosted on the VMs which are members of the inventory group called `[loadbalancer]`. An anti-affinity rule is created for these virtual machines with the name:
+In the case of managed load balancers, HA for the two load balancers (internal API and external API) is provided by mean of floating IP addresses managed by keepalived.  The load balancers are hosted on two VMs which are members of the inventory group called `[loadbalancer]`. An anti-affinity rule is created for these virtual machines with the name:
 
 `<clustername>-loadbalancer-anti-affinity-rule-001`
 
 where `<clustername>` is the name of your cluster as specified by `group_vars/all/vars.yml:cluster_name`
 
-
+The possible deployment options for the load balancers are described later in this document.
 
 # Deployment of the control plane
 
@@ -54,7 +88,7 @@ The playbook `site.yml` is used to deploy the control plane, and zero or more Co
 1. run the OpenShift Installer to generate the ignition data required by the OpenShift virtual machines
 2. provision the virtual machines listed in the Ansible inventory and powers up the non-OCP virtual machines
 3. configure the services running on the non-OCP virtual machines including DNS and DHCP services.
-4. configure anti affinity DRS rules for the virtual machines (master VMs should run on separate hosts as well as the infrastructure (DNS and DHCP services) and load balancer VMs (for now only one LB supported)
+4. configure anti affinity DRS rules for the virtual machines (master VMs should run on separate hosts as well as the infrastructure (DNS and DHCP services) and load balancer VMs
 5. power up the OCP virtual machines
 6. wait for the OpenShift API to come up on the master nodes
 7. create a PV from an NFS share and a PVC for use by the OpenShift Registry
@@ -83,24 +117,24 @@ The playbooks creates OCP VMs according to the following sizing:
 
 The playbooks also creates the following VMs which provide additional infrastructure services required by OCP
 
-| VM                | OS and Sizing | Comments                                                     |
-| :---------------- | :------------ | :----------------------------------------------------------- |
-| 1 x load balancer | Red Hat 7.6   | Only one LB allowed with this version of the playbooks       |
-| 1 or 2 x Infra    | Red Hat 7.6   | One or two VMs providing DHCP and DNS services on the internal VLAN. Configure two for HA purposes |
-| 1 x NFS           | Red Hat 7.6   | one NFS VM to hold the OpenShift Registry images             |
+| VM                            | OS and Sizing | Comments                                                     |
+| :---------------------------- | :------------ | :----------------------------------------------------------- |
+| 0, 1 or 2  x load balancer(s) | Red Hat 7.6   | The playbooks can deploy one or two virtual machines (two for redundancy purposes) if you don't have an external load balancer. |
+| 1 or 2 x Infra                | Red Hat 7.6   | One or two VMs providing DHCP and DNS services on the internal VLAN. Configure two for HA purposes |
+| 1 x NFS                       | Red Hat 7.6   | one NFS VM to hold the OpenShift Registry images             |
 
 ## Prepare an Ansible box
 
-- I use Fedora 29 and Ansible 2.8 (**REQUIRED**) (dnf update probably necessary)
-- My Ansible box is directly connected to the proxy-free VLAN (I don’t know if this is important or not, I don't think so)
-- the playbooks work from a non privileged account. It will make your life easier if you work from an account named **core** because: 
+- We use Fedora 29 and Ansible 2.8 (**REQUIRED**) (dnf update probably necessary)
+- The Ansible box is directly connected to the proxy-free VLAN.
+- The playbooks work from a non-privileged account. It will make your life easier if you work from an account named **core** because: 
   - RH CoreOS builtin account is '**core'**
-  - a user with the same name as the user who runs the playbooks on the Ansible box is created on non CoreOS VMs
-  - Populate the variable **group_vars/vars/vault.yml:vault.ssh_key** with the default public key of the user who will run the playbooks (~/.ssh/id_rsa.pub)
-- Make sure the user who runs the playbooks can sudo without a password on the Ansible box
+  - a user with the same name as the user who runs the playbooks on the Ansible box is created on non-CoreOS VMs
+  - Populate the variable **group_vars/all/vault.yml:vault.ssh_key** with the default public key of the user who will run the playbooks (~/.ssh/id_rsa.pub)
+- Make sure the user who runs the playbooks can `sudo` without a password on the Ansible box itself.
   - to be completed (see Linux doc, sudo)
 
-## **Prepare a RHEL template**
+## Prepare a RHEL template
 
 The load balancer(s) and the infrastructure nodes are cloned from a RHEL7 template. You need to create this template. Use the following specs:
 
@@ -152,7 +186,7 @@ Once the installation is finished, log in the VM (root account) and perform the 
 
 Finally, make sure the name of this template matches the variable `group_vars/all/vars.yml:infra_template`.
 
-## **Prepare an OVA file (optional)**
+## Prepare an OVA file (optional)
 
 It is possible to deploy the `infra_template` from an OVA. To create the OVA proceed as indicated below:
 
@@ -164,7 +198,7 @@ It is possible to deploy the `infra_template` from an OVA. To create the OVA pro
 
 note: If a template with the name specified by `group_vars/all/vars.yml:infra_template` is found in the vCenter Datacenter, the OVA file will not be deployed and the existing template will be used to deploy non-CoreOS VMS. If the template is not found, the OVA file is deployed and the template is given the name documented by `infra_template`.
 
-## **Download Required Files**
+## Download Required Files
 
 You need to copy a number of files to the Ansible box. We need the Linux installer, the Linux client and the Red Hat CoreOS OVA. The exact file names reflect the version of the release. At the time of writing, the latest version available for the OpenShift installer and the client tools was 4.1.4, and 4.1.0 for the Red Hat CoreOS VMware template. The ultimate reference for downloading required files is [here](https://cloud.redhat.com/openshift/install/vsphere/user-provisioned).
 
@@ -184,7 +218,7 @@ If the account you use on the Ansible box does not have a default SSH keypair, c
 
 More info on variables later.
 
-## **Clone the repo**
+## Clone the repo
 
 From the Ansible box (user core)
 
@@ -192,7 +226,7 @@ From the Ansible box (user core)
 git clone https://github.com/HewlettPackard/OpenShift-on-SimpliVity.git
 ```
 
-## **Prepare to run the playbooks**
+## Prepare to run the playbooks
 
 ### Configure the playbooks
 
@@ -215,15 +249,127 @@ Make a copy of the file `hosts.sample` to  - say - `hosts`. This will be your in
 
 - Configure one or two machines in the `[infrastructure]` group. Configure two VMs if you want HA. Configure only one if you don't need HA.
 
-- Only configure one machine in the `[loadbalancer]` group. Future rev will implement 2 load balancers and virtual IPs.
-
 - Load balancers need to have two IP addresses. One on the internal network designated by  `group_vars/all/vars.yml:vm_portgroup` and specified with the `ansible_host` variable. A second address for the frontend network designated by the variable `frontend_ipaddr` in the inventory. `frontend_ipaddr` should be specified in CIDR notation (for example 10.10.174.165/22).
 
+More information regarding load balancers is provided in the next paragraph.
+
+### About Load Balancers
+
+#### Managed Load Balancers with HA
+
+You can configure 2 virtual machines in the inventory group named `[loadbalancer]`.  The two virtual machines are connected to two networks, an external network, also called the frontend network, and an internal network also called the backend network. Both VMs are eligible for hosting two floating IP addresses (FIPs), one for external access to the OCP API and a second for internal access to the OCP API.  The first IP binds to the external network and the second to the internal network. 
+
+**note:** the internal network is the one which connects all the OCP VMs together (this is the network that the variable `group_vars/vars/all.yml:vm_portgroup` designates). The external network is the one designated by the variable `group_vars/all/vars.yml:frontend_vm_portgroup`. 
+
+The floating IP addresses are managed with `keepalived` using the VRRP protocol. These IP addresses and additional settings are configured using the variable `group_vars/all/vars.yml:loadbalancers`.
+
+In the Ansible inventory, each VM can specify the following variables:
+
+- `api_int_preferred`: The VM specified with this variable will be the preferred VM for hosting the internal VIP for the OCP API,
+- `api_preferred`: The VM specified with this variable will be the preferred VM for hosting the external VIP for the OCP API
+
+For example, in the inventory below, the VM named `hpe-lb1` will host the internal FIP whereas `hpe-lb2` will host the external FIP. If one of these two VMs fails, the FIPs are migrated to the surviving VM.
+
+```
+[loadbalancer]
+hpe-lb1 ansible_host=10.15.152.7 frontend_ipaddr=10.15.156.7/24 api_int_preferred= ...
+hpe-lb2 ansible_host=10.15.152.8 frontend_ipaddr=10.15.156.8/24 api_preferred= ...
+
+```
+
+**note**: You need to enter an equal sign after `api_int_preferred` and `api_preferred`.
+
+The corresponding variables in `group_vars/all/vars.yml` look like the snippet below. 
+
+```
+frontend_vm_portgroup: 'extVLAN2968' # Name of the portgroup / external network
+frontend_gateway: '10.15.156.1'      # gateway for the external network
+loadbalancers:
+  apps:
+    vip: 10.15.156.9/24
+  backend:
+    vip: 10.15.152.9/24
+    interface: ens192
+    vrrp_router_id: 51
+  frontend:
+    vip: 10.15.156.9/24
+    interface: ens224
+    vrrp_router_id: 51
+
+```
+
+**note**: The names of the interfaces are OS dependent and depend on how the VMs are built.  If you are using the playbooks of this repository and deploy Red Hat Enterprise 7.6 you should not have to change these names.
+
+The figure below illustrates such a deployment
+
+![1564477304454](pics/haproxy_ha_deployment)
+
+#### Managed Load Balancers, no HA
+
+If you don't want HA (for demo purposes for example), you can configure a single VM in the `[loadbalancer]` group and you can delete the `vip` properties from the `loadbalancers` datastructure. 
+
+Here is a snippet of an Ansible inventory which specifies a unique VM in the `[loadbalancer]` group.
+
+```
+[loadbalancer]
+hpe-lb1 ansible_host=10.15.152.7 frontend_ipaddr=10.15.156.7/24  ...
+```
+
+The `loadbalancers` datastructure does not specify any FIP as shown below. No FIP is used and the IP addresses of this VM will be use for the OCP API. In this example, the external endpoint for the OCP api will point to 10.15.156.7 and the internal endpoint will point to 10.15.152.7)
+
+```
+frontend_vm_portgroup: 'extVLAN2968'  # Name of the portgroup / external network
+frontend_gateway: '10.15.156.1'       # gateway for the external network
+loadbalancers:
+  apps:
+  backend:
+    interface: ens192
+  frontend:
+    interface: ens224
+
+```
+
+The figure below illustrates such a deployment:
+
+![1564476406796](pics/haproxy_no_ha)
+
+#### Unmanaged Load Balancers
+
+You may use your own load balancing solution by NOT configuring any VM in the `[loadbalancer]` group and by documenting the datastructure `loadbalancers` in `group_vars/all/vars.yml`.
+
+`Note`: that these unmanaged load balancers should be configured as explained in the OpenShift 4.1 installation documentation.
+
+In the example Ansible inventory below, the `[loadbalancer]` group is left empty.
+
+```
+[loadbalancer]
+# hpe-lb1 ansible_host=10.15.152.7 frontend_ipaddr=10.15.156.7/24 api_int_preferred= ...
+# hpe-lb2 ansible_host=10.15.152.8 frontend_ipaddr=10.15.156.8/24 api_preferred= ...
+
+```
+
+sample `group_vars/all/vars.yml` (snippet)
+
+```
+frontend_vm_portgroup: 'extVLAN2968'  
+frontend_gateway: '10.15.156.1'       
+loadbalancers:
+  apps:
+    vip: 10.15.156.9/24
+  backend:
+    vip: 10.15.152.9/24
+    interface: ens192   # unused if external load balancer
+    vrrp_router_id: 51  # unused if external load balancer
+  frontend:
+    vip: 10.15.156.9/24
+    interface: ens224   # unused if external load balancer
+    vrrp_router_id: 51  # unused if external load balancer
+
+```
+
+**note**: Do not delete the `[loadbalancer]`  group from the inventory but leave it empty if you want to use existing external load balancers. 
 
 
-### About Persistent Storage
-
-By default the OpenShift installer configures a default storage class which uses the vSphere Cloud Provider. This provider does not support the [ReadWriteMany](https://docs.openshift.com/container-platform/4.1/installing/installing_vsphere/installing-vsphere.html#installation-registry-storage-config_installing-vsphere) access mode which is required by the Image Registry. For this reason, the `site.yml` playbook deploys an NFS virtual machine which exports a number of NFS shares. The Image Registry service will use one of these. The number of shares that the playbooks creates can be customized using the variable `group_vars/all/vars.yml/num_nfs_shares`. Only one share is required by the Image Registry service. Use vSphere volumes in your apps if you don't need ReadWriteMany access mode
 
 ## Deploy the Control Plane
 
@@ -236,11 +382,11 @@ cd ~/OpenShift-on-SimpliVity
 ansible-playbook –i hosts site.yml
 ```
 
-Depending on your hardware and the load, it takes approximately 30mns for the playbook to finish successfully. 
+Depending on your hardware and the load, it takes approximately 30mns for the playbook to finish its work.
 
 ## Monitoring the progresses
 
-The playbooks that powers on the OCP machines monitors port 22 for the non OCP VMs and port 22623 to assess the successful “ignition” of the OpenShift cluster.
+The playbooks that powers on the OCP machines monitors port 22 for the non-OCP VMs and port 22623 to assess the successful “ignition” of the OpenShift cluster.
 
 You can monitor the progress of the ignition process in several places:
 
@@ -264,13 +410,9 @@ You can monitor the progress of the ignition process in several places:
 
 ## Persistent Storage
 
-The OpenShift Image Registry is configured to use a kubernetes Persistent Volume backed by an NFS Share to store the images. Everything is configured by the playbooks.
+By default the OpenShift installer configures a default storage class which uses the vSphere Cloud Provider. This provider does not support the [ReadWriteMany](https://docs.openshift.com/container-platform/4.1/installing/installing_vsphere/installing-vsphere.html#installation-registry-storage-config_installing-vsphere) access mode which is required by the Image Registry. For this reason, the `site.yml` playbook deploys an NFS virtual machine which exports a number of NFS shares. The Image Registry service will use one of these. The number of shares that the playbooks creates can be customized using the variable `group_vars/all/vars.yml/num_nfs_shares`. Only one share is required by the Image Registry service. Use vSphere volumes in your apps if you don't need `ReadWriteMany` access mode
 
-A default Storage Class is also configured that leverages the vSphere Cloud Provider (VCP). It supports dynamic volume provisioning.
 
-**Note**: the reason why the Registry does not use a vSphere volume is that because VCP does not support the ReadWriteMany access mode .
-
- 
 
 # Customization
 
@@ -547,11 +689,11 @@ all keys here are properties of the dictionary called **vault.**
 | ssh_key                 | 'yourSSHpublickeyhere' | see the about [pull secret and ssh key](https://confluence.simplivt.local/display/PE/Installing+OCP+4.1+released+version#InstallingOCP4.1releasedversion-pullsecret) |
 | ldap_bind_user_password | 'BindPassword'         | The password of the Bind DN user when integrating with an LDAP Directory |
 
-# **Appendix: Inventory**
+# Appendix: Inventory
 
 The file https://github.com/HewlettPackard/OpenShift-on-SimpliVity/blob/master/hosts.sample contains an example inventory. The IP used in this inventory are inline with the settings documented in the group_vars/all/vars.yml.sample (dhcp_subnet and gateway)
 
-# **Appendix: Environment**
+# Appendix: Environment
 
 The environment consists of a 4-node SimpliVity cluster running the latest OmniStack bits at the time of testing
 
@@ -560,9 +702,9 @@ The environment consists of a 4-node SimpliVity cluster running the latest OmniS
 - ESXi 6.7 EP 05 10764712
 - vCenter 6.7U1b (build 11726888)
 
-# 
+#  Appendix: LDAP sample ldap_cr.yml
 
-# <a id="ldap_cr_yml"></a>Appendix: LDAP sample ldap_cr.yml
+<a id="ldap_cr_yml"></a>
 
 This appendix describes the sample `ldap_cr.yml`  shipped with this repository and explains it. Remember that this file will not work in your environment so you will have to edit it.  The example was using Active Directory as the directory service.
 
