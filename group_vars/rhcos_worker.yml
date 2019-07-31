@@ -2,8 +2,8 @@ cpus: '4'                                               # Number of vCPUs
 ram: '16384'                                            # RAM size in MBs
 disk1_size: '120'                                       # Disk size in GBs
 folder: "{{ cluster_name }}"                            # Where the VM will be stored
-template: "{{ worker_template }}"                       # Override the default CoreOS template
-ova_path: "{{ worker_ova_path }}"                       # Name of the OVA used to import the template
+template: "{{ rhcos_worker_template }}"                 # Override the default CoreOS template
+ova_path: "{{ rhcos_worker_ova_path }}"                 # Name of the OVA used to import the template
 ignition_file: '{{ install_dir }}/worker.ign'           # location of the ignition data
 initial_port_check: 22                                  # This is the SSH port
 initial_port_check_timeout: 10                          # Seconds waiting for port 22 to be open
