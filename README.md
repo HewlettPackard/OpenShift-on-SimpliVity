@@ -20,7 +20,6 @@ Version Installed:** OCP 4.1 released!
       - [Managed Load Balancers, no HA](#managed-load-balancers-no-ha)
       - [Unmanaged Load Balancers](#unmanaged-load-balancers)
   - [Deploy the Control Plane](#deploy-the-control-plane)
-  - [Monitoring the progresses](#monitoring-the-progresses)
   - [Persistent Storage](#persistent-storage)
 - [Customization](#customization)
   - [LDAP Integration](#ldap-integration)
@@ -37,6 +36,7 @@ Version Installed:** OCP 4.1 released!
 - [Appendix: variable files](#appendix-variable-files)
 - [Appendix: Inventory](#appendix-inventory)
 - [Appendix: Environment](#appendix-environment)
+- [Appendix: Monitoring the Deployment](#appendix-monitoring-the-deployment)
 - [Appendix: LDAP Integration](#appendix-ldap-sample-ldap-cr-yml)
 
 
@@ -382,31 +382,7 @@ cd ~/OpenShift-on-SimpliVity
 ansible-playbook –i hosts site.yml
 ```
 
-Depending on your hardware and the load, it takes approximately 30mns for the playbook to finish its work.
-
-## Monitoring the progresses
-
-The playbooks that powers on the OCP machines monitors port 22 for the non-OCP VMs and port 22623 to assess the successful “ignition” of the OpenShift cluster.
-
-You can monitor the progress of the ignition process in several places:
-
-- After powering on the OCP VMs, the playbook repeatedly polls specific ports on the OCP machines and displays a line per retry for each machine being polled so that you know that it is not stuck.  To be specific, the playbook first polls ports 22 on all OCP machines, then when all OCP machines have their port 22 up and running, it polls ports 22 and 22623 depending on the machine role.
-
-  **Note:** In my environment, the playbook finishes at 70 / 60 retries remaining.
-
-- You should see the `openshift-api-server` and the `machine-config-server` endpoints available on the bootstrap machine. Use the Load Balancer stats screen to check this out (url [http://your‑lb-ip-address:9000](http://yourlb-ip-address:9000/))
-
-- SSH to the bootstrap VM and run the following command:
-
-  `journalctl -b -f -u bootkube.service`
-
-  When something is wrong, the bootstrap VM waits endlessly for the etcd cluster to come online. The documentation gives a few hints on how to troubleshoot ignition.
-
-- Several minutes after all the VMS have been powered on (you don’t have anything to do), the `bootkube.service` service completes successfully. You can view this using the same `journalctl` command as in the previous step from the bootstrap VM.
-
-- It may take a while before all the endpoints are up in the Load Balancer Stats screen. The `site.yml` playbook finishes when all these endpoints are successfully polled. Note that the `openshift-api-server` and `machine-config-server` endpoints for the bootstrap machine are down. This is expected,
-
-- typical elapsed time for the `site.yml` playbook to finish is 30mns.
+Depending on your hardware and the load, it takes approximately 30mns for the playbook to finish its work. The following appendix explains how you can monitor the progresses of the deployment if you are impatient.
 
 ## Persistent Storage
 
@@ -701,6 +677,30 @@ The environment consists of a 4-node SimpliVity cluster running the latest OmniS
 - OmniStack 3.7.8.232 (PSI16)
 - ESXi 6.7 EP 05 10764712
 - vCenter 6.7U1b (build 11726888)
+
+# Appendix: Monitoring the deployment
+
+The playbooks that powers on the OCP machines monitors port 22 for the non-OCP VMs and port 22623 to assess the successful “ignition” of the OpenShift cluster.
+
+You can monitor the progress of the ignition process in several places:
+
+- After powering on the OCP VMs, the playbook repeatedly polls specific ports on the OCP machines and displays a line per retry for each machine being polled so that you know that it is not stuck.  To be specific, the playbook first polls ports 22 on all OCP machines, then when all OCP machines have their port 22 up and running, it polls ports 22 and 22623 depending on the machine role.
+
+  **Note:** In my environment, the playbook finishes at 70 / 60 retries remaining.
+
+- You should see the `openshift-api-server` and the `machine-config-server` endpoints available on the bootstrap machine. Use the Load Balancer stats screen to check this out (url [http://your‑internal-lb-ip-address:9000](http://yourlb-ip-address:9000/))
+
+- SSH to the bootstrap VM and run the following command:
+
+  `journalctl -b -f -u bootkube.service`
+
+  When something is wrong, the bootstrap VM waits endlessly for the etcd cluster to come online. The documentation gives a few hints on how to troubleshoot ignition.
+
+- Several minutes after all the VMS have been powered on (you don’t have anything to do), the `bootkube.service` service completes successfully. You can view this using the same `journalctl` command as in the previous step from the bootstrap VM.
+
+- It may take a while before all the endpoints are up in the Load Balancer Stats screen. The `site.yml` playbook finishes when all these endpoints are successfully polled. Note that the `openshift-api-server` and `machine-config-server` endpoints for the bootstrap machine are down. This is expected,
+
+- typical elapsed time for the `site.yml` playbook to finish is 30mns.
 
 #  Appendix: LDAP sample ldap_cr.yml
 
