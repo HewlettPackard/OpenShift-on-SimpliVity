@@ -1,14 +1,16 @@
-cpus: '2'                                               # Number of vCPUs
-ram: '4096'                                             # RAM size in MBs
-disk1_size: '60'                                        # Disk size in Gbs
-folder: "{{ infra_folder }}"                            # Where the VM will be stored
-template: "{{ infra_template }}"                        # Override the default CoreOS template
+cpus: '4'                                               # Number of vCPUs
+ram: '16384'                                            # RAM size in MBs
+disk1_size: '120'                                       # Disk size in GBs
+folder: "{{ cluster_name }}"                            # Where the VM will be stored
+template: "{{ infra_template }}"                        # Override the default template
 ova_path: "{{ infra_ova_path }}"                        # Name of the OVA used to import the template
 
 #
 # with cloud-init
 #
 customvalues: 
+  - key: disk.EnableUUID
+    value: "TRUE"
   - key: guestinfo.metadata
     value: "{{ cloud_init_metadata_data }}"
   - key: guestinfo.metadata.encoding

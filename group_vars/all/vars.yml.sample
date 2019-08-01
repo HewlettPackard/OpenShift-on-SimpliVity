@@ -81,4 +81,4 @@ number_of_nfs_shares: 5                                         # The image regi
 # LDAP integration
 #
 ldap_bind_user_dn: "cn=adreader,cn=Users,dc=am2,dc=cloudra,dc=local"       # DN of the user you use to bind with the LDAP service
-ldap_bind_user_password: "{{ vault.ldap_bind_user_password }}"             # password for the user above, the real password is encrypted in the vaul file
+ldap_bind_user_password: "{{ vault.ldap_bind_user_password }}"             # password for the user above, the real password is encrypted in the vault file
