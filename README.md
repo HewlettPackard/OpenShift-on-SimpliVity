@@ -33,11 +33,11 @@ Version Installed:** OCP 4.1
     + [Verifications](#verifications)
     + [More information](#more-information)
   * [Adding a cluster Administrator](#adding-a-cluster-administrator)
-- [Appendix: variable files](#appendix--variable-files)
-- [Appendix: Inventory](#appendix--inventory)
-- [Appendix: Environment](#appendix--environment)
-- [Appendix: Monitoring the deployment](#appendix--monitoring-the-deployment)
-- [Appendix: LDAP sample ldap_cr.yml](#appendix--ldap-sample-ldap-cryml)
+- [Appendix: variable files](#appendix-variable-files)
+- [Appendix: Inventory](#appendix-inventory)
+- [Appendix: Environment](#appendix-environment)
+- [Appendix: Monitoring the deployment](#appendix-monitoring-the-deployment)
+- [Appendix: LDAP sample ldap_cr.yml](#appendix-ldap-sample-ldap-cryml)
 
 
 
