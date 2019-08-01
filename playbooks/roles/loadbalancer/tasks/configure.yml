@@ -35,6 +35,7 @@
    - 22623/tcp  # Machine config server
    - 443/tcp    # https traffic
    - 80/tcp     # http traffic
+   - 9000/tcp   # HAProxy stats
 
 - name: Add rule for vrrp protocole
   become: true
