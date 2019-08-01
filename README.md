@@ -382,7 +382,7 @@ cd ~/OpenShift-on-SimpliVity
 ansible-playbook –i hosts site.yml
 ```
 
-Depending on your hardware and the load, it takes approximately 30mns for the playbook to finish its work. The following appendix explains how you can monitor the progresses of the deployment if you are impatient.
+Depending on your hardware and the load, it takes approximately 30mns for the playbook to finish its work. Refer to  this  [appendix](#appendix-monitoring-the-deployment) if you want to monitor the progresses of the deployment.
 
 ## Persistent Storage
 
