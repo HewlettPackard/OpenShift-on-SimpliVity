@@ -1,0 +1,6 @@
+#
+# Variables used by OpenShift-Ansible Playbooks
+#
+openshift_kubeconfig_path: '{{ install_dir }}/auth/kubeconfig'
+openshift_pull_secret_path: '{{ ocp_repo_directory }}/pull_secret.txt'
+ansible_become: yes

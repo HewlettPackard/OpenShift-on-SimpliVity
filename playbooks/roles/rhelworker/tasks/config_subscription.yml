@@ -1,0 +1,80 @@
+###
+# Copyright (2017) Hewlett Packard Enterprise Development LP
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# You may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+### 
+---
+- name: Register system using Red Hat Org ID and Activation Key
+  become: true
+  redhat_subscription:
+    state: present
+    org_id: '{{ rhn_orgid }}'
+    activationkey: '{{ rhn_key }}'
+    auto_attach: yes
+    force_register: yes
+  when:
+    - rhn_orgid is defined and rhn_orgid != ''
+    - rhn_key is defined and rhn_key != ''
+
+- name: Register system using Red Hat Username and Password
+  become: true
+  redhat_subscription:
+    state: present
+    username: '{{ rhn_user }}'
+    password: '{{ rhn_pass }}'
+    auto_attach: yes
+    force_register: yes
+  when:
+    - rhn_user is defined and rhn_user != ''
+    - rhn_pass is defined and rhn_pass != ''
+
+- name: Disable all repositories except those needed for OpenShift
+  become: true
+  rhsm_repository:
+    name:
+      - rhel-7-server-rpms
+      - rhel-7-server-extras-rpms
+      - rhel-7-server-ose-4.1-rpms
+    purge: True
+
+- name: Identify OpenShift Repository
+  become: true
+  shell: |
+    subscription-manager list --available --matches '*OpenShift*' | grep 'Pool ID:' | head -1 | awk '{ print $NF }'
+  register: ocp_poolid
+
+- name: Attach OpenShift Container Platform Pool ID using OrgID
+  become: true
+  redhat_subscription:
+    state: present
+    org_id: '{{ rhn_orgid }}'
+    activationkey: '{{ rhn_key }}'
+    pool_ids:
+      - '{{ ocp_poolid.stdout }}'
+  when: 
+    - rhn_orgid is defined and rhn_orgid != ''
+    - rhn_key is defined and rhn_key != ''
+    - ocp_poolid.stdout != ''
+
+- name: Attach OpenShift Container Platform Pool ID using Username
+  become: true
+  redhat_subscription:
+    state: present
+    username: '{{ rhn_user }}'
+    password: '{{ rhn_pass }}'
+    pool_ids:
+      - '{{ ocp_poolid.stdout }}'
+  when: 
+    - rhn_user is defined and rhn_user != ''
+    - rhn_pass is defined and rhn_pass != ''
+    - ocp_poolid.stdout != ''

@@ -64,7 +64,7 @@ loadbalancers:
   apps:
     vip: 10.15.156.9/24                                         # if omitted, defaults to the internal IP address of the first load balancer (ie no VIP, no HA)
   backend:
-    vip: 10.15.152.9/24                                         # if ommited, defaults to the internal IP address of the first laod balancer (ie no VIP, no HA)
+    vip: 10.15.152.9/24                                         # if ommited, defaults to the internal IP address of the first load balancer (ie no VIP, no HA)
     interface: ens192                                           # name of the internal/backend interface (ens192 if using RHEL7.6 and using these playbooks)
     vrrp_router_id: 51
   frontend:
@@ -82,3 +82,9 @@ number_of_nfs_shares: 5                                         # The image regi
 #
 ldap_bind_user_dn: "cn=adreader,cn=Users,dc=am2,dc=cloudra,dc=local"       # DN of the user you use to bind with the LDAP service
 ldap_bind_user_password: "{{ vault.ldap_bind_user_password }}"             # password for the user above, the real password is encrypted in the vault file
+
+#
+# OpenShift-Ansible Playbook
+#
+local_home: "{{ lookup('env','HOME') }}"                        # Local user's HOME directory
+ocp_repo_directory: "{{ local_home }}/openshift-ansible"        # OpenShift-Ansible repository directory

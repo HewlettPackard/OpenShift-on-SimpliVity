@@ -4,3 +4,5 @@
 - import_playbook: playbooks/configure.yml
 - import_playbook: playbooks/poweron.yml
 - import_playbook: playbooks/finish.yml
+- import_playbook: playbooks/prepare_rhelworker.yml
+- import_playbook: ../openshift-ansible/playbooks/scaleup.yml
