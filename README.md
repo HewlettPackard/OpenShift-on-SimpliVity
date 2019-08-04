@@ -11,9 +11,9 @@ Version Installed:** OCP 4.1 released!
   - [Prepare a RHEL template](#prepare-a-rhel-template)
   - [Prepare an OVA file (optional)](#prepare-an-ova-file-optional)
   - [Download Required Files](#download-required-files)
-  - [Clone the repo](#clone-the-repo)
+  - [Clone the OpenShift-on-SimpliVity and OpenShift-Ansible repositories](#clone-the-OpenShift-on-SimpliVity-and-OpenShift-Ansible-repositories)
   - [Prepare to run the playbooks](#prepare-to-run-the-playbooks)
-    - [Configure the playbooks](#configure-the-playbooks)
+    - [Configure the OpenShift-on-SimpliVity playbooks](#configure-the-OpenShift-on-SimpliVity-playbooks)
     - [Create your inventory](#create-your-inventory)
     - [About Load Balancers](#about-load-balancers)
       - [Managed Load Balancers with HA](#managed-load-balancers-with-ha)
@@ -218,17 +218,18 @@ If the account you use on the Ansible box does not have a default SSH keypair, c
 
 More info on variables later.
 
-## Clone the repo
+## Clone the OpenShift-on-SimpliVity and OpenShift-Ansible repositories
 
 From the Ansible box (user core)
 
 ```
 git clone https://github.com/HewlettPackard/OpenShift-on-SimpliVity.git
+git clone --branch release-4.1 https://github.com/openshift/openshift-ansible.git
 ```
 
 ## Prepare to run the playbooks
 
-### Configure the playbooks
+### Configure the OpenShift-on-SimpliVity playbooks
 
 - Copy `group_vars/all/vars.yml.sample` to `group_vars/all/vars.yml`
 - Edit `group_vars/all/vars.yml` to match your environment. More details can be found [here](#vars_yml)
