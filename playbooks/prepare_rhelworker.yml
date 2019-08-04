@@ -19,13 +19,13 @@
 # Play: Register RHEL worker with subscription-manager
 #
 #######################################################################
-#- name: Register system with Red Hat Subscription Manager
-#  hosts: rhel_worker
-#  gather_facts: false
-#  roles:
-#  - role: rhelworker
-#    vars:
-#      config_subscription: yes
+- name: Register system with Red Hat Subscription Manager
+  hosts: rhel_worker
+  gather_facts: false
+  roles:
+  - role: rhelworker
+    vars:
+      config_subscription: yes
 
 #######################################################################
 #
