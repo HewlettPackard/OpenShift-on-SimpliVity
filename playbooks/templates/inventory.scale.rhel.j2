@@ -1,0 +1,25 @@
+[all:vars]
+# SSH user, this user should allow ssh based auth without requiring a
+# password. If using ssh key based auth, then the key should be managed by an
+# ssh agent.
+ansible_user=core
+openshift_pull_secret_path = "{{ install_dir }}/pull-secret.txt"
+openshift_node_bootstrap_server =  https://api-int.{{ cluster_name }}.{{ domain_name }}:22623
+
+# If ansible_user is not root, ansible_become must be set to yes and the
+# user must be configured for passwordless sudo
+ansible_become=yes
+
+###############################################################################
+# Required configuration variables                                            #
+###############################################################################
+openshift_kubeconfig_path="{{ install_dir }}/auth/kubeconfig"
+
+# For running RHEL worker upgrades
+[workers]
+
+# For running RHEL worker scaleup
+[new_workers]
+{% for host in new_rhel_workers %}
+{{ host }}
+{% endfor %}

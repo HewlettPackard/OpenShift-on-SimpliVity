@@ -1,0 +1,195 @@
+###
+# Copyright (2017) Hewlett Packard Enterprise Development LP
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# You may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+### 
+---
+#######################################################################
+#
+# Play: Verify that the cluster is running and that there are new 
+#       worker nodes configured in the inventory that are not currently 
+#       running in the cluster. Fail the play if that is not the case.
+#
+#######################################################################
+- name: Build inventory of new RHCOS and RHEL worker nodes
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+  - name: Retrieve the list of nodes in the cluster
+    k8s_facts:
+      kind: Node
+    register: res
+    environment:
+      KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+
+  - name: Build the lists of new worker nodes
+    set_fact:
+      new_rhel_workers: "{{ groups.rhel_worker | difference (res.resources | json_query(query)) }}"
+      new_rhcos_workers: "{{ groups.rhcos_worker | difference (res.resources | json_query(query)) }}"
+    vars:
+      query: '[].metadata.name'
+
+  - fail:
+      msg: "No new RHCOS or RHEL worker nodes found in the inventory file"
+    when: 
+    - new_rhel_workers | count == 0
+    - new_rhcos_workers | count == 0
+
+#######################################################################
+#
+# Play: Prepare VMware Environment
+#
+#######################################################################
+- name: Prepare VMWare Environment
+  hosts: localhost
+  gather_facts: false
+
+  pre_tasks:
+  - debug: var=new_rhel_workers
+  - debug: var=new_rhcos_workers
+
+  roles:
+  - role: prepare
+    vars:
+      provision: yes
+
+#######################################################################
+#
+# Play: Provision RHCOS worker nodes
+#
+#######################################################################
+- name: Provision RHCOS worker nodes
+  hosts: rhcos_worker
+  gather_facts: false
+  roles:
+  - role: vspherevm
+    vars:
+      provision: yes
+
+#######################################################################
+#
+# Play: Prepare cloud init data
+#
+#######################################################################
+- name: Prepare cloud-init data 
+  hosts: rhel_worker
+  gather_facts: false 
+  roles:
+  - role: cloudinit
+    vars:
+      provision: yes
+
+#######################################################################
+#
+# Play: Provision RHEL worker nodes
+#
+#######################################################################
+- name: Provision RHEL worker nodes
+  hosts: rhel_worker
+  gather_facts: false
+  roles:
+  - role: vspherevm
+    vars:
+      provision: yes
+
+#######################################################################
+#
+# Play: Configure Infrastructure Nodes
+#
+#######################################################################
+- name: Configure Infrastructure Nodes
+  hosts: infrastructure
+  roles:
+  - role: disks
+  - role: dns
+    vars: 
+      configure: yes
+  - role: dhcp
+    vars: 
+      configure: yes
+
+#######################################################################
+#
+# Play: Power on new worker nodes
+#
+#######################################################################
+- name: Power on new worker nodes
+  hosts: worker
+  gather_facts: false
+
+  roles:
+  - role: vspherevm
+    vars:
+      poweron: yes
+
+  tasks:
+  - name: "Waiting for OpenShift API server port on master nodes. (~10 to 15mns)"
+    delegate_to: localhost
+    wait_for:
+      port: "{{ initial_port_check }}"
+      host: "{{ hostvars[inventory_hostname].ansible_host }}"
+      state: started
+      timeout: 10
+    failed_when: false
+    register: res
+    delay: 10
+    retries:  "{{ ( 1 + initial_port_check_timeout | int / 10 ) | int }}"
+    until: res.state is defined and res.state == "started"
+
+  - name: "Final verification to fail the playbook is port 22 is not open"
+    delegate_to: localhost
+    wait_for:
+      port: "{{ initial_port_check }}"
+      host: "{{ hostvars[inventory_hostname].ansible_host }}"
+      state: started
+      timeout: 10
+
+#######################################################################
+#
+# Play: Configure RHEL Worker nodes
+#
+#######################################################################
+- name: Configure RHEL Workers
+  hosts: rhel_worker
+  gather_facts: false
+  roles:
+  - role: disks
+    vars:
+      configure: yes
+  - role: rhelworker
+    vars:
+      configure: yes
+
+#######################################################################
+#
+# Play: Create the customized inventory file for the openshift-ansible 
+#       scale-up playbook.
+#
+#######################################################################
+
+- name: Build openshift-inventory
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+
+  - name: Build custom inventory file for new worker nodes 
+    template:
+      src: inventory.scale.rhel.j2
+      dest: "{{ ocp_repo_directory }}/inventory.scale"
+
+  - name: Create pull-secret.txt file
+    copy:
+      content: "{{ pull_secret }}"
+      dest: "{{ install_dir }}/pull-secret.txt"
