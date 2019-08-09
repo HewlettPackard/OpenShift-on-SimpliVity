@@ -25,7 +25,6 @@ hpe-worker0   ansible_host=10.15.152.213 esxi_host=
 hpe-worker1   ansible_host=10.15.152.214 esxi_host=
 
 [rhel_worker]
-# to be done
 
 [worker:children]
 rhcos_worker

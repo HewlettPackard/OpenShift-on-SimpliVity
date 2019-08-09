@@ -70,16 +70,3 @@
   - role: nfs
     vars:
       configure: yes
-
-#######################################################################
-#
-# Play: Configure RHEL Worker nodes
-#
-#######################################################################
-- name: Configure RHEL Workers
-  hosts: rhel_worker
-  gather_facts: false
-  roles:
-  - role: disks
-    vars:
-      configure: yes
