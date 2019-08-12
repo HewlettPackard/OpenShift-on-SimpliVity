@@ -5,6 +5,10 @@
 # Default value
 #
 ignition_file: /dev/null
+#
+# Rely on DRS to place VMs, if DRS is not enabled, this variable can be specified in the inventory file for each host
+#
+esxi_host: ''
 
 #
 # api and api_int point to loadbalancer[0] IP if loadbalancers is not defined
