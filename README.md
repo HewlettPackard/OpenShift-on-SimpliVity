@@ -682,7 +682,7 @@ all keys here are properties of the dictionary called **vault.**
 | :---------------------- | :--------------------- | :----------------------------------------------------------- |
 | vcenter_password        | 'yourpassword'         | this is the password for the vCenter admin user specified with vcenter_username in group_vars/all/vars.yml |
 | simplivity_password     | 'yourpassword'         | typically the same as above                                  |
-| rhn_org_id              | '012345678             | Organization ID in the Red Hat customer portal. Use together with the activation key below, in which case you don;t need to document `rhn_user` and `rhn_pass`. You **must** have an SpenShift subscription that the key can attach to. |
+| rhn_org_id              | '012345678             | Organization ID in the Red Hat customer portal. Use together with the activation key below, in which case you don;t need to document `rhn_user` and `rhn_pass`. You **must** have an OpenShift subscription that the key can attach to. |
 | rhn_key                 | 'ActivationKey'        | An existing activation key in the organization specified above. |
 | rhn_user                | 'RHPortalUsername'     | If you are not using activation keys, you may specify your username for the Red Hat Portal. You should not define `rhn_orgid` nor `rhn_key` above (or set them to '' ). The specified user should have an OpenShift subscription. |
 | rhn_pass                | 'RHPortalPassword'     | Password for the user specified with `rhn_user`.             |
