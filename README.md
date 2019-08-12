@@ -37,12 +37,12 @@ Version Installed:** OCP 4.1
   * [Scaling with RH CoreOS Worker nodes](#scaling-with-rh-coreos-worker-nodes)
   * [Scaling with RH Enterprise Linux 7.6 worker nodes](#scaling-with-rh-enterprise-linux-76-worker-nodes)
 - [Appendices](#appendices)
-  * [group_vars/all/vars.yml](#group-vars-all-vars-yml)
-  * [group_vars/all/vault.yml](#group-vars-all-vault-yml)
+  * [group_vars/all/vars.yml](#group-vars-all-vars.yml)
+  * [group_vars/all/vault.yml](#group-vars-all-vault.yml)
   * [Inventory](#inventory)
   * [Environment](#environment)
   * [Monitoring the deployment](#monitoring-the-deployment)
-  * [LDAP sample ldap_cr.yml](#ldap-sample-ldap-cr-yml)
+  * [LDAP sample ldap_cr.yml](#ldap-sample-ldap-cr.yml)
 
 # Introduction 
 
