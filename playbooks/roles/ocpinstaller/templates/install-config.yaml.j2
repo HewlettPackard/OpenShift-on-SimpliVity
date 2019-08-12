@@ -3,7 +3,7 @@ baseDomain: {{ domain_name }}
 compute:
 - name: worker
   hyperthreading: Enabled
-  replicas: {{ groups.worker | count }}
+  replicas: 0
 controlPlane:
   name: master
   hyperthreading: Enabled

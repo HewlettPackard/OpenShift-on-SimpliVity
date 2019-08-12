@@ -33,13 +33,16 @@ Version Installed:** OCP 4.1
     + [Verifications](#verifications)
     + [More information](#more-information)
   * [Adding a cluster Administrator](#adding-a-cluster-administrator)
-- [Appendix: variable files](#appendix-variable-files)
-- [Appendix: Inventory](#appendix-inventory)
-- [Appendix: Environment](#appendix-environment)
-- [Appendix: Monitoring the deployment](#appendix-monitoring-the-deployment)
-- [Appendix: LDAP sample ldap_cr.yml](#appendix-ldap-sample-ldap-cryml)
-
-
+- [Scaling the resource plane](#scaling-the-resource-plane)
+  * [Scaling with RH CoreOS Worker nodes](#scaling-with-rh-coreos-worker-nodes)
+  * [Scaling with RH Enterprise Linux 7.6 worker nodes](#scaling-with-rh-enterprise-linux-76-worker-nodes)
+- [Appendices](#appendices)
+  * [group_vars/all/vars.yml](#group_varsallvarsyml)
+  * [group_vars/all/vault.yml](#group_varsallvaultyml)
+  * [Inventory](#inventory)
+  * [Environment](#environment)
+  * [Monitoring the deployment](#monitoring-the-deployment)
+  * [LDAP sample ldap_cr.yml](#ldap-sample-ldap_cryml)
 
 # Introduction 
 
@@ -126,7 +129,7 @@ The playbooks also creates the following VMs which provide additional infrastruc
 
 ## Prepare an Ansible box
 
-- We use Fedora 29 and Ansible 2.8 (**REQUIRED**) (dnf update probably necessary)
+- We use Fedora 29 and Ansible 2.8.1 (**REQUIRED**) (dnf update probably necessary)
 - The Ansible box is directly connected to the proxy-free VLAN.
 - The playbooks work from a non-privileged account. It will make your life easier if you work from an account named **core** because: 
   - RH CoreOS builtin account is '**core'**
@@ -640,17 +643,38 @@ oc login -u ocpadmin
 oc delete secret kubeadmin -n kube-system
 ```
 
-# Appendix: variable files
+# Scaling the resource plane
 
-## <a id="vars_yml"></a>group_vars/all/vars.yml
+Once you have deployed the OpenShift cluster, you can add additional worker nodes. 
 
-The file group_vars/all/vars.sample contains the list of ansible variables that you should configure to match your environment.  This file comes with plenty of comments 
+## Scaling with RH CoreOS Worker nodes
+
+instructions to come
+
+## Scaling with RH Enterprise Linux 7.6 worker nodes
+
+instructions to come, in short:
+
+(
+
+- clone the openshift-ansible repository
+- make sure you have an RHEL OVA file. Place the file somwehere on your ansible box and edit group_vars/rhel_worker.yml (variables `template` and `ova_path`)
+- populate the Ansible inventory (group `[rhel_worker]`)
+- run playbooks/scale.yml
+- cd to the directory where you cloned oneshift-ansible repository
+- run playbooks/scaleup.yml
+
+)
+
+# Appendices 
+
+## group_vars/all/vars.yml
+
+The file `group_vars/all/vars.sample` contains the list of Ansible variables that you should configure to match your environment.  This file comes with plenty of comments 
 
 https://github.com/HewlettPackard/OpenShift-on-SimpliVity/blob/master/group_vars/all/vars.yml.sample
 
-
-
-## <a id="vault-yml"></a>group_vars/all/vault.yml
+## group_vars/all/vault.yml
 
 all keys here are properties of the dictionary called **vault.**
 
@@ -658,19 +682,19 @@ all keys here are properties of the dictionary called **vault.**
 | :---------------------- | :--------------------- | :----------------------------------------------------------- |
 | vcenter_password        | 'yourpassword'         | this is the password for the vCenter admin user specified with vcenter_username in group_vars/all/vars.yml |
 | simplivity_password     | 'yourpassword'         | typically the same as above                                  |
-| rhn_org_id              | 'not used for now'     |                                                              |
-| rhn_key                 | 'not used for now'     |                                                              |
-| rhn_user                | 'not used for now'     |                                                              |
-| rhn_pass                | 'not used for now'     |                                                              |
+| rhn_org_id              | '012345678             | Organization ID in the Red Hat customer portal. Use together with the activation key below, in which case you don;t need to document `rhn_user` and `rhn_pass`. You **must** have an OpenShift subscription that the key can attach to. |
+| rhn_key                 | 'ActivationKey'        | An existing activation key in the organization specified above. |
+| rhn_user                | 'RHPortalUsername'     | If you are not using activation keys, you may specify your username for the Red Hat Portal. You should not define `rhn_orgid` nor `rhn_key` above (or set them to '' ). The specified user should have an OpenShift subscription. |
+| rhn_pass                | 'RHPortalPassword'     | Password for the user specified with `rhn_user`.             |
 | pull_secret             | 'yourpullsecrethere'   | see the about [pull secret and ssh key](https://confluence.simplivt.local/display/PE/Installing+OCP+4.1+released+version#InstallingOCP4.1releasedversion-pullsecret) |
 | ssh_key                 | 'yourSSHpublickeyhere' | see the about [pull secret and ssh key](https://confluence.simplivt.local/display/PE/Installing+OCP+4.1+released+version#InstallingOCP4.1releasedversion-pullsecret) |
 | ldap_bind_user_password | 'BindPassword'         | The password of the Bind DN user when integrating with an LDAP Directory |
 
-# Appendix: Inventory
+## Inventory
 
 The file https://github.com/HewlettPackard/OpenShift-on-SimpliVity/blob/master/hosts.sample contains an example inventory. The IP used in this inventory are inline with the settings documented in the group_vars/all/vars.yml.sample (dhcp_subnet and gateway)
 
-# Appendix: Environment
+## Environment
 
 The environment consists of a 4-node SimpliVity cluster running the latest OmniStack bits at the time of testing
 
@@ -679,7 +703,7 @@ The environment consists of a 4-node SimpliVity cluster running the latest OmniS
 - ESXi 6.7 EP 05 10764712
 - vCenter 6.7U1b (build 11726888)
 
-# Appendix: Monitoring the deployment
+## Monitoring the deployment
 
 The playbooks that powers on the OCP machines monitors port 22 for the non-OCP VMs and port 22623 to assess the successful “ignition” of the OpenShift cluster.
 
@@ -703,9 +727,7 @@ You can monitor the progress of the ignition process in several places:
 
 - typical elapsed time for the `site.yml` playbook to finish is 30mns.
 
-#  Appendix: LDAP sample ldap_cr.yml
-
-<a id="ldap_cr_yml"></a>
+##  LDAP sample ldap_cr.yml
 
 This appendix describes the sample `ldap_cr.yml`  shipped with this repository and explains it. Remember that this file will not work in your environment so you will have to edit it.  The example was using Active Directory as the directory service.
 
