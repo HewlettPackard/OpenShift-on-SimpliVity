@@ -645,11 +645,26 @@ oc delete secret kubeadmin -n kube-system
 
 # Scaling the resource plane
 
+Once you have deployed the OpenShift cluster, you can add additional worker nodes. 
+
 ## Scaling with RH CoreOS Worker nodes
+
+instructions to come
 
 ## Scaling with RH Enterprise Linux 7.6 worker nodes
 
+instructions to come, in short:
 
+(
+
+- clone the openshift-ansible repository
+- make sure you have an RHEL OVA file. Place the file somwehere on your ansible box and edit group_vars/rhel_worker.yml (variables `template` and `ova_path`)
+- populate the Ansible inventory (group `[rhel_worker]`)
+- run playbooks/scale.yml
+- cd to the directory where you cloned oneshift-ansible repository
+- run playbooks/scaleup.yml
+
+)
 
 # Appendices 
 
