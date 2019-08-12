@@ -23,7 +23,7 @@ vcenter_hostname: vcentergen10.am2.cloudra.local                # name of your v
 vcenter_username: Administrator@vsphere.local                   # Admin user for your vCenter environment
 vcenter_password: '{{ vault.vcenter_password }}'                # Password for the above
 vcenter_validate_certs: false                                   # true not implemented/tested
-vcenter_cluster: Docker                                         # Name of your SimpliVity Cluster (must exist)
+vcenter_cluster: OCP                                            # Name of your SimpliVity Cluster (must exist)
 datacenter: DEVOPS                                              # Name of your DATACENTER (must exist)
 datastores: ['Openshift_HPE']                                   # where to store the VMs (datastore must exist)
 cluster_name: hpe                                               # Name of the K8S Cluster. A VM folder with the same name is created if needed
