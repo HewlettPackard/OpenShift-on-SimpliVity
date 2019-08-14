@@ -31,10 +31,10 @@
     pool_ids:
       - '{{ ocp_poolid.stdout }}'
   when:
+    - ansible_distribution == 'RedHat'
     - vault.rhn_orgid is defined and vault.rhn_orgid != ''
     - vault.rhn_key is defined and vault.rhn_key != ''
     - ocp_poolid.stdout != ''
-    - ansible_distribution == 'RedHat'
 
 - name: Attach OpenShift Container Platform Pool ID using Username
   become: true
@@ -45,10 +45,10 @@
     pool_ids:
       - '{{ ocp_poolid.stdout }}'
   when:
+    - ansible_distribution == 'RedHat'
     - vault.rhn_user is defined and vault.rhn_user != ''
     - vault.rhn_pass is defined and vault.rhn_pass != ''
     - ocp_poolid.stdout != ''
-    - ansible_distribution == 'RedHat'
 
 - name: Disable all repositories except those needed for OpenShift
   become: true
