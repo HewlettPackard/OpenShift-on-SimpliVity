@@ -2,8 +2,8 @@ cpus: '4'                                               # Number of vCPUs
 ram: '16384'                                            # RAM size in MBs
 disk1_size: '120'                                       # Disk size in GBs
 folder: "{{ cluster_name }}"                            # Where the VM will be stored
-template: dfo-rhel760                                   # Override the default template
-ova_path: /kits/dfo-rhel760.ova                         # Name of the OVA used to import the template
+template: hpe-rhel760                                   # Override the default template
+ova_path: /kits/hpe-rhel760.ova                         # Name of the OVA used to import the template
 
 #
 # with cloud-init
