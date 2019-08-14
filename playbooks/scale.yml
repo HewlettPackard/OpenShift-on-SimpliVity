@@ -42,7 +42,7 @@
 
   - fail:
       msg: "No new RHCOS or RHEL worker nodes found in the inventory file"
-    when: 
+    when:
     - new_rhel_workers | count == 0
     - new_rhcos_workers | count == 0
 
@@ -110,13 +110,17 @@
 #######################################################################
 - name: Configure Infrastructure Nodes
   hosts: infrastructure
+  gather_facts: yes
   roles:
   - role: disks
+  - role: rhn
+    vars:
+      configure: yes
   - role: dns
-    vars: 
+    vars:
       configure: yes
   - role: dhcp
-    vars: 
+    vars:
       configure: yes
 
 #######################################################################
@@ -127,7 +131,6 @@
 - name: Power on new worker nodes
   hosts: worker
   gather_facts: false
-
   roles:
   - role: vspherevm
     vars:
@@ -162,9 +165,10 @@
 #######################################################################
 - name: Configure RHEL Workers
   hosts: rhel_worker
-  gather_facts: false
+  gather_facts: yes
   roles:
   - role: disks
+  - role: rhn
     vars:
       configure: yes
   - role: rhelworker

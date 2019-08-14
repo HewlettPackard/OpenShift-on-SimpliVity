@@ -47,15 +47,6 @@ infra_template: hpe-rhel760                                     # VMware templat
 ssh_key: '{{ vault.ssh_key }}'                                  # ssh public key for all VMs, strictly speaking this is public info and should not be in the vault
 
 #
-# not used for now
-#
-simplivity_password: '{{ vault.simplivity_password }}'          # not used for now
-rhn_orgid: '{{ vault.rhn_orgid }}'                              # not used for now
-rhn_key: '{{ vault.rhn_key }}'                                  # not used for now
-rhn_user: '{{ vault.rhn_user }}'                                # not used for now
-rhn_pass: '{{ vault.rhn_pass }}'                                # not used for now
-
-#
 # Load balancer
 #
 frontend_vm_portgroup: 'extVLAN2968'                            # Name of the portgroup connected to the access/public network

@@ -1,0 +1,85 @@
+###
+# Copyright (2017) Hewlett Packard Enterprise Development LP
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# You may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+###
+---
+- name: Register system using Red Hat Org ID and Activation Key
+  become: yes
+  redhat_subscription:
+    state: present
+    org_id: '{{ vault.rhn_orgid }}'
+    activationkey: '{{ vault.rhn_key }}'
+    auto_attach: yes
+    force_register: yes
+  register: sub_result
+  failed_when:
+    - sub_result.rc is defined and sub_result.rc > 1
+    - sub_result.stderr is defined and "'Bad Request' in sub_result.stderr"
+  when:
+    - vault.rhn_orgid is defined and vault.rhn_orgid != ''
+    - vault.rhn_key is defined and vault.rhn_key != ''
+    - ansible_distribution == 'RedHat'
+
+- name: Register system using Red Hat Username and Password
+  become: yes
+  redhat_subscription:
+    state: present
+    username: '{{ vault.rhn_user }}'
+    password: '{{ vault.rhn_pass }}'
+    auto_attach: yes
+    force_register: yes
+  register: sub_result
+  failed_when:
+    - sub_result.rc is defined and sub_result.rc > 1
+    - sub_result.stderr is defined and "'Bad Request' in sub_result.stderr"
+  when:
+    - vault.rhn_user is defined and vault.rhn_user != ''
+    - vault.rhn_pass is defined and vault.rhn_pass != ''
+    - ansible_distribution == 'RedHat'
+
+- name: Identify Red Hat Enterprise Linux Server Repository
+  become: true
+  shell: |
+    subscription-manager list --available --matches 'Red Hat Enterprise Linux Server' | grep 'Pool ID:' | awk 'FNR <= 1' | awk '{ print $NF }'
+  register: rhel_poolid
+  when:
+    - ansible_distribution == 'RedHat'
+
+- name: Attach Red Hat Enterprise Linux Server Pool ID using OrgID
+  become: true
+  redhat_subscription:
+    state: present
+    org_id: '{{ vault.rhn_orgid }}'
+    activationkey: '{{ vault.rhn_key }}'
+    pool_ids:
+      - '{{ rhel_poolid.stdout }}'
+  when:
+    - vault.rhn_orgid is defined and vault.rhn_orgid != ''
+    - vault.rhn_key is defined and vault.rhn_key != ''
+    - rhel_poolid.stdout != ''
+    - ansible_distribution == 'RedHat'
+
+- name: Attach Red Hat Enterprise Linux Server Pool ID using Username
+  become: true
+  redhat_subscription:
+    state: present
+    username: '{{ vault.rhn_user }}'
+    password: '{{ vault.rhn_pass }}'
+    pool_ids:
+      - '{{ rhel_poolid.stdout }}'
+  when:
+    - vault.rhn_user is defined and vault.rhn_user != ''
+    - vault.rhn_pass is defined and vault.rhn_pass != ''
+    - rhel_poolid.stdout != ''
+    - ansible_distribution == 'RedHat'

@@ -14,25 +14,9 @@
 # limitations under the License.
 ### 
 ---
-- hosts: all:!local:!rhcos
-  name: Un-register any Red Hat systems from the Red Hat Network
-  gather_facts: yes
-  roles:
-  - role: rhn
-    vars:
-      decommission: yes
- 
-- hosts: all:!local
-  name: Delete VMs and Templates
-  gather_facts: false
-  roles:
-  - role: vspherevm
-    vars:
-      decommission: yes
- 
-- hosts: localhost
-  name: Delete Local artifact
-  roles:
-  - role: prepare
-    vars:
-      decommission: yes
+- name: Unregister system from the Red Hat Network
+  become: yes
+  redhat_subscription:
+    state: absent
+  when:
+    - ansible_distribution == 'RedHat'
