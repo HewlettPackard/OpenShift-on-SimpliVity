@@ -19,4 +19,5 @@
   redhat_subscription:
     state: absent
   when:
+    - ansible_distribution is defined
     - ansible_distribution == 'RedHat'

@@ -17,6 +17,7 @@
 - hosts: all:!local:!rhcos
   name: Un-register any Red Hat systems from the Red Hat Network
   gather_facts: yes
+  ignore_unreachable: yes
   roles:
   - role: rhn
     vars:
