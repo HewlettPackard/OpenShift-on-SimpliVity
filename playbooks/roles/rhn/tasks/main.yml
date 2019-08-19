@@ -12,28 +12,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-### 
+###
 ---
-- hosts: all:!local:!rhcos
-  name: Un-register any Red Hat systems from the Red Hat Network
-  gather_facts: yes
-  ignore_unreachable: yes
-  roles:
-  - role: rhn
-    vars:
-      decommission: yes
- 
-- hosts: all:!local
-  name: Delete VMs and Templates
-  gather_facts: false
-  roles:
-  - role: vspherevm
-    vars:
-      decommission: yes
- 
-- hosts: localhost
-  name: Delete Local artifact
-  roles:
-  - role: prepare
-    vars:
-      decommission: yes
+
+- include_tasks: configure.yml
+  when: configure is defined
+
+- include_tasks: decommission.yml
+  when: decommission is defined

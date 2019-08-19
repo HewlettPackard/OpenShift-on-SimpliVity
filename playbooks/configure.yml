@@ -34,13 +34,17 @@
 #######################################################################
 - name: Configure Infrastructure Nodes
   hosts: infrastructure
+  gather_facts: yes
   roles:
   - role: disks
+  - role: rhn
+    vars:
+      configure: yes
   - role: dns
-    vars: 
+    vars:
       configure: yes
   - role: dhcp
-    vars: 
+    vars:
       configure: yes
 
 #######################################################################
@@ -50,9 +54,12 @@
 #######################################################################
 - name: Configure Load Balancer
   hosts: loadbalancer
-  gather_facts: false
+  gather_facts: yes
   roles:
   - role: disks
+  - role: rhn
+    vars:
+      configure: yes
   - role: loadbalancer
     vars:
       configure: yes
@@ -64,9 +71,12 @@
 #######################################################################
 - name: Configure NFS
   hosts: nfs
-  gather_facts: false
+  gather_facts: yes
   roles:
   - role: disks
+  - role: rhn
+    vars:
+      configure: yes
   - role: nfs
     vars:
       configure: yes
