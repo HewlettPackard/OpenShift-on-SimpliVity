@@ -22,6 +22,7 @@ domain_name: hpecloud.org                                       # you can keep t
 vcenter_hostname: vcentergen10.am2.cloudra.local                # name of your vCenter server
 vcenter_username: Administrator@vsphere.local                   # Admin user for your vCenter environment
 vcenter_password: '{{ vault.vcenter_password }}'                # Password for the above
+simplivity_password: '{{ vault.simplivity_password }}'          # not used for now
 vcenter_validate_certs: false                                   # true not implemented/tested
 vcenter_cluster: OCP                                            # Name of your SimpliVity Cluster (must exist)
 datacenter: DEVOPS                                              # Name of your DATACENTER (must exist)
@@ -45,6 +46,14 @@ infra_template: hpe-rhel760                                     # VMware templat
 # passwordless login
 #
 ssh_key: '{{ vault.ssh_key }}'                                  # ssh public key for all VMs, strictly speaking this is public info and should not be in the vault
+
+#
+# Red Hat Network credentials
+#
+rhn_orgid: '{{ vault.rhn_orgid }}'                              # Organization ID associated with RHN account
+rhn_key: '{{ vault.rhn_key }}'                                  # Account Key associated with RHN account
+rhn_user: '{{ vault.rhn_user }}'                                # Username associated with RHN account
+rhn_pass: '{{ vault.rhn_pass }}'                                # Password associated with RHN account
 
 #
 # Load balancer

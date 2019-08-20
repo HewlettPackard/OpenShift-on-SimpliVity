@@ -26,28 +26,28 @@
   become: true
   redhat_subscription:
     state: present
-    org_id: '{{ vault.rhn_orgid }}'
-    activationkey: '{{ vault.rhn_key }}'
+    org_id: '{{ rhn_orgid }}'
+    activationkey: '{{ rhn_key }}'
     pool_ids:
       - '{{ ocp_poolid.stdout }}'
   when:
     - ansible_distribution == 'RedHat'
-    - vault.rhn_orgid is defined and vault.rhn_orgid != ''
-    - vault.rhn_key is defined and vault.rhn_key != ''
+    - rhn_orgid is defined and rhn_orgid != ''
+    - rhn_key is defined and rhn_key != ''
     - ocp_poolid.stdout != ''
 
 - name: Attach OpenShift Container Platform Pool ID using Username
   become: true
   redhat_subscription:
     state: present
-    username: '{{ vault.rhn_user }}'
-    password: '{{ vault.rhn_pass }}'
+    username: '{{ rhn_user }}'
+    password: '{{ rhn_pass }}'
     pool_ids:
       - '{{ ocp_poolid.stdout }}'
   when:
     - ansible_distribution == 'RedHat'
-    - vault.rhn_user is defined and vault.rhn_user != ''
-    - vault.rhn_pass is defined and vault.rhn_pass != ''
+    - rhn_user is defined and rhn_user != ''
+    - rhn_pass is defined and rhn_pass != ''
     - ocp_poolid.stdout != ''
 
 - name: Disable all repositories except those needed for OpenShift
