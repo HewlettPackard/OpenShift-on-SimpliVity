@@ -432,7 +432,7 @@ Here is what you should do before running the playbook:
 
 1. edit the file `group_vars/all/vars.yml` and specify the bind DN you want to use to traverse the LDAP tree. For this purpose configure the variable `ldap_bind_user_dn:` The Bind Password is specified with the variable `ldap_bind_user_password`, using an indirection to follow the best practice. The actual value of this password is stored in the file `group_vars/all/vault.yml` which you should encrypt with `ansible-vault`. In the **example** below, the user `adreader` (which must exists) will be used to bind with the LDAP service. Make sure you leave the variable `ldap_bind_user_password` unchanged.
 
-   ```bind
+   ```bash
    ldap_bind_user_dn: "cn=adreader,cn=Users,dc=am2,dc=cloudra,dc=local"
    ldap_bind_user_password: "{{ vault.ldap_bind_user_password }}"
    ```
@@ -441,7 +441,7 @@ Here is what you should do before running the playbook:
 
 2. edit `group_vars/all/vault.yml` (preferably using `ansible-vault` because you want this file to be encrypted) and configure the variable `vault.ldap_bind_user_password:`  This is the password for the LDAP user you use for binding with the LDAP service.
 
-   ```bind
+   ```bash
    vault:
      ldap_bind_user_password: 'YourPasswordHere'
    ```
