@@ -110,16 +110,25 @@
 #######################################################################
 - name: Configure Infrastructure Nodes
   hosts: infrastructure
-  gather_facts: yes
+  gather_facts: false
   roles:
-  - role: disks
-  - role: rhn
-    vars:
-      configure: yes
   - role: dns
     vars:
       configure: yes
   - role: dhcp
+    vars:
+      configure: yes
+
+#######################################################################
+#
+# Play: Load Balancers
+#
+#######################################################################
+- name: Configure Load Balancer
+  hosts: loadbalancer
+  gather_facts: false
+  roles:
+  - role: loadbalancer
     vars:
       configure: yes
 

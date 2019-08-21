@@ -25,8 +25,6 @@ hpe-worker0   ansible_host=10.15.152.213
 hpe-worker1   ansible_host=10.15.152.214
 
 [rhel_worker]
-hpe-worker2   ansible_host=10.15.152.215
-hpe-worker3   ansible_host=10.15.152.216
 
 [worker:children]
 rhcos_worker
@@ -39,4 +37,4 @@ rhcos_worker
 
 [ocp:children]
 master
-rhcos_worker
+worker

@@ -20,7 +20,7 @@
 #
 #######################################################################
 - name: Deploy openshift nodes
-  hosts: ocp:bootstrap
+  hosts: ocp:bootstrap:!rhel_worker
   gather_facts: false
 
   roles:

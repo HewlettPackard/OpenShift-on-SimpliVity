@@ -31,7 +31,7 @@
         name: ldap-secret
         namespace: openshift-config
       data:
-        bindPassword: "{{ vault.ldap_bind_user_password | b64encode }}"
+        bindPassword: "{{ ldap_bind_user_password | b64encode }}"
       type: Opaque
   register: res
   environment:
