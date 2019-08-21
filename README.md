@@ -40,7 +40,7 @@ OpenShift Version Installed: OCP 4.1
   - [Scaling with Red Hat CoreOS Worker nodes](#scaling-with-red-hat-coreos-worker-nodes)
   - [Scaling with Red Hat Enterprise Linux 7.6 Worker nodes](#scaling-with-red-hat-enterprise-linux-76-worker-nodes)
 - [External routes](#external-routes)
-  - [Why it matters](#why-it-matters)
+  - [Why external routes matter](#why-external-routes-matter)
   - [Create a simple application](#create-a-simple-application)
   - [Create an Ingress object for the application](#create-an-ingress-object-for-the-application)
 - [Appendices](#appendices)
@@ -291,9 +291,8 @@ For example, in the inventory below, the VM named `hpe-lb1` will host the intern
 
 ```bash
 [loadbalancer]
-hpe-lb1 ansible_host=10.15.152.7 frontend_ipaddr=10.15.156.7/24 api_int_preferred= ...
-hpe-lb2 ansible_host=10.15.152.8 frontend_ipaddr=10.15.156.8/24 api_preferred= ...
-
+hpe-lb1 ansible_host=10.15.152.7 frontend_ipaddr=10.15.156.7/24 api_int_preferred=
+hpe-lb2 ansible_host=10.15.152.8 frontend_ipaddr=10.15.156.8/24 api_preferred=
 ```
 
 **note**: You need to enter an equal sign after `api_int_preferred` and `api_preferred`.
@@ -314,7 +313,6 @@ loadbalancers:
     vip: 10.15.156.9/24
     interface: ens224
     vrrp_router_id: 51
-
 ```
 
 **note**: The names of the interfaces are OS dependent and depend on how the VMs are built.  If you are using the playbooks of this repository and deploy Red Hat Enterprise 7.6 you should not have to change these names.
@@ -345,7 +343,6 @@ loadbalancers:
     interface: ens192
   frontend:
     interface: ens224
-
 ```
 
 The figure below illustrates such a deployment:
@@ -362,9 +359,8 @@ In the example Ansible inventory below, the `[loadbalancer]` group is left empty
 
 ```bash
 [loadbalancer]
-# hpe-lb1 ansible_host=10.15.152.7 frontend_ipaddr=10.15.156.7/24 api_int_preferred= ...
-# hpe-lb2 ansible_host=10.15.152.8 frontend_ipaddr=10.15.156.8/24 api_preferred= ...
-
+# hpe-lb1 ansible_host=10.15.152.7 frontend_ipaddr=10.15.156.7/24 api_int_preferred=
+# hpe-lb2 ansible_host=10.15.152.8 frontend_ipaddr=10.15.156.8/24 api_preferred=
 ```
 
 sample `group_vars/all/vars.yml` (snippet)
@@ -383,7 +379,6 @@ loadbalancers:
     vip: 10.15.156.9/24
     interface: ens224   # unused if external load balancer
     vrrp_router_id: 51  # unused if external load balancer
-
 ```
 
 **note**: Do not delete the `[loadbalancer]`  group from the inventory but leave it empty if you want to use existing external load balancers.
@@ -672,24 +667,24 @@ instructions to come, in short:
 
 # External routes
 
-## Why it matters
+## Why external routes matter
 
 Users of the OpenShift cloud you just deployed typically will not have access to the backend network. Rather, they will access the applications deployed on the cloud over a frontend network. This is illustrated by the figure below:
 
 ![1566376437624](pics/external_routes.png)
 
-Out of the box, built-in applications can be accessed by internal users (such as Jeff in the diagram above) via the backend network. An example of that is the Openshift console which can be found at `htts://console-openshift-console.apps.hpe.hpecloud.org` if the cluster was deployed with `domain_name: hpecloud.org` and `cluster_name: hpe`.
+Out of the box, built-in applications can be accessed by internal users (such as Jeff in the diagram above) via the backend network. An example of that is the OpenShift console which can be found at `htts://console-openshift-console.apps.hpe.hpecloud.org` assuming the cluster was deployed with `domain_name: hpecloud.org` and `cluster_name: hpe`.
 
 In this **example**, external users like Sally use the domain name `cloudra.local` to access resources and services provided by the IT organization. `hpe.cloudra.local` is a DNS zone used to manage records pertaining to this specific cluster.
 
-In order to achieve the above, the DNS that Sally is using must have the following DNS records defined:
+In order to achieve the above, the DNS resolver that Sally is using must have the following DNS records defined:
 
-- `api.hpe.cloudra.local` must resolve to the VIP of the load balancer on the frontend network. In this example, this is 10.15.156.9. This is needed if external users wants to use the OpenShift API (including the `oc` command)
-- A wildcard record must be created in the `hpe.cloudra.local` for `*.apps`. This records points to the same VIP (10.15.156.9). With this setup, names such as  `myapp.apps.hpe.cloudra.local` or`myotherapp.apps.hpe.cloudra.local` all resolve to 15.15.156.9.
+- `api.hpe.cloudra.local` must resolve to the VIP of the load balancer on the frontend network. In this example, this is 10.15.156.9. This is needed if external users want to use the OpenShift API (including the `oc` command).
+- A wildcard record must be created in the `hpe.cloudra.local` domain for `*.apps`. This record points to the same VIP (10.15.156.9). With this setup, names such as `myapp.apps.hpe.cloudra.local` or `myotherapp.apps.hpe.cloudra.local` all resolve to 10.15.156.9.
 
-**IMPORTANT:** The playbook will not configure external DNS servers for you, you need to have a DNS administrator do it for you
+**IMPORTANT:** The playbook will not configure external DNS servers for you.  The DNS administrator must configure these entries.
 
-For example in our example, the DNS maintains a zone for `hpe.cloudra.local` with the following records:
+In our above example, the DNS administrator maintains a zone for `hpe.cloudra.local` with the following records:
 
 ```bash
 ;
@@ -699,17 +694,17 @@ api                     A   10.15.156.9
 *.apps                  A   10.15.156.9
 ```
 
-The load balancers (lb1 and lb2 in this example) are configured to forward port 80 and port 443 to all the worker nodes. Strictly speaking the load balancers should only have to forward port 80 and 443 to the worker nodes which are hosting an OpenShift router replica but the solution configures all worker nodes in case a router replica is relocated.
+The load balancers (lb1 and lb2 in this example) are configured to forward port 80 and port 443 to all the worker nodes in the OCP cluster. Strictly speaking, the load balancers should only have to forward port 80 and 443 to the worker nodes which are hosting an OpenShift router replica but the solution configures all worker nodes in case a router replica is relocated.
 
-Whenever Sally accesses <http://myapp.hpe.cloudra.local> or <https://myapp.hpe.cloudra.local>, the packets are forwarded to one of the worker nodes hosting a router replica.
+Whenever user Sally accesses <http://myapp.hpe.cloudra.local> or <https://myapp.hpe.cloudra.local>, the packets are forwarded to one of the worker nodes hosting a router replica.
 
-For the router replica to direct the packets to the correct application running inside the cluster (ie somewhere in the pool of worker nodes) an external route must be created.
+For the router replica to direct the packets to the correct application running inside the cluster (i.e. somewhere in the pool of worker nodes) an external route must be created.
 
-**Note**: The following will walk you through the process of creating a simple application and exposing it on the frontend network so that external users can access it. This does not replace the OpenShift documentation.
+**Note**: The following example will walk you through the process of creating a simple application and exposing it on the frontend network so that external users can access it. This is not meant to replace the official OpenShift documentation.
 
 ## Create a simple application
 
-There are many different ways you can use to create an application but this is not the purpose of this document to explain how applications can be deployed. In this example we use the CLI to deploy NGINX. The code snippet below should help the absolute beginners. Note that you need to authenticate yourself with the cluster first and provide credentials. You can use the `kubeadmin` user if you did not delete it or an account with enough privileges.
+There are many different ways you can create and deploy an application. That subject is outside the scope of this document. In this example we use the OpenShift CLI `oc` to deploy the NGINX application. The code snippet below should help absolute beginners getting started with deploying applications on OpenShift. Note that you need to authenticate yourself with the cluster first and provide credentials. You can use the `kubeadmin` user if you did not delete it or an account with sufficient privileges.
 
 ```bash
 $ oc login
@@ -718,19 +713,19 @@ $ oc new-project myapp
 $ oc new-app --template=openshift/nginx-example --name=myapp --param=NAME=myapp
 ```
 
-Wait for the application to be fully deployed. You can use `oc status` for this purpose.
+Wait for the application to be fully deployed. You can use `oc status` to monitor the application deployment.
 
-Once the application is deployed you should be able to browse to `http://myapp-myapp.<cluster_name>.<domain_name>` where you replace <cluster_name> and <cluster_name> with the value you specified in `group_vars/all/vars.yml` for the variables with the same names.  The example cluster was built with `cluster_name: hpe` and `domain_name: hpecloud.org`
+Once the application is fully deployed you should be able to browse to `http://myapp.apps.<cluster_name>.<domain_name>` where you replace <cluster_name> and <domain_name> with the values specified in `group_vars/all/vars.yml` for the <cluster_domain> and <domain_name> variables. The cluster in this example was deployed with `cluster_name: hpe` and `domain_name: hpecloud.org`.
 
 ![1566378966286](pics/myapp_backendnetwork)
 
-For this to work, an OpenShift route was created by the `oc new-app` command. This can be verified with `oc get all` or `oc get routes`
+In order for this to work, an OpenShift route was created by the `oc new-app` command. This can be verified with `oc get all` or `oc get routes` commands.
 
 ![1566380956583](pics/oc_get_routes_default)
 
 ## Create an Ingress object for the application
 
-If Jeff can now access our application, this is not the case for Sally because the external DNS does not resolve hpecloud.org which is only known inside the IT organization operating the cluster. Sally should access the cluster via the frontend network using application names in the form `*.apps.hpe.cloudra.local`. For this to works we need to create an OpenShift/Kubernetes object called an `Ingress`. This object will be created with the following characteristics which you should store in a temporary file.
+If user Jeff can now access our application, this is not necessarily the case for user Sally because her external DNS server does not resolve hpecloud.org which is only known inside the IT organization operating the cluster. Sally should access the cluster via the frontend network using application name in the form `*.apps.hpe.cloudra.local`. In order for this to works we need to create an OpenShift/Kubernetes object called an `Ingress` object. This object will be created with the following characteristics which are stored in a temporary file.
 
 ```bash
 apiVersion: extensions/v1beta1
@@ -749,20 +744,20 @@ spec:
         path: /
 ```
 
-**Note**: The service name is the name of the service which was created when the application was built (see screenshot above)
+**Note**: The service name is the name of the service which was created when the application was built (see screenshot above).
 
-The first command below creates the Ingress object, the second verifies that an additional route was created
+The first command below creates the Ingress object, the second verifies that an additional route was created:
 
 ```bash
-oc apply -f <ingressfileabove>
+oc apply -f <path_to_ingress_file_above>
 oc get routes
 ```
 
-In the screenshot below we verify that a new route was created (`myapp-5rxqj`) with the hostname we expect.
+In the screenshot below we verify that a new route was created (`myapp-5rxqj`) with the hostname we expect:
 
 ![1566382329251](pics/myapp_route_frontend)
 
-Sally can now reach our simple application at <https://myapp.app.hpe.cloudra.local>
+Sally can now reach our simple application at <https://myapp.apps.hpe.cloudra.local>.
 
 ![1566382512205](pics/myapp_frontend_net)
 
