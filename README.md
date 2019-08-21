@@ -676,7 +676,7 @@ hpe-worker3   ansible_host=10.15.152.216
 Then run the Ansible playbook to deploy the new worker nodes:
 
 ```bash
-$ cd OpenShift-on-SimpliVity
+$ cd ~/OpenShift-on-SimpliVity
 $ ansible-playbook -i hosts playbooks/scale.yml --vault-password-file .vault_pass
 ```
 
@@ -700,7 +700,7 @@ The output shows the original OCP master and worker nodes that were deployed as 
 
 The procedure to add RHEL7 worker nodes is slightly different from the process used to deploy RHCOS worker nodes. The `scale.yml` Ansible playbook is used as before to prepare the RHEL7 VMs. Then the `openshift-ansible` playbooks are used to configure these VMs as OCP worker nodes and join them to the cluster.
 
-The `openshift-ansible` playbooks are not owned or maintained by HPE, and the contents of these playbooks is changing rapidly as OpenShift development progresses.  HPE therefore recommands using a `specific` version of the `openshift-ansible` playbooks that have been tested and certified by HPE with this solution.
+The `openshift-ansible` playbooks are not owned or maintained by HPE, and the contents of these playbooks are changing rapidly as OpenShift development progresses.  HPE therefore recommands using a specific version of the `openshift-ansible` playbooks rather than the version of the playbooks found on the `master` branch. As of the time of this writing, the `4.1.11-201908060314` version of the playbooks have been tested and certified with this solution.
 
 The following procedure outlines the steps involved in adding RHEL7 worker nodes to the OCP cluster:
 
