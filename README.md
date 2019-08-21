@@ -36,6 +36,10 @@ Version Installed:** OCP 4.1
 - [Scaling the resource plane](#scaling-the-resource-plane)
   * [Scaling with RH CoreOS Worker nodes](#scaling-with-rh-coreos-worker-nodes)
   * [Scaling with RH Enterprise Linux 7.6 worker nodes](#scaling-with-rh-enterprise-linux-76-worker-nodes)
+- [External routes](#external-routes)
+  * [Why it matters](#why-it-matters)
+  * [Create a simple application](#create-a-simple-application)
+  * [Create an Ingress object for the application](#create-an-ingress-object-for-the-application)
 - [Appendices](#appendices)
   * [group_vars/all/vars.yml](#group_varsallvarsyml)
   * [group_vars/all/vault.yml](#group_varsallvaultyml)
@@ -658,13 +662,113 @@ instructions to come, in short:
 (
 
 - clone the openshift-ansible repository
-- make sure you have an RHEL OVA file. Place the file somwehere on your ansible box and edit group_vars/rhel_worker.yml (variables `template` and `ova_path`)
+- make sure you have an RHEL OVA file. Place the file somewhere on your ansible box and edit group_vars/rhel_worker.yml (variables `template` and `ova_path`)
 - populate the Ansible inventory (group `[rhel_worker]`)
 - run playbooks/scale.yml
 - cd to the directory where you cloned oneshift-ansible repository
 - run playbooks/scaleup.yml
 
 )
+
+# External routes
+
+## Why it matters
+
+Users of the OpenShift cloud you just deployed typically will not have access to the backend network. Rather, they will access the applications deployed on the cloud over a frontend network. This is illustrated by the figure below:
+
+![1566376437624](pics/external_routes.png)
+
+
+
+Out of the box, built-in applications can be accessed by internal users (such as Jeff in the diagram above) via the backend network. An example of that is the Openshift console which can be found at `htts://console-openshift-console.apps.hpe.hpecloud.org` if the cluster was deployed with `domain_name: hpecloud.org` and `cluster_name: hpe`.
+
+In this **example**, external users like Sally use the domain name `cloudra.local` to access resources and services provided by the IT organization. `hpe.cloudra.local` is a DNS zone used to manage records pertaining to this specific cluster. 
+
+In order to achieve the above, the DNS that Sally is using must have the following DNS records defined:
+
+- `api.hpe.cloudra.local` must resolve to the VIP of the load balancer on the frontend network. In this example, this is 10.15.156.9. This is needed if external users wants to use the OpenShift API (including the `oc` command)
+- A wildcard record must be created in the `hpe.cloudra.local` for `*.apps`. This records points to the same VIP (10.15.156.9). With this setup, names such as  `myapp.apps.hpe.cloudra.local` or`myotherapp.apps.hpe.cloudra.local` all resolve to 15.15.156.9.
+
+**IMPORTANT:** The playbook will not configure external DNS servers for you, you need to have a DNS administrator do it for you
+
+For example in our example, the DNS maintains a zone for `hpe.cloudra.local` with the following records:
+
+```
+;
+;  Zone records
+;
+api                     A   10.15.156.9
+*.apps                  A   10.15.156.9
+```
+
+The load balancers (lb1 and lb2 in this example) are configured to forward port 80 and port 443 to all the worker nodes. Strictly speaking the load balancers should only have to forward port 80 and 443 to the worker nodes which are hosting an OpenShift router replica but the solution configures all worker nodes in case a router replica is relocated. 
+
+Whenever Sally accesses http://myapp.hpe.cloudra.local or https://myapp.hpe.cloudra.local, the packets are forwarded to one of the worker nodes hosting a router replica.
+
+For the router replica to direct the packets to the correct application running inside the cluster (ie somewhere in the pool of worker nodes) an external route must be created.  
+
+**Note**: The following will walk you through the process of creating a simple application and exposing it on the frontend network so that external users can access it. This does not replace the OpenShift documentation.
+
+## Create a simple application
+
+There are many different ways you can use to create an application but this is not the purpose of this document to explain how applications can be deployed. In this example we use the CLI to deploy NGINX. The code snippet below should help the absolute beginners. Note that you need to authenticate yourself with the cluster first and provide credentials. You can use the `kubeadmin` user if you did not delete it or an account with enough privileges.
+
+```
+$ oc login
+(enter username and password)
+$ oc new-project myapp
+$ oc new-app --template=openshift/nginx-example --name=myapp --param=NAME=myapp
+```
+
+Wait for the application to be fully deployed. You can use `oc status` for this purpose.
+
+Once the application is deployed you should be able to browse to `http://myapp-myapp.<cluster_name>.<domain_name>` where you replace <cluster_name> and <cluster_name> with the value you specified in `group_vars/all/vars.yml` for the variables with the same names.  The example cluster was built with `cluster_name: hpe` and `domain_name: hpecloud.org`
+
+![1566378966286](pics/myapp_backendnetwork)
+
+For this to work, an OpenShift route was created by the `oc new-app` command. This can be verified with `oc get all` or `oc get routes`
+
+![1566380956583](pics/oc_get_routes_default)
+
+## Create an Ingress object for the application
+
+If Jeff can now access our application, this is not the case for Sally because the external DNS does not resolve hpecloud.org which is only known inside the IT organization operating the cluster. Sally should access the cluster via the frontend network using application names in the form `*.apps.hpe.cloudra.local`. For this to works we need to create an OpenShift/Kubernetes object called an `Ingress`. This object will be created with the following characteristics which you should store in a temporary file.
+
+```
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: myapp
+  namespace: myapp
+spec:
+  rules:
+  - host: myapp.apps.hpe.cloudra.local
+    http:
+      paths:
+      - backend:
+          serviceName: myapp
+          servicePort: 8080
+        path: /
+```
+
+**Note**: The service name is the name of the service which was created when the application was built (see screenshot above)
+
+The first command below creates the Ingress object, the second verifies that an additional route was created
+
+```
+$ oc apply -f <ingressfileabove>
+$ oc get routes 
+```
+
+In the screenshot below we verify that a new route was created (`myapp-5rxqj`) with the hostname we expect.
+
+![1566382329251](pics/myapp_route_frontend)
+
+Sally can now reach our simple application at https://myapp.app.hpe.cloudra.local
+
+![1566382512205](pics/myapp_frontend_net)
+
+
 
 # Appendices 
 
