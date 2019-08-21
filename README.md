@@ -747,7 +747,7 @@ $ cd ~/OpenShift-on-SimpliVity
 $ ansible-playbook -i hosts playbooks/scale.yml --vault-password-file .vault_pass
 ```
 
-- The final step of the `scale.yml` playbook creates a customized Ansible inventory file in the `openshift-ansible` directory called `inventory.scale`.  This inventory file contains a list of the newly requested RHEL7 worker nodes that were configured in the `hosts` inventory file. In the above example, the `inventory.scale` file will contain `hpe-worker2`.
+- The final step of the `scale.yml` playbook creates a customized Ansible inventory file in the `openshift-ansible` directory called `inventory.scale`.  This inventory file contains a list of the newly requested RHEL7 worker nodes that were configured in the `hosts` inventory file. In the above example, the `inventory.scale` file will contain `hpe-worker4`.
 
 - Deploy the RHEL7 worker node(s) by invoking the `playbooks/scaleup.yml` playbook in the `openshift-ansible` directory:
 
