@@ -42,8 +42,7 @@
     folder: "{{ datacenter }}/vm/{{ cluster_name }}"
     name: "{{ item }}"
   with_items:
-    - "{{ groups.bootstrap }}"
-    - "{{ groups.ocp }}"
+    - "{{ groups.rhcos }}"
   register: vms_facts
 
 - name: Create dhcp.conf 

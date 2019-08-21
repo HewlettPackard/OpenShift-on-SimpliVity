@@ -20,8 +20,3 @@
 {{ hostvars[host].ansible_host }} {{ host }}
 {% endfor %}
 {% endif %}
-{% if groups.rhel_worker is defined %}
-{% for host in groups.rhel_worker %}
-{{ hostvars[host].ansible_host }} {{ host }}
-{% endfor %}
-{% endif %}
