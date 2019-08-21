@@ -21,7 +21,7 @@ OpenShift Version Installed: OCP 4.1
     - [About Load Balancers](#about-load-balancers)
       - [Managed Load Balancers with HA](#managed-load-balancers-with-ha)
       - [Managed Load Balancers, no HA](#managed-load-balancers-no-ha)
-      - [Unmanaged Load Balancers](#unmanaged-load-balancers)
+      - [Un-managed Load Balancers](#un-managed-load-balancers)
   - [Deploy the Control Plane](#deploy-the-control-plane)
   - [Persistent Storage](#persistent-storage)
 - [Customization](#customization)
@@ -222,13 +222,13 @@ note: If a template with the name specified by `group_vars/all/vars.yml:infra_te
 You need to copy a number of files to the Ansible box. We need the Linux installer, the Linux client and the Red Hat CoreOS OVA. The exact file names reflect the version of the release. At the time of writing, the latest version available for the OpenShift installer and the client tools was 4.1.4, and 4.1.0 for the Red Hat CoreOS VMware template. The ultimate reference for downloading required files is [here](https://cloud.redhat.com/openshift/install/vsphere/user-provisioned).
 
 ```bash
-mkdir /kits
-cd /kits
-wget https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux-4.1.4.tar.gz
-wget https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-install-linux-4.1.4.tar.gz
-wget https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/4.1/latest/rhcos-4.1.0-x86_64-vmware.ova
-tar -xvf openshift-client-linux-4.1.4.tar.gz
-tar -xvf openshift-install-linux-4.1.4.tar.gz
+$ mkdir /kits
+$ cd /kits
+$ wget https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux-4.1.4.tar.gz
+$ wget https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-install-linux-4.1.4.tar.gz
+$ wget https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/4.1/latest/rhcos-4.1.0-x86_64-vmware.ova
+$ tar -xvf openshift-client-linux-4.1.4.tar.gz
+$ tar -xvf openshift-install-linux-4.1.4.tar.gz
 ```
 
 Download your pull secret from this page: <https://cloud.redhat.com/openshift/install/vsphere/user-provisioned>.  You will use your pull secret to set a value to the variable `group_vars/all/vault.yml:vault.pull_secret`
@@ -242,7 +242,7 @@ More info on variables later.
 From the Ansible box (user core)
 
 ```bash
-git clone https://github.com/HewlettPackard/OpenShift-on-SimpliVity.git
+$ git clone https://github.com/HewlettPackard/OpenShift-on-SimpliVity.git
 ```
 
 ## Prepare to run the playbooks
@@ -390,8 +390,8 @@ loadbalancers:
 Provided you clones the repository under `~/OpenShift-on-SimpliVity`, perform the following commands on your Ansible machine to deploy the OpenShift 4.1 control plane:
 
 ```bash
-cd ~/OpenShift-on-SimpliVity
-ansible-playbook –i hosts site.yml
+$ cd ~/OpenShift-on-SimpliVity
+$ ansible-playbook –i hosts site.yml --vault-password-file .vault_pass
 ```
 
 Depending on your hardware and the load, it takes approximately 30mns for the playbook to finish its work. Refer to  this  [appendix](#appendix-monitoring-the-deployment) if you want to monitor the progresses of the deployment.
@@ -443,7 +443,7 @@ Here is what you should do before running the playbook:
 
    ```bind
    vault:
-     ldap_bind_user_password: 'YourPasswordHere
+     ldap_bind_user_password: 'YourPasswordHere'
    ```
 
 3. The playbook supports secure LDAP which means you need to configure the identity provider with the CA Bundle of the LDAP server. This bundle should be exported in PEM format.  How you retrieve this CA bundle depends on your environment and is beyond the scope of this documentation. In any case, you **MUST** deposit this bundle under the name `ca.pem` in `playbooks/roles/ldap/files`. **The default bundle that comes with the repository will not work** but we leave it here for you to see which format is needed.
@@ -457,7 +457,7 @@ Here is what you should do before running the playbook:
 An example of query is shown below where we bind with the user `adreader` to query a user called `john`, the directory service being hosted by a server named `mars-adds.am2.cloudra.local`.
 
 ```bash
-# ldapsearch  -H ldaps://mars-adds.am2.cloudra.local \
+$ ldapsearch -H ldaps://mars-adds.am2.cloudra.local \
          -x -w '(redacted)' -D "cn=adreader,cn=Users,dc=am2,dc=cloudra,dc=local"  \
          -b "cn=Users,dc=am2,dc=cloudra,dc=local" \
          "(&(objectClass=person)(sAMAccountName=john))"`
@@ -476,8 +476,8 @@ You may want to use `ldapsearch` using insecure connections first (if your LDAP 
 Once you are ready with the preparation steps above, you can run the ldap.yml playbook
 
 ```bash
-cd <folder of repo>
-ansible-playbook -i hosts playbooks/ldap.yml
+$ cd ~/OpenShift-on-SimpliVity
+$ ansible-playbook -i hosts playbooks/ldap.yml
 ```
 
 ### Verification
@@ -487,7 +487,7 @@ After the playbook is finished running, try to login using the new Identity prov
 **Note**: You may have to wait a few seconds before the `authentication` cluster operator is available.
 
 ```bash
-[core@hpe-ansible]$ oc login -u ocpuser1
+$ oc login -u ocpuser1
 Authentication required for https://api.hpe.hpecloud.org:6443 (openshift)
 Username: ocpuser1
 Password:
@@ -496,12 +496,9 @@ Login successful.
 You don't have any projects. You can try to create a new project, by running
 ​
 oc new-project <projectname>
-```
 
-```bash
-[core@hpe-ansible]$ oc whoami
+$ oc whoami
 ocpuser1
-[core@hpe-ansible]$
 ```
 
 ## LDAP Integration, synchronizing groups
@@ -563,7 +560,7 @@ The last block (`ActiveDirectory`:) tells the sync tool which schema is used for
 Provided you named the configuration file `active_directory_config.yml` you can use the following command to run the synchronization
 
 ```bash
-oc adm groups sync --sync-config=active_directory_config.yml
+$ oc adm groups sync --sync-config=active_directory_config.yml
 ```
 
 The problem with the above command is that it would import all the LDAP groups in OpenShift. Actually it won't because by default, the sync command only performs a dry run. You would need to add the `--confirm` switch to the command line for the synchronization to be done.
@@ -571,7 +568,7 @@ The problem with the above command is that it would import all the LDAP groups i
 It is possible however to specify which groups you want to import. To import the `ocpadmins` group you can type the following command without the `--confirm` switch first to make sure it will import what you want.
 
 ```bash
-oc adm groups sync \
+$ oc adm groups sync \
     --sync-config=active_directory_config.yml \
     'CN=ocpadmins,CN=Users,DC=am2,DC=cloudra,DC=local'
 ```
@@ -583,7 +580,7 @@ This would output something like that where you can verify the name of the group
 If you are happy with the result, you can enter the same command with the `--confirm` switch
 
 ```bash
-oc adm groups sync \
+$ oc adm groups sync \
     --sync-config=active_directory_config.yml \
     'CN=ocpadmins,CN=Users,DC=am2,DC=cloudra,DC=local'  --confirm
 ```
@@ -591,7 +588,7 @@ oc adm groups sync \
 Use the same command to import the `ocpusers` group from LDAP
 
 ```bash
- oc adm groups sync \
+$ oc adm groups sync \
    --sync-config=active_directory_config.yml \
    'CN=ocpusers,CN=Users,DC=am2,DC=cloudra,DC=local'  --confirm
 ```
@@ -601,8 +598,8 @@ Use the same command to import the `ocpusers` group from LDAP
 You can verify that your groups are here as well as their content with the following commands: (provided you used the same group names)
 
 ```bash
-oc get group ocpadmins -o yaml
-oc get group ocpusers -o yaml
+$ oc get group ocpadmins -o yaml
+$ oc get group ocpusers -o yaml
 ```
 
 ### More information
@@ -622,24 +619,28 @@ In the remaining of this paragraph, we will continue to use our sample Active Di
 If your `install_dir`is pointing to the .ocp folder under your home directory, then you should export KUBECONFIG like this:
 
 ```bash
-export KUBECONFIG=~/.ocp/auth/kubeconfig
+$ export KUBECONFIG=~/.ocp/auth/kubeconfig
 ```
 
 Make sure you have cluster-admin privilege by login in with `kubeadmin`. The password is stored in `<install_dir>/auth/kubeadmin-password`.
 
 Login with kubeadmin, you will be prompted for the password
 
-`oc login -u kubeadmin`
+```bash
+$ oc login -u kubeadmin
+```
 
 Assign the cluster-admin role to the `ocpadmins` group
 
-`oc adm policy add-cluster-role-to-group cluster-admin ocpadmins`
+```bash
+$ oc adm policy add-cluster-role-to-group cluster-admin ocpadmins
+```
 
 Now all users in the `ocpadmins` group are cluster administrators. Red Hat recommends you disable the `kubeadmin` account. It is a good opportunity to test your new cluster admin account. In the example below, we use the `ocpadmin` account which is a member of our `ocpadmins` group.
 
 ```bash
-oc login -u ocpadmin
-oc delete secret kubeadmin -n kube-system
+$ oc login -u ocpadmin
+$ oc delete secret kubeadmin -n kube-system
 ```
 
 # Scaling the resource plane
@@ -675,8 +676,8 @@ hpe-worker3   ansible_host=10.15.152.216
 Then run the Ansible playbook to deploy the new worker nodes:
 
 ```bash
-cd OpenShift-on-SimpliVity
-ansible-playbook -i hosts playbooks/scale.yml --vault-password-file .vault_pass
+$ cd OpenShift-on-SimpliVity
+$ ansible-playbook -i hosts playbooks/scale.yml --vault-password-file .vault_pass
 ```
 
 Once the playbook completes, the newly created RHCOS worker nodes will automatically join the cluster. You can verify the nodes in the OCP cluster using the `oc get nodes` command:
@@ -697,18 +698,81 @@ The output shows the original OCP master and worker nodes that were deployed as 
 
 ## Scaling with Red Hat Enterprise Linux 7.6 Worker nodes
 
-instructions to come, in short:
+The procedure to add RHEL7 worker nodes is slightly different from the process used to deploy RHCOS worker nodes. The `scale.yml` Ansible playbook is used as before to prepare the RHEL7 VMs. Then the `openshift-ansible` playbooks are used to configure these VMs as OCP worker nodes and join them to the cluster.
 
-(
+The `openshift-ansible` playbooks are not owned or maintained by HPE, and the contents of these playbooks is changing rapidly as OpenShift development progresses.  HPE therefore recommands using a `specific` version of the `openshift-ansible` playbooks that have been tested and certified by HPE with this solution.
 
-- clone the openshift-ansible repository
-- make sure you have an RHEL OVA file. Place the file somewhere on your ansible box and edit group_vars/rhel_worker.yml (variables `template` and `ova_path`)
-- populate the Ansible inventory (group `[rhel_worker]`)
-- run playbooks/scale.yml
-- cd to the directory where you cloned oneshift-ansible repository
-- run playbooks/scaleup.yml
+The following procedure outlines the steps involved in adding RHEL7 worker nodes to the OCP cluster:
 
-)
+- Clone the `4.1.11-201908060314` branch of the `openshift-ansible` playbooks into the home directory of the "core" user on the Ansible controller node:
+
+```bash
+$ pwd
+/home/core
+
+$ git clone --branch openshift-ansible-4.1.11-201908060314 https://github.com/openshift/openshift-ansible.git
+```
+
+- Ensure the `ocp_repo_directory` variable (located in `group_vars/all/vars.yml`) accurately reflects the location of the `openshift-ansible` playbooks cloned in the previous step. By default this parameter is set to: `{{ local_home }}/openshift-ansible` so it should not require modification if the playbooks were cloned in the core user's home directory as instructed.
+
+- Ensure the `template` and `ova_path` variables in the `group_vars/rhel_worker.yml` file accurately reflect the name and location of the Red Hat Enterprise Linux 7.6 OVA file and template in your environment.
+
+```bash
+template: hpe-rhel760              # Override the default template
+ova_path: /kits/hpe-rhel760.ova    # Name of the OVA used to import the template
+```
+
+- Modify the Ansible inventory file `hosts` to add entries under the `rhel_worker` section.  For example, in the below `hosts` file the `hpe-worker4` node will be added as a RHEL7 worker:
+
+```bash
+[master]
+hpe-master0   ansible_host=10.15.153.210
+hpe-master1   ansible_host=10.15.153.211
+hpe-master2   ansible_host=10.15.153.212
+
+[rhcos_worker]
+hpe-worker0   ansible_host=10.15.153.213
+hpe-worker1   ansible_host=10.15.153.214
+hpe-worker2   ansible_host=10.15.152.215
+hpe-worker3   ansible_host=10.15.152.216
+
+[rhel_worker]
+hpe-worker4   ansible_host=10.15.153.217
+```
+
+- Prepare the RHEL7 worker node VM(s) by invoking the `playbooks/scale.yml` playbook:
+
+```bash
+$ cd ~/OpenShift-on-SimpliVity
+$ ansible-playbook -i hosts playbooks/scale.yml --vault-password-file .vault_pass
+```
+
+- The final step of the `scale.yml` playbook creates a customized Ansible inventory file in the `openshift-ansible` directory called `inventory.scale`.  This inventory file contains a list of the newly requested RHEL7 worker nodes that were configured in the `hosts` inventory file. In the above example, the `inventory.scale` file will contain `hpe-worker2`.
+
+- Deploy the RHEL7 worker node(s) by invoking the `playbooks/scaleup.yml` playbook in the `openshift-ansible` directory:
+
+```bash
+$ cd ~/openshift-ansible
+$ ansible-playbook -i inventory.scale playbooks/scaleup.yml
+```
+
+- Verify the newly created RHEL7 worker node `hpe-worker4` has joined the cluster:
+
+```bash
+$ oc get nodes -o wide
+
+NAME          STATUS   ROLES    AGE     VERSION             INTERNAL-IP     EXTERNAL-IP     OS-IMAGE                                                   KERNEL-VERSION               CONTAINER-RUNTIME
+hpe-master0   Ready    master   42m     v1.13.4+d81afa6ba   10.15.153.210   10.15.153.210   Red Hat Enterprise Linux CoreOS 410.8.20190807.0 (Ootpa)   4.18.0-80.7.2.el8_0.x86_64   cri-o://1.13.10-0.1.dev.rhaos4.1.git9e2e1de.el8-dev
+hpe-master1   Ready    master   43m     v1.13.4+d81afa6ba   10.15.153.211   10.15.153.211   Red Hat Enterprise Linux CoreOS 410.8.20190807.0 (Ootpa)   4.18.0-80.7.2.el8_0.x86_64   cri-o://1.13.10-0.1.dev.rhaos4.1.git9e2e1de.el8-dev
+hpe-master2   Ready    master   43m     v1.13.4+d81afa6ba   10.15.153.212   10.15.153.212   Red Hat Enterprise Linux CoreOS 410.8.20190807.0 (Ootpa)   4.18.0-80.7.2.el8_0.x86_64   cri-o://1.13.10-0.1.dev.rhaos4.1.git9e2e1de.el8-dev
+hpe-worker0   Ready    worker   42m     v1.13.4+d81afa6ba   10.15.153.213   10.15.153.213   Red Hat Enterprise Linux CoreOS 410.8.20190807.0 (Ootpa)   4.18.0-80.7.2.el8_0.x86_64   cri-o://1.13.10-0.1.dev.rhaos4.1.git9e2e1de.el8-dev
+hpe-worker1   Ready    worker   43m     v1.13.4+d81afa6ba   10.15.153.214   10.15.153.214   Red Hat Enterprise Linux CoreOS 410.8.20190807.0 (Ootpa)   4.18.0-80.7.2.el8_0.x86_64   cri-o://1.13.10-0.1.dev.rhaos4.1.git9e2e1de.el8-dev
+hpe-worker2   Ready    worker   43m     v1.13.4+d81afa6ba   10.15.153.215   10.15.153.215   Red Hat Enterprise Linux CoreOS 410.8.20190807.0 (Ootpa)   4.18.0-80.7.2.el8_0.x86_64   cri-o://1.13.10-0.1.dev.rhaos4.1.git9e2e1de.el8-dev
+hpe-worker3   Ready    worker   43m     v1.13.4+d81afa6ba   10.15.153.216   10.15.153.216   Red Hat Enterprise Linux CoreOS 410.8.20190807.0 (Ootpa)   4.18.0-80.7.2.el8_0.x86_64   cri-o://1.13.10-0.1.dev.rhaos4.1.git9e2e1de.el8-dev
+hpe-worker4   Ready    worker   63s     v1.13.4+d81afa6ba   10.15.153.217   10.15.153.217   OpenShift Enterprise                                       3.10.0-1062.el7.x86_64       cri-o://1.13.9-1.rhaos4.1.gitd70609a.el7
+```
+
+- In the above output the `OS-IMAGE`, `KERNEL-VERSION`, and `CONTAINER-RUNTIME` values are different for worker node `hpe-worker4`, confirming this is a RHEL7 worker node.
 
 # External routes
 
@@ -794,8 +858,8 @@ spec:
 The first command below creates the Ingress object, the second verifies that an additional route was created:
 
 ```bash
-oc apply -f <path_to_ingress_file_above>
-oc get routes
+$ oc apply -f <path_to_ingress_file_above>
+$ oc get routes
 ```
 
 In the screenshot below we verify that a new route was created (`myapp-5rxqj`) with the hostname we expect:
