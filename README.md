@@ -644,11 +644,56 @@ oc delete secret kubeadmin -n kube-system
 
 # Scaling the resource plane
 
-Once you have deployed the OpenShift cluster, you can add additional worker nodes.
+Once the OpenShift cluster is successfully deployed, you can scale up the cluster with additional worker nodes. These worker nodes are used for scheduling application workloads, so the number and size of the worker nodes will depend heavily on the applications deployed in your OCP cluster.
+
+OpenShift 4.1 supports two Operating System variants for the worker nodes: Red Hat Enterprise Linux CoreOS (RHCOS) and Red Hat Enterprise Linux 7.6 (RHEL7).
+
+A separate playbook is provided to scale up the resource plane with additional worker nodes called `playbooks/scale.yml`. This playbook is run separately after the control plane is deployed, and it is used when adding either RHCOS or RHEL7 worker nodes to the cluster.
 
 ## Scaling with Red Hat CoreOS Worker nodes
 
-instructions to come
+As part of deploying the OpenShift control plane, two RHCOS-based workers are configured by default.  These workers are defined in the `rhcos_worker` group in the `hosts` inventory file:
+
+```bash
+[rhcos_worker]
+hpe-worker0   ansible_host=10.15.152.213
+hpe-worker1   ansible_host=10.15.152.214
+```
+
+Additional RHCOS worker nodes can be deployed by adding entries to the `rhcos_worker` section of the inventory file and then running the `playbooks/scale.yml` playbook.
+
+For example, to deploy two additional RHCOS worker nodes to the cluster (hpe-worker2 and hpe-worker3), update the `rhcos_worker` section of the `hosts` file with the required entries for these worker nodes:
+
+```bash
+[rhcos_worker]
+hpe-worker0   ansible_host=10.15.152.213
+hpe-worker1   ansible_host=10.15.152.214
+hpe-worker2   ansible_host=10.15.152.215
+hpe-worker3   ansible_host=10.15.152.216
+```
+
+Then run the Ansible playbook to deply the new worker nodes:
+
+```bash
+cd OpenShift-on-SimpliVity
+ansible-playbook -i hosts playbooks/scale.yml --vault-password-file .vault_pass
+```
+
+Once the playbook completes, the newly created RHCOS worker nodes will automatically join the cluster. You can verify the nodes in the OCP cluster using the `oc get nodes` command:
+
+```bash
+$ oc get nodes
+NAME          STATUS   ROLES    AGE     VERSION
+hpe-master0   Ready    master   4h      v1.13.4+d81afa6ba
+hpe-master1   Ready    master   4h      v1.13.4+d81afa6ba
+hpe-master2   Ready    master   4h      v1.13.4+d81afa6ba
+hpe-worker0   Ready    worker   4h      v1.13.4+d81afa6ba
+hpe-worker1   Ready    worker   4h      v1.13.4+d81afa6ba
+hpe-worker2   Ready    worker   3h25m   v1.13.4+d81afa6ba
+hpe-worker3   Ready    worker   3h17m   v1.13.4+d81afa6ba
+```
+
+The output shows the original OCP master and worker nodes that were deployed as part of the control plane are running (hpe-master0, hpe-master1, hpe-master2, hpe-worker0, hpe-worker1) as well as the newly added RHCOS worker nodes `hpe-worker2` and `hpe-worker3`.
 
 ## Scaling with Red Hat Enterprise Linux 7.6 Worker nodes
 
