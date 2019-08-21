@@ -675,7 +675,7 @@ Users of the OpenShift cloud you just deployed typically will not have access to
 
 Out of the box, built-in applications can be accessed by internal users (such as Jeff in the diagram above) via the backend network. An example of that is the OpenShift console which can be found at `htts://console-openshift-console.apps.hpe.hpecloud.org` assuming the cluster was deployed with `domain_name: hpecloud.org` and `cluster_name: hpe`.
 
-In this **example**, external users like Sally use the domain name `cloudra.local` to access resources and services provided by the IT organization. `hpe.cloudra.local` is a DNS zone used to manage records pertaining to this specific cluster.
+In this example, external users like Sally use the domain name `cloudra.local` to access resources and services provided by the IT organization. `hpe.cloudra.local` is a DNS zone used to manage records pertaining to this specific cluster.
 
 In order to achieve the above, the DNS resolver that Sally is using must have the following DNS records defined:
 
@@ -696,7 +696,7 @@ api                     A   10.15.156.9
 
 The load balancers (lb1 and lb2 in this example) are configured to forward port 80 and port 443 to all the worker nodes in the OCP cluster. Strictly speaking, the load balancers should only have to forward port 80 and 443 to the worker nodes which are hosting an OpenShift router replica but the solution configures all worker nodes in case a router replica is relocated.
 
-Whenever user Sally accesses <http://myapp.hpe.cloudra.local> or <https://myapp.hpe.cloudra.local>, the packets are forwarded to one of the worker nodes hosting a router replica.
+When user Sally accesses <http://myapp.hpe.cloudra.local> or <https://myapp.hpe.cloudra.local>, the packets are forwarded to one of the worker nodes hosting a router replica.
 
 For the router replica to direct the packets to the correct application running inside the cluster (i.e. somewhere in the pool of worker nodes) an external route must be created.
 
