@@ -139,7 +139,7 @@ The playbooks also creates the following VMs which provide additional infrastruc
 - We use Fedora 29 and Ansible 2.8.1 (**REQUIRED**) (dnf update probably necessary)
 - The Ansible box is directly connected to the proxy-free VLAN.
 - The playbooks work from a non-privileged account. It will make your life easier if you work from an account named **core** because:
-  - RH CoreOS builtin account is '**core'**
+  - RH CoreOS built-in account is '**core'**
   - a user with the same name as the user who runs the playbooks on the Ansible box is created on non-CoreOS VMs
   - Populate the variable **group_vars/all/vault.yml:vault.ssh_key** with the default public key of the user who will run the playbooks (~/.ssh/id_rsa.pub)
 - Make sure the user who runs the playbooks can `sudo` without a password on the Ansible box itself.
@@ -278,7 +278,7 @@ More information regarding load balancers is provided in the next paragraph.
 
 You can configure 2 virtual machines in the inventory group named `[loadbalancer]`.  The two virtual machines are connected to two networks, an external network, also called the frontend network, and an internal network also called the backend network. Both VMs are eligible for hosting two floating IP addresses (FIPs), one for external access to the OCP API and a second for internal access to the OCP API.  The first IP binds to the external network and the second to the internal network.
 
-**note:** the internal network is the one which connects all the OCP VMs together (this is the network that the variable `group_vars/vars/all.yml:vm_portgroup` designates). The external network is the one designated by the variable `group_vars/all/vars.yml:frontend_vm_portgroup`.
+**Note**: the internal network is the one which connects all the OCP VMs together (this is the network that the variable `group_vars/vars/all.yml:vm_portgroup` designates). The external network is the one designated by the variable `group_vars/all/vars.yml:frontend_vm_portgroup`.
 
 The floating IP addresses are managed with `keepalived` using the VRRP protocol. These IP addresses and additional settings are configured using the variable `group_vars/all/vars.yml:loadbalancers`.
 
@@ -295,7 +295,7 @@ hpe-lb1 ansible_host=10.15.152.7 frontend_ipaddr=10.15.156.7/24 api_int_preferre
 hpe-lb2 ansible_host=10.15.152.8 frontend_ipaddr=10.15.156.8/24 api_preferred=
 ```
 
-**note**: You need to enter an equal sign after `api_int_preferred` and `api_preferred`.
+**Note**: You need to enter an equal sign after `api_int_preferred` and `api_preferred`.
 
 The corresponding variables in `group_vars/all/vars.yml` look like the snippet below.
 
@@ -315,7 +315,7 @@ loadbalancers:
     vrrp_router_id: 51
 ```
 
-**note**: The names of the interfaces are OS dependent and depend on how the VMs are built.  If you are using the playbooks of this repository and deploy Red Hat Enterprise 7.6 you should not have to change these names.
+**Note**: The names of the interfaces are OS dependent and depend on how the VMs are built.  If you are using the playbooks of this repository and deploy Red Hat Enterprise 7.6 you should not have to change these names.
 
 The figure below illustrates such a deployment
 
@@ -323,7 +323,7 @@ The figure below illustrates such a deployment
 
 #### Managed Load Balancers, no HA
 
-If you don't want HA (for demo purposes for example), you can configure a single VM in the `[loadbalancer]` group and you can delete the `vip` properties from the `loadbalancers` datastructure.
+If you don't want HA (for demo purposes for example), you can configure a single VM in the `[loadbalancer]` group and you can delete the `vip` properties from the `loadbalancers` data structure.
 
 Here is a snippet of an Ansible inventory which specifies a unique VM in the `[loadbalancer]` group.
 
@@ -332,7 +332,7 @@ Here is a snippet of an Ansible inventory which specifies a unique VM in the `[l
 hpe-lb1 ansible_host=10.15.152.7 frontend_ipaddr=10.15.156.7/24
 ```
 
-The `loadbalancers` datastructure does not specify any FIP as shown below. No FIP is used and the IP addresses of this VM will be use for the OCP API. In this example, the external endpoint for the OCP api will point to 10.15.156.7 and the internal endpoint will point to 10.15.152.7)
+The `loadbalancers` data structure does not specify any FIP as shown below. No FIP is used and the IP addresses of this VM will be use for the OCP API. In this example, the external endpoint for the OCP API will point to 10.15.156.7 and the internal endpoint will point to 10.15.152.7)
 
 ```bash
 frontend_vm_portgroup: 'extVLAN2968'  # Name of the portgroup / external network
@@ -349,11 +349,11 @@ The figure below illustrates such a deployment:
 
 ![1564476406796](pics/haproxy_no_ha)
 
-#### Unmanaged Load Balancers
+#### Un-managed Load Balancers
 
-You may use your own load balancing solution by NOT configuring any VM in the `[loadbalancer]` group and by documenting the datastructure `loadbalancers` in `group_vars/all/vars.yml`.
+You may use your own load balancing solution by NOT configuring any VM in the `[loadbalancer]` group and by documenting the data structure `loadbalancers` in `group_vars/all/vars.yml`.
 
-`Note`: that these unmanaged load balancers should be configured as explained in the OpenShift 4.1 installation documentation.
+Note that these un-managed load balancers should be configured as explained in the OpenShift 4.1 installation documentation.
 
 In the example Ansible inventory below, the `[loadbalancer]` group is left empty.
 
@@ -381,7 +381,7 @@ loadbalancers:
     vrrp_router_id: 51  # unused if external load balancer
 ```
 
-**note**: Do not delete the `[loadbalancer]`  group from the inventory but leave it empty if you want to use existing external load balancers.
+**Note**: Do not delete the `[loadbalancer]`  group from the inventory but leave it empty if you want to use existing external load balancers.
 
 ## Deploy the Control Plane
 
@@ -443,7 +443,7 @@ Here is what you should do before running the playbook:
 
    ```bind
    vault:
-     ldap_bind_user_password: 'YourpasswordHere
+     ldap_bind_user_password: 'YourPasswordHere
    ```
 
 3. The playbook supports secure LDAP which means you need to configure the identity provider with the CA Bundle of the LDAP server. This bundle should be exported in PEM format.  How you retrieve this CA bundle depends on your environment and is beyond the scope of this documentation. In any case, you **MUST** deposit this bundle under the name `ca.pem` in `playbooks/roles/ldap/files`. **The default bundle that comes with the repository will not work** but we leave it here for you to see which format is needed.
@@ -452,7 +452,7 @@ Here is what you should do before running the playbook:
 
 4. Edit the file named `ldap_cr.yml` under `playbooks/roles/ldap/vars`. The OpenShift 4.1 documentation explains how to populate this file [here](https://docs.openshift.com/container-platform/4.1/authentication/identity_providers/configuring-ldap-identity-provider.html) .  Because the content of this file is highly customizable we did not try to parameterize it. The url in this file is an [RFC 2255](https://tools.ietf.org/html/rfc2255) URL.  An [Appendix](#ldap_cr_yml) later in this document reproduces and comments the default `ldap_cr.yml` that this repository ships.  Remember, you **must**  edit this file because it will not work in your environment.
 
-**Note:** Before you attempt to run `playbooks/ldap.yml` you may want to test your settings with a tool like `ldapsearch` (for example). If you cannot query your LDAP with the Bind DN, Bind password and CA Bundle your configured earlier then the identity provider that the playbook configures will fail to interact with your LDAP service.
+**Note**: Before you attempt to run `playbooks/ldap.yml` you may want to test your settings with a tool like `ldapsearch` (for example). If you cannot query your LDAP with the Bind DN, Bind password and CA Bundle your configured earlier then the identity provider that the playbook configures will fail to interact with your LDAP service.
 
 An example of query is shown below where we bind with the user `adreader` to query a user called `john`, the directory service being hosted by a server named `mars-adds.am2.cloudra.local`.
 
@@ -506,7 +506,7 @@ ocpuser1
 
 ## LDAP Integration, synchronizing groups
 
-The Red Hat Openshift documentation explains perfectly why you would want to synchronize the OCP groups with the groups defined in your Directory Service
+The Red Hat OpenShift documentation explains perfectly why you would want to synchronize the OCP groups with the groups defined in your Directory Service
 
 > As an OpenShift administrator, you can use groups to manage users, change their permissions, and enhance collaboration. Your organization may have already created user groups and stored them in an LDAP server. OpenShift can sync those LDAP records with internal OpenShift records, enabling you to manage your groups in one place. OpenShift currently supports group sync with LDAP servers using three common schemas for defining group membership: RFC 2307, Active Directory, and augmented Active Directory.
 
@@ -517,7 +517,7 @@ This repository does not come with playbooks to perform this synchronization but
 
 ### Create the sync configuration file
 
-The first thing you need to do is to create a configuration file that the sync tool will use. Let's call this file `active_directory_config.yml.` This is a yaml file as you may have guessed it now and you should respect the indentation when you edit this file. Here is the file we used with our example Active Directory:
+The first thing you need to do is to create a configuration file that the sync tool will use. Let's call this file `active_directory_config.yml.` This is a YAML file as you may have guessed it now and you should respect the indentation when you edit this file. Here is the file we used with our example Active Directory:
 
 ```bash
 kind: LDAPSyncConfig
@@ -544,7 +544,7 @@ activeDirectory:
 
 The first two lines should be unchanged.  You should be familiar with the next 6 lines.
 
-- `url`: This is the same url of your LDAP server. Prefer the `ldaps` protocol (vs `ldap`) to make sure the communications with the LDAP server are encrypted.
+- `url`: This is the same URL of your LDAP server. Prefer the `ldaps` protocol (vs `ldap`) to make sure the communications with the LDAP server are encrypted.
 - `ca`: This is the same CA bundle as the one you used when configuring the LDAP identity provider. Hence this file should be in `playbooks/roles/ldap/files`.
 - `insecure`: This is set to false because you want to use the LDAP protocol over TLS/SSL (hence the need for a CA Bundle).
 - `bindDN`: This is the LDAP user which will be used to "bind" with the LDAP directory. This can be the same as the one you used when configuring the identity provider
@@ -558,7 +558,7 @@ The last block (`ActiveDirectory`:) tells the sync tool which schema is used for
 
 ### Synchronize
 
-**Prerequisites**:  You must have the cluster-admin privilege and the oc tool installed
+**Prerequisites**:  You must have the cluster-admin privilege and the `oc` tool installed
 
 Provided you named the configuration file `active_directory_config.yml` you can use the following command to run the synchronization
 
@@ -660,9 +660,9 @@ hpe-worker0   ansible_host=10.15.152.213
 hpe-worker1   ansible_host=10.15.152.214
 ```
 
-Additional RHCOS worker nodes can be deployed by adding entries to the `rhcos_worker` section of the inventory file and then running the `playbooks/scale.yml` playbook.
+Additional RHCOS worker nodes can be deployed by adding entries to the `rhcos_worker` section of the inventory file and running the `playbooks/scale.yml` playbook.
 
-For example, to deploy two additional RHCOS worker nodes to the cluster (hpe-worker2 and hpe-worker3), update the `rhcos_worker` section of the `hosts` file with the required entries for these worker nodes:
+For example, to deploy two additional RHCOS worker nodes to the cluster (`hpe-worker2` and `hpe-worker3`), update the `rhcos_worker` section of the `hosts` file with the required entries for these worker nodes:
 
 ```bash
 [rhcos_worker]
@@ -672,7 +672,7 @@ hpe-worker2   ansible_host=10.15.152.215
 hpe-worker3   ansible_host=10.15.152.216
 ```
 
-Then run the Ansible playbook to deply the new worker nodes:
+Then run the Ansible playbook to deploy the new worker nodes:
 
 ```bash
 cd OpenShift-on-SimpliVity
