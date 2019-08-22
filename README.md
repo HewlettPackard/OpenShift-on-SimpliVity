@@ -394,7 +394,7 @@ $ cd ~/OpenShift-on-SimpliVity
 $ ansible-playbook –i hosts site.yml --vault-password-file .vault_pass
 ```
 
-Depending on your hardware and the load, it takes approximately 30mns for the playbook to finish its work. Refer to  this  [appendix](#appendix-monitoring-the-deployment) if you want to monitor the progresses of the deployment.
+**Note:** Depending on your hardware and the load, it takes approximately 30/35mns for the playbook to finish its work. Refer to this [appendix](#appendix-monitoring-the-deployment) if you want to monitor the progresses of the deployment.
 
 ## Persistent Storage
 
@@ -774,13 +774,15 @@ hpe-worker4   Ready    worker   63s     v1.13.4+d81afa6ba   10.15.153.217   10.1
 
 - In the above output the `OS-IMAGE`, `KERNEL-VERSION`, and `CONTAINER-RUNTIME` values are different for worker node `hpe-worker4`, confirming this is a RHEL7 worker node.
 
+**Note:** It takes 10 to 15mns to deploy two Red Hat Enterprise Linux worker nodes
+
 # External routes
 
 ## Why external routes matter
 
 Users of the OpenShift cloud you just deployed typically will not have access to the backend network. Rather, they will access the applications deployed on the cloud over a frontend network. This is illustrated by the figure below:
 
-![1566376437624](pics/external_routes.png)
+![1566463241377](pics/why_external_routes.png)
 
 Out of the box, built-in applications can be accessed by internal users (such as Jeff in the diagram above) via the backend network. An example of that is the OpenShift console which can be found at `htts://console-openshift-console.apps.hpe.hpecloud.org` assuming the cluster was deployed with `domain_name: hpecloud.org` and `cluster_name: hpe`.
 
@@ -826,11 +828,11 @@ Wait for the application to be fully deployed. You can use `oc status` to monito
 
 Once the application is fully deployed you should be able to browse to `http://myapp.apps.<cluster_name>.<domain_name>` where you replace <cluster_name> and <domain_name> with the values specified in `group_vars/all/vars.yml` for the <cluster_domain> and <domain_name> variables. The cluster in this example was deployed with `cluster_name: hpe` and `domain_name: hpecloud.org`.
 
-![1566378966286](pics/myapp_backendnetwork)
+![1566460826110](pics/myapp_backend_network.png)
 
 In order for this to work, an OpenShift route was created by the `oc new-app` command. This can be verified with `oc get all` or `oc get routes` commands.
 
-![1566380956583](pics/oc_get_routes_default)
+![1566461072294](pics/oc_get_routes_before_ingress.png)
 
 ## Create an Ingress object for the application
 
@@ -862,13 +864,13 @@ $ oc apply -f <path_to_ingress_file_above>
 $ oc get routes
 ```
 
-In the screenshot below we verify that a new route was created (`myapp-5rxqj`) with the hostname we expect:
+In the screenshot below we verify that a new route was created (`myapp-xxxxx`) with the hostname we expect:
 
-![1566382329251](pics/myapp_route_frontend)
+![1566461314467](pics/routes_after_ingress_created.png)
 
 Sally can now reach our simple application at <https://myapp.apps.hpe.cloudra.local>.
 
-![1566382512205](pics/myapp_frontend_net)
+![1566461423713](pics/myapp_frontend_network.png)
 
 # Appendices
 
