@@ -28,8 +28,8 @@
     - sub_result.stderr is defined and "'Bad Request' in sub_result.stderr"
   when:
     - ansible_distribution == 'RedHat'
-    - rhn_orgid is defined and rhn_orgid != ''
-    - rhn_key is defined and rhn_key != ''
+    - rhn_orgid != ''
+    - rhn_key != ''
 
 - name: Register system using Red Hat Username and Password
   become: yes
@@ -45,8 +45,8 @@
     - sub_result.stderr is defined and "'Bad Request' in sub_result.stderr"
   when:
     - ansible_distribution == 'RedHat'
-    - rhn_user is defined and rhn_user != ''
-    - rhn_pass is defined and rhn_pass != ''
+    - rhn_user != ''
+    - rhn_pass != ''
 
 - name: Identify Red Hat Enterprise Linux Server Repository
   become: true
@@ -66,8 +66,8 @@
       - '{{ rhel_poolid.stdout }}'
   when:
     - ansible_distribution == 'RedHat'
-    - rhn_orgid is defined and rhn_orgid != ''
-    - rhn_key is defined and rhn_key != ''
+    - rhn_orgid != ''
+    - rhn_key != ''
     - rhel_poolid.stdout != ''
 
 - name: Attach Red Hat Enterprise Linux Server Pool ID using Username
@@ -80,6 +80,6 @@
       - '{{ rhel_poolid.stdout }}'
   when:
     - ansible_distribution == 'RedHat'
-    - rhn_user is defined and rhn_user != ''
-    - rhn_pass is defined and rhn_pass != ''
+    - rhn_user != ''
+    - rhn_pass != ''
     - rhel_poolid.stdout != ''
