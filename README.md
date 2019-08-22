@@ -780,7 +780,7 @@ hpe-worker4   Ready    worker   63s     v1.13.4+d81afa6ba   10.15.153.217   10.1
 
 Users of the OpenShift cloud you just deployed typically will not have access to the backend network. Rather, they will access the applications deployed on the cloud over a frontend network. This is illustrated by the figure below:
 
-![1566376437624](pics/external_routes.png)
+![1566463241377](pics/why_external_routes.png)
 
 Out of the box, built-in applications can be accessed by internal users (such as Jeff in the diagram above) via the backend network. An example of that is the OpenShift console which can be found at `htts://console-openshift-console.apps.hpe.hpecloud.org` assuming the cluster was deployed with `domain_name: hpecloud.org` and `cluster_name: hpe`.
 
@@ -864,7 +864,7 @@ $ oc get routes
 
 In the screenshot below we verify that a new route was created (`myapp-xxxxx`) with the hostname we expect:
 
-![1566461314467](../../../AppData/Roaming/Typora/typora-user-images/1566461314467.png)
+![1566461314467](pics/routes_after_ingress_created.png)
 
 Sally can now reach our simple application at <https://myapp.apps.hpe.cloudra.local>.
 
