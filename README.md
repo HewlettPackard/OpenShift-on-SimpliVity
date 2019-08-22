@@ -826,11 +826,11 @@ Wait for the application to be fully deployed. You can use `oc status` to monito
 
 Once the application is fully deployed you should be able to browse to `http://myapp.apps.<cluster_name>.<domain_name>` where you replace <cluster_name> and <domain_name> with the values specified in `group_vars/all/vars.yml` for the <cluster_domain> and <domain_name> variables. The cluster in this example was deployed with `cluster_name: hpe` and `domain_name: hpecloud.org`.
 
-![1566378966286](pics/myapp_backendnetwork)
+![1566460826110](pics/myapp_backend_network.png)
 
 In order for this to work, an OpenShift route was created by the `oc new-app` command. This can be verified with `oc get all` or `oc get routes` commands.
 
-![1566380956583](pics/oc_get_routes_default)
+![1566461072294](pics/oc_get_routes_before_ingress.png)
 
 ## Create an Ingress object for the application
 
@@ -862,13 +862,13 @@ $ oc apply -f <path_to_ingress_file_above>
 $ oc get routes
 ```
 
-In the screenshot below we verify that a new route was created (`myapp-5rxqj`) with the hostname we expect:
+In the screenshot below we verify that a new route was created (`myapp-xxxxx`) with the hostname we expect:
 
-![1566382329251](pics/myapp_route_frontend)
+![1566461314467](../../../AppData/Roaming/Typora/typora-user-images/1566461314467.png)
 
 Sally can now reach our simple application at <https://myapp.apps.hpe.cloudra.local>.
 
-![1566382512205](pics/myapp_frontend_net)
+![1566461423713](pics/myapp_frontend_network.png)
 
 # Appendices
 
