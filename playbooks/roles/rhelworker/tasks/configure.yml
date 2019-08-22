@@ -32,8 +32,8 @@
       - '{{ ocp_poolid.stdout }}'
   when:
     - ansible_distribution == 'RedHat'
-    - rhn_orgid is defined and rhn_orgid != ''
-    - rhn_key is defined and rhn_key != ''
+    - rhn_orgid != ''
+    - rhn_key != ''
     - ocp_poolid.stdout != ''
 
 - name: Attach OpenShift Container Platform Pool ID using Username
@@ -46,8 +46,8 @@
       - '{{ ocp_poolid.stdout }}'
   when:
     - ansible_distribution == 'RedHat'
-    - rhn_user is defined and rhn_user != ''
-    - rhn_pass is defined and rhn_pass != ''
+    - rhn_user != ''
+    - rhn_pass != ''
     - ocp_poolid.stdout != ''
 
 - name: Disable all repositories except those needed for OpenShift
