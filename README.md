@@ -394,7 +394,7 @@ $ cd ~/OpenShift-on-SimpliVity
 $ ansible-playbook –i hosts site.yml --vault-password-file .vault_pass
 ```
 
-Depending on your hardware and the load, it takes approximately 30mns for the playbook to finish its work. Refer to  this  [appendix](#appendix-monitoring-the-deployment) if you want to monitor the progresses of the deployment.
+**Note:** Depending on your hardware and the load, it takes approximately 30/35mns for the playbook to finish its work. Refer to this [appendix](#appendix-monitoring-the-deployment) if you want to monitor the progresses of the deployment.
 
 ## Persistent Storage
 
@@ -773,6 +773,8 @@ hpe-worker4   Ready    worker   63s     v1.13.4+d81afa6ba   10.15.153.217   10.1
 ```
 
 - In the above output the `OS-IMAGE`, `KERNEL-VERSION`, and `CONTAINER-RUNTIME` values are different for worker node `hpe-worker4`, confirming this is a RHEL7 worker node.
+
+**Note:** It takes 10 to 15mns to deploy two Red Hat Enterprise Linux worker nodes
 
 # External routes
 
