@@ -826,7 +826,7 @@ $ oc new-app --template=openshift/nginx-example --name=myapp --param=NAME=myapp
 
 Wait for the application to be fully deployed. You can use `oc status` to monitor the application deployment.
 
-Once the application is fully deployed you should be able to browse to `http://myapp.apps.<cluster_name>.<domain_name>` where you replace <cluster_name> and <domain_name> with the values specified in `group_vars/all/vars.yml` for the <cluster_domain> and <domain_name> variables. The cluster in this example was deployed with `cluster_name: hpe` and `domain_name: hpecloud.org`.
+Once the application is fully deployed you should be able to browse to `http://myapp-myapp.apps.<cluster_name>.<domain_name>` where you replace <cluster_name> and <domain_name> with the values specified in `group_vars/all/vars.yml` for the <cluster_domain> and <domain_name> variables. The cluster in this example was deployed with `cluster_name: hpe` and `domain_name: hpecloud.org`.
 
 ![1566460826110](pics/myapp_backend_network.png)
 
