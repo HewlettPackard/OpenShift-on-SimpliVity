@@ -24,3 +24,32 @@
   delegate_to: localhost
   command: mv {{ install_dir }} {{ install_dir }}.{{ lookup('pipe','date +%Y-%m-%d-%H-%M-%S') }}
   when: ins_dir.stat.exists
+
+- name: Remove api-int entry from /etc/hosts
+  become: true
+  blockinfile:
+    path: /etc/hosts
+    block: |
+      {{ lb_api_int_ip | ipaddr('address') }} api-int api-int.{{ cluster_name }}.{{ domain_name }}
+    marker: "# {mark} ANSIBLE MANAGED BLOCK api-int"
+    state: absent
+
+- name: Remove api entry from /etc/hosts
+  become: true
+  blockinfile:
+    path: /etc/hosts
+    block: |
+      {{ lb_api_ip | ipaddr('address') }} api api.{{ cluster_name }}.{{ domain_name }}
+    marker: "# {mark} ANSIBLE MANAGED BLOCK api"
+    state: absent
+
+- name: Remove host entries from /etc/hosts
+  become: true
+  blockinfile:
+    path: /etc/hosts
+    block: |
+      {{ hostvars[item].ansible_host }} {{ hostvars[item].inventory_hostname }}  {{ hostvars[item].inventory_hostname }}.{{ cluster_name }}.{{ domain_name }}
+    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ hostvars[item].inventory_hostname }}"
+    state: absent
+  with_items:
+  - "{{ groups['all'] | difference (groups.local) }}"
