@@ -1,3 +1,4 @@
+---
 ###
 # Copyright (2017) Hewlett Packard Enterprise Development LP
 #
@@ -12,12 +13,19 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-###
----
-- name: Refresh ExportFS
-  become: true
-  command: exportfs -a
+### 
+#######################################################################
+#
+# Play: Verify that the cluster is running and that there are new 
+#       worker nodes configured in the inventory that are not currently 
+#       running in the cluster. Fail the play if that is not the case.
+#
+#######################################################################
+- name: Build inventory of new RHCOS and RHEL worker nodes
+  hosts: localhost
+  gather_facts: false
 
-- name: NFS Add Nodes
-  become: true
-  debug: msg="Invoking NFS Add Nodes Handler"
+  tasks:
+  - name: Notify NFS Handler
+    debug: Notifying Handlers
+    notify: NFS Add Nodes
