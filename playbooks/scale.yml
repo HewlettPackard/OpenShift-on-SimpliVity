@@ -134,6 +134,20 @@
 
 #######################################################################
 #
+# Play: Allow new worker nodes to access the NFS shares
+#
+#######################################################################
+- name: Allow new worker nodes to access the NFS shares
+  hosts: nfs
+  gather_facts: false
+  roles:
+  - role: nfs
+    vars:
+      reconfigure: true
+      nfs_clients: "{{ hostvars['localhost'].new_rhel_workers  | union ( hostvars['localhost'].new_rhcos_workers ) }}"
+
+#######################################################################
+#
 # Play: Power on new worker nodes
 #
 #######################################################################
@@ -146,7 +160,7 @@
       poweron: yes
 
   tasks:
-  - name: "Waiting for OpenShift API server port on master nodes. (~10 to 15mns)"
+  - name: "Waiting for port {{ initial_port_check }}(~1 to 2mns)"
     delegate_to: localhost
     wait_for:
       port: "{{ initial_port_check }}"
