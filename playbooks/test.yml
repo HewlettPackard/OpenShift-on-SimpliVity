@@ -24,8 +24,12 @@
 - name: Build inventory of new RHCOS and RHEL worker nodes
   hosts: localhost
   gather_facts: false
+  roles:
+  - role: nfs
+    vars:
+      load_handlers: true
 
   tasks:
   - name: Notify NFS Handler
-    debug: Notifying Handlers
+    debug: msg="Notifying Handlers"
     notify: NFS Add Nodes
