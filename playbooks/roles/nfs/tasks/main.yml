@@ -21,3 +21,5 @@
 - include_tasks: configure.yml
   when: configure is defined
 
+- include_tasks: reconfigure.yml
+  when: reconfigure is defined

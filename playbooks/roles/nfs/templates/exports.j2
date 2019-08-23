@@ -1,5 +1,7 @@
 {% for index in range( number_of_nfs_shares ) %}
 {% for host in groups.ocp %}
+# BEGIN ANSIBLE MANAGED BLOCK {{ nfs_share }}{{ index}}-{{ host }}
 {{ nfs_share }}{{ index }} {{ hostvars[host].ansible_host | ipaddr('address') }}(rw,sync,no_root_squash,no_all_squash) 
+# END ANSIBLE MANAGED BLOCK {{ nfs_share }}{{ index}}-{{ host }}
 {% endfor %}
 {% endfor %} 

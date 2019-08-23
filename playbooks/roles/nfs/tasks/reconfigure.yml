@@ -12,12 +12,24 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-###
+### 
 ---
-- name: Refresh ExportFS
-  become: true
-  command: exportfs -a
+- name: Allowing new NFS clients
+  debug:
+    var: nfs_clients
 
-- name: NFS Add Nodes
+- name: Build the list of NFS shares/clients
+  set_fact:
+    exports_records: "{{ lookup ('sequence', 'start=0 count={{ number_of_nfs_shares }} format=/srv/share%d', wantlist=True) | product(nfs_clients)|list }}"
+
+- name: Update /etc/exports
   become: true
-  debug: msg="Invoking NFS Add Nodes Handler"
+  blockinfile:
+    path: /etc/exports
+    block: |
+      {{ item[0] }} {{ hostvars[item[1]].ansible_host | ipaddr('address') }}(rw,sync,no_root_squash,no_all_squash)
+    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ item[0] }}-{{ item[1] }}"
+  with_items:
+  - "{{ exports_records }}"
+  notify: Refresh ExportFS
+

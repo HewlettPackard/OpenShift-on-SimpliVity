@@ -1,4 +1,5 @@
 
+
 # OpenShift on SimpliVity
 
 OpenShift Version Installed: OCP 4.1
@@ -680,21 +681,56 @@ $ cd ~/OpenShift-on-SimpliVity
 $ ansible-playbook -i hosts playbooks/scale.yml --vault-password-file .vault_pass
 ```
 
-Once the playbook completes, the newly created RHCOS worker nodes will automatically join the cluster. You can verify the nodes in the OCP cluster using the `oc get nodes` command:
+Once the playbook completes, the newly created RHCOS worker nodes will automatically join the cluster after a few minutes (1 or 2) . You can verify the nodes in the OCP cluster using the following command:
 
-```bash
-$ oc get nodes
-NAME          STATUS   ROLES    AGE     VERSION
-hpe-master0   Ready    master   4h      v1.13.4+d81afa6ba
-hpe-master1   Ready    master   4h      v1.13.4+d81afa6ba
-hpe-master2   Ready    master   4h      v1.13.4+d81afa6ba
-hpe-worker0   Ready    worker   4h      v1.13.4+d81afa6ba
-hpe-worker1   Ready    worker   4h      v1.13.4+d81afa6ba
-hpe-worker2   Ready    worker   3h25m   v1.13.4+d81afa6ba
-hpe-worker3   Ready    worker   3h17m   v1.13.4+d81afa6ba
+```
+$ watch -n5 oc get nodes
 ```
 
-The output shows the original OCP master and worker nodes that were deployed as part of the control plane are running (hpe-master0, hpe-master1, hpe-master2, hpe-worker0, hpe-worker1) as well as the newly added RHCOS worker nodes `hpe-worker2` and `hpe-worker3`.
+If you were fast enough, the new nodes are not listed.
+
+```
+Every 5.0s: oc get node                                                                                                                     hpe-ansible: Fri Aug 23 16:23:58 2019
+
+NAME          STATUS   ROLES    AGE     VERSION
+hpe-master0   Ready    master   3h53m   v1.13.4+d81afa6ba
+hpe-master1   Ready    master   3h53m   v1.13.4+d81afa6ba
+hpe-master2   Ready    master   3h53m   v1.13.4+d81afa6ba
+hpe-worker0   Ready    worker   3h53m   v1.13.4+d81afa6ba
+hpe-worker1   Ready    worker   3h53m   v1.13.4+d81afa6ba
+```
+
+After a few seconds, new worker nodes appear in the listing with a STATUS of `NotReady`.
+
+```
+Every 5.0s: oc get node                                                                                                                     hpe-ansible: Fri Aug 23 16:24:49 2019
+
+NAME          STATUS     ROLES    AGE     VERSION
+hpe-master0   Ready      master   3h54m   v1.13.4+d81afa6ba
+hpe-master1   Ready      master   3h54m   v1.13.4+d81afa6ba
+hpe-master2   Ready      master   3h54m   v1.13.4+d81afa6ba
+hpe-worker0   Ready      worker   3h54m   v1.13.4+d81afa6ba
+hpe-worker1   Ready      worker   3h54m   v1.13.4+d81afa6ba
+hpe-worker2   NotReady   worker   8s      v1.13.4+d81afa6ba
+hpe-worker3   NotReady   worker   10s     v1.13.4+d81afa6ba
+```
+
+After one minutes or two the STATUS of the new worker nodes transitions from `NotReady` to `Ready`.
+
+```
+Every 5.0s: oc get node                                                                                                                     hpe-ansible: Fri Aug 23 16:26:52 2019
+
+NAME          STATUS   ROLES    AGE     VERSION
+hpe-master0   Ready    master   3h56m   v1.13.4+d81afa6ba
+hpe-master1   Ready    master   3h56m   v1.13.4+d81afa6ba
+hpe-master2   Ready    master   3h56m   v1.13.4+d81afa6ba
+hpe-worker0   Ready    worker   3h56m   v1.13.4+d81afa6ba
+hpe-worker1   Ready    worker   3h56m   v1.13.4+d81afa6ba
+hpe-worker2   Ready    worker   2m11s   v1.13.4+d81afa6ba
+hpe-worker3   Ready    worker   2m13s   v1.13.4+d81afa6ba
+```
+
+Type Ctrl-C to stop the `watch` command.
 
 ## Scaling with Red Hat Enterprise Linux 7.6 Worker nodes
 
@@ -757,6 +793,8 @@ $ ansible-playbook -i inventory.scale playbooks/scaleup.yml
 ```
 
 - Verify the newly created RHEL7 worker node `hpe-worker4` has joined the cluster:
+
+  **note**: This may take one or two minutes before the new nodes are listed in the cluster.
 
 ```bash
 $ oc get nodes -o wide

@@ -66,42 +66,35 @@
 
 #######################################################################
 #
-# Play: Provision RHCOS worker nodes
+# Play: Provision new RHCOS worker nodes
 #
 #######################################################################
-- name: Provision RHCOS worker nodes
+- name: Provision new RHCOS worker nodes
   hosts: rhcos_worker
   gather_facts: false
   roles:
   - role: vspherevm
     vars:
       provision: yes
-
-#######################################################################
-#
-# Play: Prepare cloud init data
-#
-#######################################################################
-- name: Prepare cloud-init data 
-  hosts: rhel_worker
-  gather_facts: false 
-  roles:
-  - role: cloudinit
-    vars:
-      provision: yes
+    when: inventory_hostname in hostvars['localhost'].new_rhcos_workers
 
 #######################################################################
 #
 # Play: Provision RHEL worker nodes
 #
 #######################################################################
-- name: Provision RHEL worker nodes
+- name: Provision new RHEL worker nodes
   hosts: rhel_worker
   gather_facts: false
   roles:
+  - role: cloudinit
+    vars:
+      provision: yes
+    when: inventory_hostname in hostvars['localhost'].new_rhel_workers
   - role: vspherevm
     vars:
       provision: yes
+    when: inventory_hostname in hostvars['localhost'].new_rhel_workers
 
 #######################################################################
 #
@@ -134,6 +127,20 @@
 
 #######################################################################
 #
+# Play: Allow new worker nodes to access the NFS shares
+#
+#######################################################################
+- name: Allow new worker nodes to access the NFS shares
+  hosts: nfs
+  gather_facts: false
+  roles:
+  - role: nfs
+    vars:
+      reconfigure: true
+      nfs_clients: "{{ hostvars['localhost'].new_rhel_workers  | union ( hostvars['localhost'].new_rhcos_workers ) }}"
+
+#######################################################################
+#
 # Play: Power on new worker nodes
 #
 #######################################################################
@@ -144,9 +151,11 @@
   - role: vspherevm
     vars:
       poweron: yes
+    when: ( inventory_hostname in hostvars['localhost'].new_rhel_workers ) or
+          ( inventory_hostname in hostvars['localhost'].new_rhcos_workers )
 
   tasks:
-  - name: "Waiting for OpenShift API server port on master nodes. (~10 to 15mns)"
+  - name: "Waiting for port {{ initial_port_check }}(~1 to 2mns)"
     delegate_to: localhost
     wait_for:
       port: "{{ initial_port_check }}"
@@ -158,6 +167,8 @@
     delay: 10
     retries:  "{{ ( 1 + initial_port_check_timeout | int / 10 ) | int }}"
     until: res.state is defined and res.state == "started"
+    when: ( inventory_hostname in hostvars['localhost'].new_rhel_workers ) or
+          ( inventory_hostname in hostvars['localhost'].new_rhcos_workers )
 
   - name: "Final verification to fail the playbook is port 22 is not open"
     delegate_to: localhost
@@ -166,6 +177,8 @@
       host: "{{ hostvars[inventory_hostname].ansible_host }}"
       state: started
       timeout: 10
+    when: ( inventory_hostname in hostvars['localhost'].new_rhel_workers ) or
+          ( inventory_hostname in hostvars['localhost'].new_rhcos_workers )
 
 #######################################################################
 #
@@ -177,10 +190,13 @@
   gather_facts: yes
   roles:
   - role: disks
+    when: inventory_hostname in hostvars['localhost'].new_rhel_workers
   - role: rhn
+    when: inventory_hostname in hostvars['localhost'].new_rhel_workers
     vars:
       configure: yes
   - role: rhelworker
+    when: inventory_hostname in hostvars['localhost'].new_rhel_workers
     vars:
       configure: yes
 
