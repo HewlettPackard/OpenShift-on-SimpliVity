@@ -735,13 +735,11 @@ Type Ctrl-C to stop the `watch` command.
 
 ## Scaling with Red Hat Enterprise Linux 7.6 Worker nodes
 
-The procedure to add RHEL7 worker nodes is slightly different from the process used to deploy RHCOS worker nodes, and this step **must** be performed **after** the OCP control plane has been successfully deployed.
+**Note:** As a reminder, configuring RHEL7 worker nodes can only be performed **after** the OpenShift control plane is successfully deployed and the OCP cluster is up and running.
 
-As with the RHCOS worker nodes, the `scale.yml` Ansible playbook is used to prepare the RHEL7 VMs. Then the `openshift-ansible` playbooks are used to configure these VMs as OCP worker nodes and join them to the cluster.
+The procedure to add RHEL7 worker nodes is slightly different from the process used to deploy RHCOS worker nodes. The `scale.yml` Ansible playbook is used as before to prepare the RHEL7 VMs. Then the `openshift-ansible` playbooks are used to configure these VMs as OCP worker nodes and join them to the cluster.
 
 The `openshift-ansible` playbooks are not owned or maintained by HPE, and the contents of these playbooks are changing rapidly as OpenShift development progresses. HPE therefore recommands using a specific version of the `openshift-ansible` playbooks rather than the version of the playbooks found on the `master` branch. As of the time of this writing, the `4.1.11-201908060314` version of the playbooks have been tested and certified with this solution.
-
-**Note:** As a reminder, configuring RHEL7 worker nodes can only be performed **after** the OpenShift control plane is successfully deployed and the OCP cluster is up and running.
 
 The following procedure outlines the steps involved in adding RHEL7 worker nodes to the OCP cluster:
 
