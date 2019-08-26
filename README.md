@@ -161,7 +161,7 @@ Power on the template and connect to the VM's console
 - Select the language
 - Installation destination: automatically configure partitioning
 - Config network and hostname: assign an IP address or use DHCP depending on your environment
-- Config time (prefer Etc/Coordinated Universal Time), configure ntp
+- Config time (prefer Etc/Coordinated Universal Time), configure NTP
 - Software selection : base environment: Infrastructure Server, Add-ons for Selected Environment: Guest Agents
 - Start the installation
 
@@ -268,7 +268,7 @@ Make a copy of the file `hosts.sample` to - say - `hosts`. This will be your inv
 
 - Configure one or two machines in the `[infrastructure]` group. Configure two VMs if you want HA. Configure only one if you don't need HA.
 
-- Ensure that no un-commented entries are present in the `[rhel_worker]` inventory group until **after** the OpenShift control plane has been sucessfully deployed. While OCP 4.1 does support worker nodes running Red Hat Enterprise Linux 7 (RHEL7), these worker nodes can only be added to the OCP cluster **after** the control plane is deployed and running. For more information about scaling the resource plane with additional RHCOS or RHEL7 worker nodes, see [Scaling the resource plane with additional Worker nodes](#scaling-the-resource-plane-with-additional-worker-nodes).
+- Ensure that no un-commented entries are present in the `[rhel_worker]` inventory group until **after** the OpenShift control plane has been successfully deployed. While OCP 4.1 does support worker nodes running Red Hat Enterprise Linux 7 (RHEL7), these worker nodes can only be added to the OCP cluster **after** the control plane is deployed and running. For more information about scaling the resource plane with additional RHCOS or RHEL7 worker nodes, see [Scaling the resource plane with additional Worker nodes](#scaling-the-resource-plane-with-additional-worker-nodes).
 
 - Load balancers need to have two IP addresses. One on the internal network designated by `group_vars/all/vars.yml:vm_portgroup` and specified with the `ansible_host` variable. A second address for the frontend network designated by the variable `frontend_ipaddr` in the inventory. `frontend_ipaddr` should be specified in CIDR notation (for example 10.10.174.165/22).
 
@@ -739,7 +739,7 @@ Type Ctrl-C to stop the `watch` command.
 
 The procedure to add RHEL7 worker nodes is slightly different from the process used to deploy RHCOS worker nodes. The `scale.yml` Ansible playbook is used as before to prepare the RHEL7 VMs. Then the `openshift-ansible` playbooks are used to configure these VMs as OCP worker nodes and join them to the cluster.
 
-The `openshift-ansible` playbooks are not owned or maintained by HPE, and the contents of these playbooks are changing rapidly as OpenShift development progresses. HPE therefore recommands using a specific version of the `openshift-ansible` playbooks rather than the version of the playbooks found on the `master` branch. As of the time of this writing, the `4.1.11-201908060314` version of the playbooks have been tested and certified with this solution.
+The `openshift-ansible` playbooks are not owned or maintained by HPE, and the contents of these playbooks are changing rapidly as OpenShift development progresses. HPE therefore recommends using a specific version of the `openshift-ansible` playbooks rather than the version of the playbooks found on the `master` branch. As of the time of this writing, the `4.1.11-201908060314` version of the playbooks have been tested and certified with this solution.
 
 The following procedure outlines the steps involved in adding RHEL7 worker nodes to the OCP cluster:
 
@@ -960,7 +960,7 @@ You can monitor the progress of the ignition process in several places:
 
   **Note:** In my environment, the playbook finishes at 70 / 60 retries remaining.
 
-- You should see the `openshift-api-server` and the `machine-config-server` endpoints available on the bootstrap machine. Use the Load Balancer stats screen to check this out (url [<http://your‑internal-lb-ip-address:9000>](<http://yourlb-ip-address:9000>))
+- You should see the `openshift-api-server` and the `machine-config-server` endpoints available on the bootstrap machine. Use the Load Balancer stats screen to check this out (URL [<http://your‑internal-lb-ip-address:9000>](<http://yourlb-ip-address:9000>))
 
 - SSH to the bootstrap VM and run the following command:
 
