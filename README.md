@@ -37,7 +37,7 @@ OpenShift Version Installed: OCP 4.1
     - [Verifications](#verifications)
     - [More information](#more-information)
   - [Adding a cluster Administrator](#adding-a-cluster-administrator)
-- [Scaling the resource plane](#scaling-the-resource-plane)
+- [Scaling the resource plane with additional Worker nodes](#scaling-the-resource-plane-with-additional-worker-nodes)
   - [Scaling with Red Hat CoreOS Worker nodes](#scaling-with-red-hat-coreos-worker-nodes)
   - [Scaling with Red Hat Enterprise Linux 7.6 Worker nodes](#scaling-with-red-hat-enterprise-linux-76-worker-nodes)
 - [External routes](#external-routes)
@@ -255,7 +255,7 @@ $ git clone https://github.com/HewlettPackard/OpenShift-on-SimpliVity.git
 - Copy `group_vars/all/vault.yml.sample` to `group_vars/all/vault.yml`
 - Edit `group_vars/all/vault.yml` to match your environment. More details can be found [here](#vault-yml)
 
-**Note**: you don’t need to edit the group files (such as `group_vars/master.yml`) unless you want to change the sizing of the VMs.
+**Note:** you don’t need to edit the group files (such as `group_vars/master.yml`) unless you want to change the sizing of the VMs.
 
 ### Create your inventory
 
@@ -263,11 +263,13 @@ Make a copy of the file `hosts.sample` to  - say - `hosts`. This will be your in
 
 - use unique names in the vCenter environment, recommended VM names in the form xxx-master0, xxx-lb1 etc, where xxx is the name of your cluster.
 
-  **note:** underscores (_) are not valid characters in hostnames
+  **Note:** underscores (_) are not valid characters in hostnames
 
 - use your own IP addresses and not those coming from the sample file
 
 - Configure one or two machines in the `[infrastructure]` group. Configure two VMs if you want HA. Configure only one if you don't need HA.
+
+- Ensure that no un-commented entries are present in the `[rhel_worker]` inventory group until **after** the OpenShift control plane has been sucessfully deployed. While OCP 4.1 does support worker nodes running Red Hat Enterprise Linux 7 (RHEL7), these worker nodes can only be added to the OCP cluster **after** the control plane is deployed and running. For more information about scaling the resource plane with additional RHCOS or RHEL7 worker nodes, see [Scaling the resource plane with additional Worker nodes](#scaling-the-resource-plane-with-additional-worker-nodes).
 
 - Load balancers need to have two IP addresses. One on the internal network designated by  `group_vars/all/vars.yml:vm_portgroup` and specified with the `ansible_host` variable. A second address for the frontend network designated by the variable `frontend_ipaddr` in the inventory. `frontend_ipaddr` should be specified in CIDR notation (for example 10.10.174.165/22).
 
@@ -279,7 +281,7 @@ More information regarding load balancers is provided in the next paragraph.
 
 You can configure 2 virtual machines in the inventory group named `[loadbalancer]`.  The two virtual machines are connected to two networks, an external network, also called the frontend network, and an internal network also called the backend network. Both VMs are eligible for hosting two floating IP addresses (FIPs), one for external access to the OCP API and a second for internal access to the OCP API.  The first IP binds to the external network and the second to the internal network.
 
-**Note**: the internal network is the one which connects all the OCP VMs together (this is the network that the variable `group_vars/vars/all.yml:vm_portgroup` designates). The external network is the one designated by the variable `group_vars/all/vars.yml:frontend_vm_portgroup`.
+**Note:** the internal network is the one which connects all the OCP VMs together (this is the network that the variable `group_vars/vars/all.yml:vm_portgroup` designates). The external network is the one designated by the variable `group_vars/all/vars.yml:frontend_vm_portgroup`.
 
 The floating IP addresses are managed with `keepalived` using the VRRP protocol. These IP addresses and additional settings are configured using the variable `group_vars/all/vars.yml:loadbalancers`.
 
@@ -296,7 +298,7 @@ hpe-lb1 ansible_host=10.15.152.7 frontend_ipaddr=10.15.156.7/24 api_int_preferre
 hpe-lb2 ansible_host=10.15.152.8 frontend_ipaddr=10.15.156.8/24 api_preferred=
 ```
 
-**Note**: You need to enter an equal sign after `api_int_preferred` and `api_preferred`.
+**Note:** You need to enter an equal sign after `api_int_preferred` and `api_preferred`.
 
 The corresponding variables in `group_vars/all/vars.yml` look like the snippet below.
 
@@ -316,7 +318,7 @@ loadbalancers:
     vrrp_router_id: 51
 ```
 
-**Note**: The names of the interfaces are OS dependent and depend on how the VMs are built.  If you are using the playbooks of this repository and deploy Red Hat Enterprise 7.6 you should not have to change these names.
+**Note:** The names of the interfaces are OS dependent and depend on how the VMs are built.  If you are using the playbooks of this repository and deploy Red Hat Enterprise 7.6 you should not have to change these names.
 
 The figure below illustrates such a deployment
 
@@ -382,11 +384,11 @@ loadbalancers:
     vrrp_router_id: 51  # unused if external load balancer
 ```
 
-**Note**: Do not delete the `[loadbalancer]`  group from the inventory but leave it empty if you want to use existing external load balancers.
+**Note:** Do not delete the `[loadbalancer]`  group from the inventory but leave it empty if you want to use existing external load balancers.
 
 ## Deploy the Control Plane
 
-**WARNING**: Make sure you run the `site.yml` playbook from the top-level directory of the git repository. The repository comes with an `ansible.cfg` file and a number of options which are required.
+**WARNING:** Make sure you run the `site.yml` playbook from the top-level directory of the git repository. The repository comes with an `ansible.cfg` file and a number of options which are required.
 
 Provided you clones the repository under `~/OpenShift-on-SimpliVity`, perform the following commands on your Ansible machine to deploy the OpenShift 4.1 control plane:
 
@@ -438,7 +440,7 @@ Here is what you should do before running the playbook:
    ldap_bind_user_password: "{{ vault.ldap_bind_user_password }}"
    ```
 
-   **Note**: The playbook will create a secret to store the password for the binding user.
+   **Note:** The playbook will create a secret to store the password for the binding user.
 
 2. edit `group_vars/all/vault.yml` (preferably using `ansible-vault` because you want this file to be encrypted) and configure the variable `vault.ldap_bind_user_password:`  This is the password for the LDAP user you use for binding with the LDAP service.
 
@@ -449,11 +451,11 @@ Here is what you should do before running the playbook:
 
 3. The playbook supports secure LDAP which means you need to configure the identity provider with the CA Bundle of the LDAP server. This bundle should be exported in PEM format.  How you retrieve this CA bundle depends on your environment and is beyond the scope of this documentation. In any case, you **MUST** deposit this bundle under the name `ca.pem` in `playbooks/roles/ldap/files`. **The default bundle that comes with the repository will not work** but we leave it here for you to see which format is needed.
 
-   **Note**: the playbook creates a ConfigMap to store this bundle.
+   **Note:** the playbook creates a ConfigMap to store this bundle.
 
 4. Edit the file named `ldap_cr.yml` under `playbooks/roles/ldap/vars`. The OpenShift 4.1 documentation explains how to populate this file [here](https://docs.openshift.com/container-platform/4.1/authentication/identity_providers/configuring-ldap-identity-provider.html) .  Because the content of this file is highly customizable we did not try to parameterize it. The url in this file is an [RFC 2255](https://tools.ietf.org/html/rfc2255) URL.  An [Appendix](#ldap_cr_yml) later in this document reproduces and comments the default `ldap_cr.yml` that this repository ships.  Remember, you **must**  edit this file because it will not work in your environment.
 
-**Note**: Before you attempt to run `playbooks/ldap.yml` you may want to test your settings with a tool like `ldapsearch` (for example). If you cannot query your LDAP with the Bind DN, Bind password and CA Bundle your configured earlier then the identity provider that the playbook configures will fail to interact with your LDAP service.
+**Note:** Before you attempt to run `playbooks/ldap.yml` you may want to test your settings with a tool like `ldapsearch` (for example). If you cannot query your LDAP with the Bind DN, Bind password and CA Bundle your configured earlier then the identity provider that the playbook configures will fail to interact with your LDAP service.
 
 An example of query is shown below where we bind with the user `adreader` to query a user called `john`, the directory service being hosted by a server named `mars-adds.am2.cloudra.local`.
 
@@ -485,7 +487,7 @@ $ ansible-playbook -i hosts playbooks/ldap.yml
 
 After the playbook is finished running, try to login using the new Identity provider. You can do it using the CLI or the console. A sample session is shown below
 
-**Note**: You may have to wait a few seconds before the `authentication` cluster operator is available.
+**Note:** You may have to wait a few seconds before the `authentication` cluster operator is available.
 
 ```bash
 $ oc login -u ocpuser1
@@ -550,13 +552,13 @@ The first two lines should be unchanged.  You should be familiar with the next 6
 
 The next block (`groupUIDNameMapping`)  let you explicitly map LDAP group names with OpenShift group names. In this example, if the group `CN=ocpadmins,CN-Users,DC=am2,DC=cloudra,DC=local` is found, it will be named `ocpadmins` in OpenShift.
 
-**Note**: The names are case sensitive. Hence `CN=xxx` is not the same as `cn=xxx`  !!!
+**Note:** The names are case sensitive. Hence `CN=xxx` is not the same as `cn=xxx`  !!!
 
 The last block (`ActiveDirectory`:) tells the sync tool which schema is used for defining group membership. OpenShift supports three schemas, `RFC 2307`, `Active Directory` and `augmented Active Directory`. In our example we use `Active Directory`. The `baseDN` should be something familiar now, this is where the tool will start the search in the LDAP tree. The value for `userNameAttributes` is the same we uses when configuring the identity provider. The `groupMembershipAttributes` for our Active Directory is `memberOf.`
 
 ### Synchronize
 
-**Prerequisites**:  You must have the cluster-admin privilege and the `oc` tool installed
+**Prerequisites:** You must have the cluster-admin privilege and the `oc` tool installed
 
 Provided you named the configuration file `active_directory_config.yml` you can use the following command to run the synchronization
 
@@ -644,7 +646,7 @@ $ oc login -u ocpadmin
 $ oc delete secret kubeadmin -n kube-system
 ```
 
-# Scaling the resource plane
+# Scaling the resource plane with additional Worker nodes
 
 Once the OpenShift cluster is successfully deployed, you can scale up the cluster with additional worker nodes. These worker nodes are used for scheduling application workloads, so the number and size of the worker nodes will depend heavily on the applications deployed in your OCP cluster.
 
@@ -734,9 +736,13 @@ Type Ctrl-C to stop the `watch` command.
 
 ## Scaling with Red Hat Enterprise Linux 7.6 Worker nodes
 
-The procedure to add RHEL7 worker nodes is slightly different from the process used to deploy RHCOS worker nodes. The `scale.yml` Ansible playbook is used as before to prepare the RHEL7 VMs. Then the `openshift-ansible` playbooks are used to configure these VMs as OCP worker nodes and join them to the cluster.
+The procedure to add RHEL7 worker nodes is slightly different from the process used to deploy RHCOS worker nodes, and this step **must** be performed **after** the OCP control plane has been successfully deployed.
+
+As with the RHCOS worker nodes, the `scale.yml` Ansible playbook is used to prepare the RHEL7 VMs. Then the `openshift-ansible` playbooks are used to configure these VMs as OCP worker nodes and join them to the cluster.
 
 The `openshift-ansible` playbooks are not owned or maintained by HPE, and the contents of these playbooks are changing rapidly as OpenShift development progresses.  HPE therefore recommands using a specific version of the `openshift-ansible` playbooks rather than the version of the playbooks found on the `master` branch. As of the time of this writing, the `4.1.11-201908060314` version of the playbooks have been tested and certified with this solution.
+
+**Note:** As a reminder, configuring RHEL7 worker nodes can only be performed **after** the OpenShift control plane is successfully deployed and the OCP cluster is up and running.
 
 The following procedure outlines the steps involved in adding RHEL7 worker nodes to the OCP cluster:
 
@@ -758,7 +764,7 @@ template: hpe-rhel760              # Override the default template
 ova_path: /kits/hpe-rhel760.ova    # Name of the OVA used to import the template
 ```
 
-- Modify the Ansible inventory file `hosts` to add entries under the `rhel_worker` section.  For example, in the below `hosts` file the `hpe-worker4` node will be added as a RHEL7 worker:
+- Modify the Ansible inventory file `hosts` to add entries under the `[rhel_worker]` section. For example, in the below `hosts` file the `hpe-worker4` node will be added as a RHEL7 worker:
 
 ```bash
 [master]
@@ -794,7 +800,7 @@ $ ansible-playbook -i inventory.scale playbooks/scaleup.yml
 
 - Verify the newly created RHEL7 worker node `hpe-worker4` has joined the cluster:
 
-  **note**: This may take one or two minutes before the new nodes are listed in the cluster.
+  **Note:** This may take one or two minutes before the new nodes are listed in the cluster.
 
 ```bash
 $ oc get nodes -o wide
@@ -849,7 +855,7 @@ When user Sally accesses <http://myapp.hpe.cloudra.local> or <https://myapp.hpe.
 
 For the router replica to direct the packets to the correct application running inside the cluster (i.e. somewhere in the pool of worker nodes) an external route must be created.
 
-**Note**: The following example will walk you through the process of creating a simple application and exposing it on the frontend network so that external users can access it. This is not meant to replace the official OpenShift documentation.
+**Note:** The following example will walk you through the process of creating a simple application and exposing it on the frontend network so that external users can access it. This is not meant to replace the official OpenShift documentation.
 
 ## Create a simple application
 
@@ -893,7 +899,7 @@ spec:
         path: /
 ```
 
-**Note**: The service name is the name of the service which was created when the application was built (see screenshot above).
+**Note:** The service name is the name of the service which was created when the application was built (see screenshot above).
 
 The first command below creates the Ingress object, the second verifies that an additional route was created:
 
