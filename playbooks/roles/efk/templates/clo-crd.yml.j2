@@ -16,8 +16,8 @@ spec:
           cpu: 200m
           memory: 2Gi
       storage:
-        storageClassName: "thin"
-        size: "200G"
+        storageClassName: {{ efk_es_pv_storage_class }}
+        size: {{ efk_es_pv_size }}
       redundancyPolicy: "SingleRedundancy"
   visualization:
     type: "kibana"
