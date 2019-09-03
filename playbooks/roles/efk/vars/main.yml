@@ -1,0 +1,5 @@
+---
+# vars file for efk
+
+efk_es_pv_size: '200G'               # Size of Persistent Volume used for Elasticsearch data
+efk_es_pv_storage_class: 'thin'      # Storage class name used for Elasticsearch data

@@ -1,0 +1,174 @@
+###
+# Copyright (2017) Hewlett Packard Enterprise Development LP
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# You may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+### 
+---
+- name: Create Namespace for Elasticsearch Operator
+  k8s:
+    state: present
+    definition:
+      api_version: v1
+      kind: Namespace
+      metadata:
+        name: openshift-operators-redhat
+        annotations:
+          openshift.io/node-selector: ""
+        labels:
+          openshift.io/cluster-logging: "true"
+          openshift.io/cluster-monitoring: "true"
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+
+- name: Create Elasticsearch Operator Group
+  k8s:
+    state: present
+    definition:
+      api_version: v1
+      kind: OperatorGroup
+      metadata:
+        name: openshift-operators-redhat
+        namespace: openshift-operators-redhat
+      spec: {}
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+
+- name: Create CatalogSourceConfig Object for Elasticsearch
+  k8s:
+    state: present
+    definition:
+      api_version: operators.coreos.com/v1
+      kind: CatalogSourceConfig
+      metadata:
+        name: elasticsearch
+        namespace: openshift-marketplace
+      spec:
+        targetNamespace: openshift-operators-redhat 
+        packages: elasticsearch-operator
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+
+- name: Retrieve Channel for Elasticsearch Subscription
+  shell: |
+    oc get packagemanifest elasticsearch-operator -n openshift-marketplace -o jsonpath='{.status.channels[].name}'
+  register: channel
+  changed_when: false
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+
+- set_fact:
+    outfile: "{{ role_path }}/files/eo-sub.yml"
+
+- name: Generate Elasticsearch Subscription Object
+  template:
+    src: eo-sub.yml.j2
+    dest: "{{ outfile }}"
+
+- name: Create Elasticsearch Subscription
+  k8s:
+    state: present
+    src: "{{ outfile }}"
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+
+- name: Create RBAC Object for Prometheus
+  k8s:
+    state: present
+    src: "{{ role_path }}/files/eo-rbac.yml"
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+
+- name: Create Namespace for Cluster Logging Operator
+  k8s:
+    state: present
+    definition:
+      api_version: v1
+      kind: Namespace
+      metadata:
+        name: openshift-logging
+        annotations:
+          openshift.io/node-selector: ""
+        labels:
+          openshift.io/cluster-logging: "true"
+          openshift.io/cluster-monitoring: "true"
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+
+- name: Create Cluster Logging Operator Group
+  k8s:
+    state: present
+    definition:
+      api_version: v1
+      kind: OperatorGroup
+      metadata:
+        name: openshift-logging
+        namespace: openshift-logging
+      spec:
+        targetNamespaces:
+        - openshift-logging
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+
+- name: Create CatalogSourceConfig Object for Cluster Logging
+  k8s:
+    state: present
+    definition:
+      api_version: operators.coreos.com/v1
+      kind: CatalogSourceConfig
+      metadata:
+        name: installed-redhat-openshift-logging
+        namespace: openshift-marketplace
+      spec:
+        targetNamespace: openshift-logging
+        packages: cluster-logging
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+
+- name: Retrieve Channel for Cluster Logging Subscription
+  shell: |
+    oc get packagemanifest cluster-logging -n openshift-marketplace -o jsonpath='{.status.channels[].name}'
+  register: channel
+  changed_when: false
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+
+- set_fact:
+    outfile: "{{ role_path }}/files/clo-sub.yml"
+
+- name: Generate Cluster Logging Subscription Object
+  template:
+    src: clo-sub.yml.j2
+    dest: "{{ outfile }}"
+
+- name: Create Cluster Logging Subscription
+  k8s:
+    state: present
+    src: "{{ outfile }}"
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+
+- set_fact:
+    outfile: "{{ role_path }}/files/clo-crd.yml"
+
+- name: Generate Cluster Logging Instance Object
+  template:
+    src: clo-crd.yml.j2
+    dest: "{{ outfile }}"
+
+- name: Create Cluster Logging Instance
+  k8s:
+    state: present
+    src: "{{ outfile }}"
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+
