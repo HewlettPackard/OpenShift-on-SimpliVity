@@ -2,6 +2,7 @@
 #
 # Openshift 4.1 artifacts
 #
+local_home: "{{ lookup('env','HOME') }}"                        # Local user's HOME directory
 install_dir: "{{ local_home }}/.ocp"                            # OCP installation dir
 ocp_installer_path: /kits/openshift-install                     # Path to the OCP installer
 ocp_oc_path: /kits/oc                                           # Path to the oc client 
@@ -86,5 +87,14 @@ ldap_bind_user_password: "{{ vault.ldap_bind_user_password }}"             # pas
 #
 # OpenShift-Ansible Playbook
 #
-local_home: "{{ lookup('env','HOME') }}"                        # Local user's HOME directory
 ocp_repo_directory: "{{ local_home }}/openshift-ansible"        # OpenShift-Ansible repository directory
+
+#
+# backup related settings
+#
+backup_directory: "{{ local_home }}/backups"                    # will be created if needed
+backup_artifacts:                                               # additional items to save in a backup
+- "{{ install_dir }}"
+- ./group_vars/
+- ./hosts
+
