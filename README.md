@@ -913,6 +913,72 @@ Sally can now reach our simple application at <https://myapp.apps.hpe.cloudra.lo
 
 ![1566461423713](pics/myapp_frontend_network.png)
 
+# Backup and Restore
+
+A backup of the etcd cluster can be taken using the `backup_etcd.yml` playbook. Before you use this playbooks you should do the following:
+
+1. populate group_`vars/all/vars.yml` with the backup-related variables
+2. login the cluster using an account with cluster-admin privilege
+
+## Configuring Backup
+
+Edit the file `group_vars/vars/all.yml` and document the backup-related variables as indicated below
+
+| Variable Name    | Purpose                                                      |
+| ---------------- | ------------------------------------------------------------ |
+| backup_directory | Directory on the Ansible controller where the backup files are stored. This directory is created if it does not exists |
+| backup_artifacts | Files or directory on the Ansible controller you wish to backup in addition to ETCD snapshots. This is a list of files or folder. In the example, the install_dir directory is backed up, all the hierarchy under the group_vars folder as well as the Ansible inventory. File paths are relative to the location of the playbook. |
+
+In the example below, the backup files will be stored in $HOME/backups, where $HOME is the home directory of the user running the Ansible playbook. In addition to the `etcd` snapshot files, all files under the '`install_dir`' directory, as well as all files under the `group_vars` directory and the `hosts`  file will be saved as well.
+
+```
+#
+# backup related settings
+#
+backup_directory: "{{ local_home }}/backups"
+backup_artifacts:
+- "{{ install_dir }}"
+- ./group_vars/
+- ./hosts
+```
+
+## Backup files
+
+The playbook backup_etcd.yml creates two files which it stored in the `backup_directory` folder. Both files are in the .tgz file format (compressed tar file).  The first file contains a snapshot of  the etcd cluster taken on each operational master node in the cluster. The second file contains the files which are specified with the `backup_artifacts` variable. The files names are created according to the following pattern:
+
+backup_<timestamp>.<type>.tgz
+
+were <timestamp> is a timestamp (as seen on the Ansible controller) and <type> is `snapshots` or `misc`.
+
+## Running backup_etcd.yml
+
+First make sure you are connected to the cluster with a user granted with the cluster-admin privilege:
+
+```
+$ oc login -u <user>
+```
+
+Then cd to the folder were you cloned the Openshift-on-Simplivity repository
+
+```
+$ cd <Your clone of the repository>
+```
+
+Then run the playbook
+
+```
+$ ansible-playbook -i hosts backup_etcd.yml
+```
+
+## Restore
+
+`etcd` snapshot files can be used to recover from the folllowing scenarios:
+
+- Recovering from lost master hosts: The recovery procedure is documented here: https://docs.openshift.com/container-platform/4.1/disaster_recovery/scenario-1-infra-recovery.html
+- Restoring back to a previous cluster state. This is documented here: https://docs.openshift.com/container-platform/4.1/disaster_recovery/scenario-2-restoring-cluster-state.html
+
+(to be completed)
+
 # Appendices
 
 ## group_vars/all/vars.yml
