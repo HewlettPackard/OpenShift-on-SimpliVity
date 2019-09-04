@@ -67,7 +67,7 @@
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 
 - set_fact:
-    outfile: "{{ role_path }}/files/eo-sub.yml"
+    outfile: "{{ install_dir }}/eo-sub.yml"
 
 - name: Generate Elasticsearch Subscription Object
   template:
@@ -143,7 +143,7 @@
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 
 - set_fact:
-    outfile: "{{ role_path }}/files/clo-sub.yml"
+    outfile: "{{ install_dir }}/clo-sub.yml"
 
 - name: Generate Cluster Logging Subscription Object
   template:
@@ -158,7 +158,7 @@
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 
 - set_fact:
-    outfile: "{{ role_path }}/files/clo-crd.yml"
+    outfile: "{{ install_dir }}/clo-crd.yml"
 
 - name: Generate Cluster Logging Instance Object
   template:

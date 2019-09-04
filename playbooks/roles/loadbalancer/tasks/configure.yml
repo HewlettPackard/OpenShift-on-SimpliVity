@@ -102,7 +102,7 @@
     - libsemanage-python
     - libselinux-python
 
-- name: Enable HAPROXY to open non standard ports
+- name: Enable haproxy to open non standard ports
   become: true
   seboolean:
     name: haproxy_connect_any
