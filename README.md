@@ -43,6 +43,11 @@ OpenShift Version Installed: OCP 4.1
   - [Why external routes matter](#why-external-routes-matter)
   - [Create a simple application](#create-a-simple-application)
   - [Create an Ingress object for the application](#create-an-ingress-object-for-the-application)
+- [Backup and Restore](#backup-and-restore)
+  - [Configuring Backup](#configuring-backup)
+  - [Backup files](#backup-files)
+  - [Running backup_etcd.yml](#running-backup_etcdyml)
+  - [Restore](#restore)
 - [Appendices](#appendices)
   - [group_vars/all/vars.yml](#group_varsallvarsyml)
   - [group_vars/all/vault.yml](#group_varsallvaultyml)
@@ -912,6 +917,107 @@ In the screenshot below we verify that a new route was created (`myapp-xxxxx`) w
 Sally can now reach our simple application at <https://myapp.apps.hpe.cloudra.local>.
 
 ![1566461423713](pics/myapp_frontend_network.png)
+
+# Backup and Restore
+
+A backup of the etcd cluster can be taken using the `backup_etcd.yml` playbook. Before you use this playbooks you should do the following:
+
+1. populate group_`vars/all/vars.yml` with the backup-related variables
+2. login the cluster using an account with cluster-admin privilege
+
+## Configuring Backup
+
+Edit the file `group_vars/vars/all.yml` and document the backup-related variables as indicated below
+
+| Variable Name    | Purpose                                                      |
+| ---------------- | ------------------------------------------------------------ |
+| backup_directory | Directory on the Ansible controller where the backup files are stored. This directory is created if it does not exists |
+| backup_artifacts | Files or directory on the Ansible controller you wish to backup in addition to ETCD snapshots. This is a list of files or folder. In the example, the install_dir directory is backed up, all the hierarchy under the group_vars folder as well as the Ansible inventory. File paths are relative to the location of the playbook. |
+
+In the example below, the backup files will be stored in $HOME/backups, where $HOME is the home directory of the user running the Ansible playbook. In addition to the `etcd` snapshot files, all files under the '`install_dir`' directory, as well as all files under the `group_vars` directory and the `hosts`  file will be saved as well.
+
+```
+#
+# backup related settings
+#
+backup_directory: "{{ local_home }}/backups"
+backup_artifacts:
+- "{{ install_dir }}"
+- ./group_vars/
+- ./hosts
+```
+
+## Running backup_etcd.yml
+
+First make sure you are connected to the cluster with a user granted with the cluster-admin privilege:
+
+```
+$ oc login -u <user>
+```
+
+Then cd to the folder were you cloned the Openshift-on-Simplivity repository
+
+```
+$ cd <Your clone of the repository>
+```
+
+Then run the playbook
+
+```
+$ ansible-playbook -i hosts backup_etcd.yml
+```
+
+## Backup files
+
+The playbook `backup_etcd.yml` creates two files which are stored in the  folder designated by`backup_directory`. Both files are in the .tgz file format (compressed tar file).  The first file contains snapshot of the `etcd` cluster taken on each master node found operational (Ready) at the time the playbook was run. The second file contains the files which are specified with the `backup_artifacts` variable. The files names are created according to the following pattern:
+
+```
+backup_<timestamp>.<type>.tgz
+```
+
+were <timestamp> is a timestamp (as seen on the Ansible controller) and <type> is `snapshots` or `misc`.
+
+Hereafter is a listing of a .snapshot.tgz file taken on three master nodes:
+
+```
+[core@hpe-ansible backups]$ tar -tvf backup_2019_09_04_075703.snapshots.tgz
+drwxrwxr-x core/core         0 2019-09-04 07:57 hpe-master2/
+drwxrwxr-x core/core         0 2019-09-04 07:57 hpe-master0/
+drwxrwxr-x core/core         0 2019-09-04 07:57 hpe-master1/
+drwxrwxr-x core/core         0 2019-09-04 07:57 hpe-master2/assets/
+drwxrwxr-x core/core         0 2019-09-04 07:57 hpe-master2/assets/backup/
+-rw-rw-r-- core/core  55435296 2019-09-04 07:57 hpe-master2/assets/backup/snapshot.db
+-rw-rw-r-- core/core      6083 2019-09-04 07:57 hpe-master2/assets/backup/etcd-member.yaml
+-rw-rw-r-- core/core      1675 2019-09-04 07:57 hpe-master2/assets/backup/etcd-client.key
+-rw-rw-r-- core/core      1188 2019-09-04 07:57 hpe-master2/assets/backup/etcd-client.crt
+-rw-rw-r-- core/core      1135 2019-09-04 07:57 hpe-master2/assets/backup/etcd-ca-bundle.crt
+drwxrwxr-x core/core         0 2019-09-04 07:57 hpe-master0/assets/
+drwxrwxr-x core/core         0 2019-09-04 07:57 hpe-master0/assets/backup/
+-rw-rw-r-- core/core  55525408 2019-09-04 07:57 hpe-master0/assets/backup/snapshot.db
+-rw-rw-r-- core/core      6083 2019-09-04 07:57 hpe-master0/assets/backup/etcd-member.yaml
+-rw-rw-r-- core/core      1675 2019-09-04 07:57 hpe-master0/assets/backup/etcd-client.key
+-rw-rw-r-- core/core      1188 2019-09-04 07:57 hpe-master0/assets/backup/etcd-client.crt
+-rw-rw-r-- core/core      1135 2019-09-04 07:57 hpe-master0/assets/backup/etcd-ca-bundle.crt
+drwxrwxr-x core/core         0 2019-09-04 07:57 hpe-master1/assets/
+drwxrwxr-x core/core         0 2019-09-04 07:57 hpe-master1/assets/backup/
+-rw-rw-r-- core/core  55365664 2019-09-04 07:57 hpe-master1/assets/backup/snapshot.db
+-rw-rw-r-- core/core      6083 2019-09-04 07:57 hpe-master1/assets/backup/etcd-member.yaml
+-rw-rw-r-- core/core      1675 2019-09-04 07:57 hpe-master1/assets/backup/etcd-client.key
+-rw-rw-r-- core/core      1188 2019-09-04 07:57 hpe-master1/assets/backup/etcd-client.crt
+-rw-rw-r-- core/core      1135 2019-09-04 07:57 hpe-master1/assets/backup/etcd-ca-bundle.crt
+
+```
+
+
+
+## Restore
+
+`etcd` snapshot files can be used to recover from the folllowing scenarios:
+
+- Recovering from lost master hosts: The recovery procedure is documented here: https://docs.openshift.com/container-platform/4.1/disaster_recovery/scenario-1-infra-recovery.html
+- Restoring back to a previous cluster state. This is documented here: https://docs.openshift.com/container-platform/4.1/disaster_recovery/scenario-2-restoring-cluster-state.html
+
+(to be completed)
 
 # Appendices
 
