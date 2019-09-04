@@ -43,6 +43,11 @@ OpenShift Version Installed: OCP 4.1
   - [Why external routes matter](#why-external-routes-matter)
   - [Create a simple application](#create-a-simple-application)
   - [Create an Ingress object for the application](#create-an-ingress-object-for-the-application)
+- [Backup and Restore](#backup-and-restore)
+  - [Configuring Backup](#configuring-backup)
+  - [Backup files](#backup-files)
+  - [Running backup_etcd.yml](#running-backup_etcdyml)
+  - [Restore](#restore)
 - [Appendices](#appendices)
   - [group_vars/all/vars.yml](#group_varsallvarsyml)
   - [group_vars/all/vault.yml](#group_varsallvaultyml)
@@ -942,14 +947,6 @@ backup_artifacts:
 - ./hosts
 ```
 
-## Backup files
-
-The playbook backup_etcd.yml creates two files which it stored in the `backup_directory` folder. Both files are in the .tgz file format (compressed tar file).  The first file contains a snapshot of  the etcd cluster taken on each operational master node in the cluster. The second file contains the files which are specified with the `backup_artifacts` variable. The files names are created according to the following pattern:
-
-backup_<timestamp>.<type>.tgz
-
-were <timestamp> is a timestamp (as seen on the Ansible controller) and <type> is `snapshots` or `misc`.
-
 ## Running backup_etcd.yml
 
 First make sure you are connected to the cluster with a user granted with the cluster-admin privilege:
@@ -969,6 +966,49 @@ Then run the playbook
 ```
 $ ansible-playbook -i hosts backup_etcd.yml
 ```
+
+## Backup files
+
+The playbook `backup_etcd.yml` creates two files which are stored in the  folder designated by`backup_directory`. Both files are in the .tgz file format (compressed tar file).  The first file contains snapshot of the `etcd` cluster taken on each master node found operational (Ready) at the time the playbook was run. The second file contains the files which are specified with the `backup_artifacts` variable. The files names are created according to the following pattern:
+
+```
+backup_<timestamp>.<type>.tgz
+```
+
+were <timestamp> is a timestamp (as seen on the Ansible controller) and <type> is `snapshots` or `misc`.
+
+Hereafter is a listing of a .snapshot.tgz file taken on three master nodes:
+
+```
+[core@hpe-ansible backups]$ tar -tvf backup_2019_09_04_075703.snapshots.tgz
+drwxrwxr-x core/core         0 2019-09-04 07:57 hpe-master2/
+drwxrwxr-x core/core         0 2019-09-04 07:57 hpe-master0/
+drwxrwxr-x core/core         0 2019-09-04 07:57 hpe-master1/
+drwxrwxr-x core/core         0 2019-09-04 07:57 hpe-master2/assets/
+drwxrwxr-x core/core         0 2019-09-04 07:57 hpe-master2/assets/backup/
+-rw-rw-r-- core/core  55435296 2019-09-04 07:57 hpe-master2/assets/backup/snapshot.db
+-rw-rw-r-- core/core      6083 2019-09-04 07:57 hpe-master2/assets/backup/etcd-member.yaml
+-rw-rw-r-- core/core      1675 2019-09-04 07:57 hpe-master2/assets/backup/etcd-client.key
+-rw-rw-r-- core/core      1188 2019-09-04 07:57 hpe-master2/assets/backup/etcd-client.crt
+-rw-rw-r-- core/core      1135 2019-09-04 07:57 hpe-master2/assets/backup/etcd-ca-bundle.crt
+drwxrwxr-x core/core         0 2019-09-04 07:57 hpe-master0/assets/
+drwxrwxr-x core/core         0 2019-09-04 07:57 hpe-master0/assets/backup/
+-rw-rw-r-- core/core  55525408 2019-09-04 07:57 hpe-master0/assets/backup/snapshot.db
+-rw-rw-r-- core/core      6083 2019-09-04 07:57 hpe-master0/assets/backup/etcd-member.yaml
+-rw-rw-r-- core/core      1675 2019-09-04 07:57 hpe-master0/assets/backup/etcd-client.key
+-rw-rw-r-- core/core      1188 2019-09-04 07:57 hpe-master0/assets/backup/etcd-client.crt
+-rw-rw-r-- core/core      1135 2019-09-04 07:57 hpe-master0/assets/backup/etcd-ca-bundle.crt
+drwxrwxr-x core/core         0 2019-09-04 07:57 hpe-master1/assets/
+drwxrwxr-x core/core         0 2019-09-04 07:57 hpe-master1/assets/backup/
+-rw-rw-r-- core/core  55365664 2019-09-04 07:57 hpe-master1/assets/backup/snapshot.db
+-rw-rw-r-- core/core      6083 2019-09-04 07:57 hpe-master1/assets/backup/etcd-member.yaml
+-rw-rw-r-- core/core      1675 2019-09-04 07:57 hpe-master1/assets/backup/etcd-client.key
+-rw-rw-r-- core/core      1188 2019-09-04 07:57 hpe-master1/assets/backup/etcd-client.crt
+-rw-rw-r-- core/core      1135 2019-09-04 07:57 hpe-master1/assets/backup/etcd-ca-bundle.crt
+
+```
+
+
 
 ## Restore
 
