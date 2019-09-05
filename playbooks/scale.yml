@@ -217,8 +217,12 @@
     template:
       src: inventory.scale.rhel.j2
       dest: "{{ ocp_repo_directory }}/inventory.scale"
+    when:
+    - new_rhel_workers | count > 0
 
   - name: Create pull-secret.txt file
     copy:
       content: "{{ pull_secret }}"
       dest: "{{ install_dir }}/pull-secret.txt"
+    when:
+    - new_rhel_workers | count > 0
