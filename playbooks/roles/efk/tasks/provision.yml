@@ -172,9 +172,6 @@
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 
-- set_fact:
-    outfile: "{{ install_dir }}/clo-crd.yml"
-
 - name: Wait for Cluster Logging Operator installation to complete
   k8s_facts:
     api_version: operators.coreos.com/v1alpha1
@@ -190,6 +187,9 @@
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 
+- set_fact:
+    outfile: "{{ install_dir }}/clo-crd.yml"
+
 - name: Generate Cluster Logging Instance Object
   template:
     src: clo-crd.yml.j2
@@ -201,4 +201,3 @@
     src: "{{ outfile }}"
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
-
