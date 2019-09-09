@@ -88,6 +88,21 @@
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 
+- name: Wait for Elasticsearch operator installation to complete
+  k8s_facts:
+    api_version: operators.coreos.com/v1alpha1
+    kind: ClusterServiceVersion
+    namespace: openshift-operators-redhat
+  register: res
+  delay: 10
+  retries: 10
+  until:
+    - res.resources | json_query('[?status.*[? requirementStatus.name==`elasticsearch-operator`]]')
+    - res.resources | json_query('[?status.*[? reason==`InstallSucceeded`]]')
+    - res.resources | json_query('[?status.*[? phase==`Succeeded`]]')
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+
 - name: Create Namespace for Cluster Logging Operator
   k8s:
     state: present
@@ -157,6 +172,21 @@
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 
+- name: Wait for Cluster Logging Operator installation to complete
+  k8s_facts:
+    api_version: operators.coreos.com/v1alpha1
+    kind: ClusterServiceVersion
+    namespace: openshift-logging
+  register: res
+  delay: 10
+  retries: 10
+  until:
+    - res.resources | json_query('[?status.*[? requirementStatus.name==`cluster-logging-operator`]]')
+    - res.resources | json_query('[?status.*[? reason==`InstallSucceeded`]]')
+    - res.resources | json_query('[?status.*[? phase==`Succeeded`]]')
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+
 - set_fact:
     outfile: "{{ install_dir }}/clo-crd.yml"
 
@@ -171,4 +201,3 @@
     src: "{{ outfile }}"
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
-
