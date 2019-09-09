@@ -1037,7 +1037,22 @@ For more information about the OpenShift Cluster Logging facility, see: <https:/
 
 ## Deploying the Cluster Logging (EFK) stack
 
-You can customize both the Storage Class and Size of the persistent volumes (PVs) used to store Elasticsearch data by editing the following variables in the `playbooks/roles/efk/vars/main.yml` file:
+Elasticsearch is a memory-intensive application. Each Elasticsearch node needs 16G of memory and additional CPU limits. The initial set of OpenShift Container Platform nodes might not be large enough to support the Elasticsearch cluster. You must add additional nodes to the OpenShift Container Platform cluster to run with the recommended or higher memory limits. Each Elasticsearch node can operate with a lower memory setting though this is not recommended for production deployments.
+
+The example `hosts.sample` inventory file that ships with the OpenShift-on-SimpliVity playbooks includes entries used to create three CoreOS worker nodes with higher CPU and RAM limits (`hpe-worker2`, `hpe-worker3`, `hpe-worker4`):
+
+```bash
+[rhcos_worker]
+hpe-worker0   ansible_host=10.15.152.213
+hpe-worker1   ansible_host=10.15.152.214
+hpe-worker2   ansible_host=10.15.152.215  cpus=8 ram=32768  # Larger worker node for EFK
+hpe-worker3   ansible_host=10.15.152.216  cpus=8 ram=32768  # Larger worker node for EFK
+hpe-worker4   ansible_host=10.15.152.217  cpus=8 ram=32768  # Larger worker node for EFK
+```
+
+In the above example, each of these "large" CoreOS worker nodes will be allocated `8` virtual CPU cores and `32GB` of RAM. These values override the default limits of 4 virtual CPU cores and 16GB RAM defined in the `group_vars/worker.yml` file.
+
+A persistent volume is required for each Elasticsearch deployment to have one data volume per data node. On OpenShift Container Platform this is achieved using Persistent Volume Claims (PVC) and Persistent Volumes (PV). You can customize both the Storage Class and Size of the Persistent Volumes (PV) used to store Elasticsearch data by editing the following variables in the `playbooks/roles/efk/vars/main.yml` file:
 
 | Variable Name           | Purpose               |
 | ----------------------- | --------------------- |
