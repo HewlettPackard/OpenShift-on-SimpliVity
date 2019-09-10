@@ -1097,7 +1097,9 @@ You should see several pods for cluster logging, Elasticsearch, Fluentd, and Kib
 
 ## Access the Kibana Dashboard
 
-The Kibana dashboard is available at: https://kibana-openshift-logging.apps.`<cluster_name>`.`<domain_name>` where `<cluster_name>` and `<domain_name>` match the `cluter_name` and `domain_name` variables configured in the `group_vars/all/vars.yml` file.
+Once the Cluster Logging instance has deployed successfully a new entry called `Logging` will appear under the `Monitoring` tab of the OpenShift Container Platform dashboard. Selecting the `Logging` entry will launch the Kibana Dashboard in a separate browser tab.
+
+The Kibana dashboard can also be accessed directly at: https://kibana-openshift-logging.apps.`<cluster_name>`.`<domain_name>` where `<cluster_name>` and `<domain_name>` match the `cluter_name` and `domain_name` variables configured in the `group_vars/all/vars.yml` file.
 
 # Appendices
 
