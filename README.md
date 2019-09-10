@@ -185,11 +185,11 @@ Once the installation is finished, log in the VM (root account) and perform the 
 
 - Register the system with the Red Hat portal and attach it to a subscription. You can do this using the following command if you have created activations keys:
 
-  `subscription-manager register --org=<your_org> --activationkey=<activation key>`
+  `subscription-manager register --org=<your_org> --activationkey=<activation key> --auto-attach`
 
    If your Red Hat Network account does not use organization IDs and activation keys, you can instead register the server using your RHN username and password:
 
-  `subscription-manager register --username <your_username> --password <your_password>`
+  `subscription-manager register --username <your_username> --password <your_password> --auto-attach`
 
 - Update the machine
 
