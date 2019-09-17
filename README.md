@@ -48,6 +48,11 @@ OpenShift Version Installed: OCP 4.1
   - [Backup files](#backup-files)
   - [Running backup_etcd.yml](#running-backup_etcdyml)
   - [Restore](#restore)
+- [Cluster Logging](#cluster-logging)
+  - [About Cluster Logging](#about-cluster-logging)
+  - [Deploying the Cluster Logging (EFK) stack](#deploying-the-cluster-logging-efk-stack)
+  - [Verify the Cluster Logging installation](#verify-the-cluster-logging-installation)
+  - [Access the Kibana Dashboard](#access-the-kibana-dashboard)
 - [Appendices](#appendices)
   - [group_vars/all/vars.yml](#group_varsallvarsyml)
   - [group_vars/all/vault.yml](#group_varsallvaultyml)
@@ -180,11 +185,11 @@ Once the installation is finished, log in the VM (root account) and perform the 
 
 - Register the system with the Red Hat portal and attach it to a subscription. You can do this using the following command if you have created activations keys:
 
-  `subscription-manager register --org=<your_org> --activationkey=<activation key>`
+  `subscription-manager register --org=<your_org> --activationkey=<activation key> --auto-attach`
 
    If your Red Hat Network account does not use organization IDs and activation keys, you can instead register the server using your RHN username and password:
 
-  `subscription-manager register --username <your_username> --password <your_password>`
+  `subscription-manager register --username <your_username> --password <your_password> --auto-attach`
 
 - Update the machine
 
@@ -1015,6 +1020,86 @@ drwxrwxr-x core/core         0 2019-09-04 07:57 hpe-master1/assets/backup/
 - Restoring back to a previous cluster state. This is documented here: <https://docs.openshift.com/container-platform/4.1/disaster_recovery/scenario-2-restoring-cluster-state.html>
 
 (to be completed)
+
+# Cluster Logging
+
+As an OpenShift Container Platform cluster administrator, you can deploy cluster logging to aggregate logs for a range of OpenShift Container Platform services.
+
+## About cluster logging
+
+The cluster logging components are based upon the `Elasticsearch`, `Fluentd`, and `Kibana` (EFK) tools.
+
+The collector component, `Fluentd`, is deployed to each node in the OpenShift Container Platform cluster. It collects all node and container logs and sends them to `Elasticsearch` (ES). `Kibana` is the centralized, web UI where users and administrators can create rich visualizations and dashboards with the aggregated data.
+
+OpenShift Container Platform cluster administrators can deploy the cluster logging stack using an HPE-provided Ansible playbook called `playbooks/efk.yml`. This playbook automates the installation of the Elasticsearch Operator and the Cluster Logging Operator. When the operators are installed, it creates a Cluster Logging Custom Resource (CR) to schedule cluster logging pods and other resources necessary to support cluster logging. The operators are responsible for deploying, upgrading, and maintaining cluster logging.
+
+For more information about the OpenShift Cluster Logging facility, see: <https://docs.openshift.com/container-platform/4.1/logging/efk-logging.html>.
+
+## Deploying the Cluster Logging (EFK) stack
+
+Elasticsearch is a memory-intensive application. Each Elasticsearch node needs 16G of memory and additional CPU limits. The initial set of OpenShift Container Platform nodes might not be large enough to support the Elasticsearch cluster. You must add additional nodes to the OpenShift Container Platform cluster to run with the recommended or higher memory limits. Each Elasticsearch node can operate with a lower memory setting though this is not recommended for production deployments.
+
+The example `hosts.sample` inventory file that ships with the OpenShift-on-SimpliVity playbooks includes entries used to create three CoreOS worker nodes with higher CPU and RAM limits (`hpe-worker2`, `hpe-worker3`, `hpe-worker4`):
+
+```bash
+[rhcos_worker]
+hpe-worker0   ansible_host=10.15.152.213
+hpe-worker1   ansible_host=10.15.152.214
+hpe-worker2   ansible_host=10.15.152.215  cpus=8 ram=32768  # Larger worker node for EFK
+hpe-worker3   ansible_host=10.15.152.216  cpus=8 ram=32768  # Larger worker node for EFK
+hpe-worker4   ansible_host=10.15.152.217  cpus=8 ram=32768  # Larger worker node for EFK
+```
+
+In the above example, each of these "large" CoreOS worker nodes will be allocated `8` virtual CPU cores and `32GB` of RAM. These values override the default limits of 4 virtual CPU cores and 16GB RAM defined in the `group_vars/worker.yml` file.
+
+A persistent volume is required for each Elasticsearch deployment to have one data volume per data node. On OpenShift Container Platform this is achieved using Persistent Volume Claims (PVC) and Persistent Volumes (PV). You can customize both the Storage Class and Size of the Persistent Volumes (PV) used to store Elasticsearch data by editing the following variables in the `playbooks/roles/efk/vars/main.yml` file:
+
+| Variable Name           | Purpose               |
+| ----------------------- | --------------------- |
+| efk_es_pv_size          | Size of the Persistent Volume used to hold Elasticsearch data (default size is `'200G'`) |
+| efk_es_pv_storage_class | The Storage Class to use when creating Elasticsearch Persistent Volumes (default storage class name is `'thin'`) |
+
+After making the appropriate customizations to the above variables, deploy the EFK stack by changing into to the directory were you cloned the OpenShift-on-SimpliVity repository:
+
+```bash
+$ cd ~/OpenShift-on-SimpliVity
+```
+
+and then running the playbook:
+
+```bash
+$ ansible-playbook -i hosts playbooks/efk.yml
+```
+
+The playbook takes approximately 1-2 minutes to complete.  However, it may take several additional minutes for the various Cluster Logging components to successfully deploy to the OpenShift Container Platform cluster.
+
+## Verify the Cluster Logging installation
+
+To verify the Cluster Logging installation:
+
+- Switch to the `Workloads → Pods` page
+- Select the `openshift-logging` project
+
+You should see several pods for cluster logging, Elasticsearch, Fluentd, and Kibana similar to the following list:
+
+- cluster-logging-operator-cb795f8dc-xkckc
+- elasticsearch-cdm-b3nqzchd-1-5c6797-67kfz
+- elasticsearch-cdm-b3nqzchd-2-6657f4-wtprv
+- elasticsearch-cdm-b3nqzchd-3-588c65-clg7g
+- fluentd-2c7dg
+- fluentd-9z7kk
+- fluentd-br7r2
+- fluentd-fn2sb
+- fluentd-pb2f8
+- fluentd-zqgqx
+- kibana-7fb4fd4cc9-bvt4p
+- kibana-7fb4fd4cc9-st4cs
+
+## Access the Kibana Dashboard
+
+Once the Cluster Logging instance has deployed successfully a new entry called `Logging` will appear under the `Monitoring` tab of the OpenShift Container Platform dashboard. Selecting the `Logging` entry will launch the Kibana Dashboard in a separate browser tab.
+
+The Kibana dashboard can also be accessed directly at: https://kibana-openshift-logging.apps.`<cluster_name>`.`<domain_name>` where `<cluster_name>` and `<domain_name>` match the `cluter_name` and `domain_name` variables configured in the `group_vars/all/vars.yml` file.
 
 # Appendices
 
