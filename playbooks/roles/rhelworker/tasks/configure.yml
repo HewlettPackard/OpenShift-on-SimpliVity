@@ -17,7 +17,7 @@
 - name: Identify OpenShift Repository
   become: true
   shell: |
-    subscription-manager list --available --matches '*OpenShift*' | grep 'Pool ID:' | awk 'FNR <= 1' | awk '{ print $NF }'
+    subscription-manager list --available --consumed --match-installed --matches 'Red Hat OpenShift Container Platform' | grep 'Pool ID:' | awk 'FNR <= 1' | awk '{ print $NF }'
   register: ocp_poolid
   when:
     - ansible_distribution == 'RedHat'

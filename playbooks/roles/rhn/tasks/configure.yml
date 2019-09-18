@@ -51,7 +51,7 @@
 - name: Identify Red Hat Enterprise Linux Server Repository
   become: true
   shell: |
-    subscription-manager list --available --matches 'Red Hat Enterprise Linux Server' | grep 'Pool ID:' | awk 'FNR <= 1' | awk '{ print $NF }'
+    subscription-manager list --available --consumed --match-installed --matches 'Red Hat Enterprise Linux Server' | grep 'Pool ID:' | awk 'FNR <= 1' | awk '{ print $NF }'
   register: rhel_poolid
   when:
     - ansible_distribution == 'RedHat'
