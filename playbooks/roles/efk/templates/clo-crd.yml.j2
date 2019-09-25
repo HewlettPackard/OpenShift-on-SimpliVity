@@ -9,12 +9,6 @@ spec:
     type: "elasticsearch"
     elasticsearch:
       nodeCount: 3
-      resources:
-        limits:
-          memory: 2Gi
-        requests:
-          cpu: 200m
-          memory: 2Gi
       storage:
         storageClassName: {{ efk_es_pv_storage_class }}
         size: {{ efk_es_pv_size }}
@@ -22,37 +16,12 @@ spec:
   visualization:
     type: "kibana"
     kibana:
-      resources:
-        limits:
-          memory: 1Gi
-        requests:
-          cpu: 500m
-          memory: 1Gi
-      proxy:
-        resources:
-          limits:
-            memory: 100Mi
-          requests:
-            cpu: 100m
-            memory: 100Mi
       replicas: 2
   curation:
     type: "curator"
     curator:
-      resources:
-        limits:
-          memory: 200Mi
-        requests:
-          cpu: 200m
-          memory: 200Mi
       schedule: "*/10 * * * *"
   collection:
     logs:
       type: "fluentd"
-      fluentd:
-        resources:
-          limits:
-            memory: 1Gi
-          requests:
-            cpu: 200m
-            memory: 1Gi
+      fluentd: {}
