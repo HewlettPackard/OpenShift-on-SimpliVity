@@ -1,7 +1,0 @@
----
-# vars file for monitoring
-
-prometheus_pv_size: '40Gi'               # Size of Persistent Volume used for Prometheus data
-prometheus_pv_storage_class: 'thin'      # Storage class name used for Prometheus data
-alertmanager_pv_size: '40Gi'             # Size of Persistent Volume used for Alertmanager data
-alertmanager_pv_storage_class: 'thin'    # Storage class name used for Alertmanager data
