@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cluster-monitoring-config
+  namespace: openshift-monitoring
+data:
+  config.yaml: |
+    prometheusK8s:
+      volumeClaimTemplate:
+        metadata:
+          name: prometheus-claim
+        spec:
+          storageClassName: {{ prometheus_pv_storage_class }}
+          resources:
+            requests:
+              storage: {{ prometheus_pv_size }}
+    alertmanagerMain:
+      volumeClaimTemplate:
+        metadata:
+          name: alertmanager-claim
+        spec:
+          storageClassName: {{ alertmanager_pv_storage_class }}
+          resources:
+            requests:
+              storage: {{ alertmanager_pv_size }}

@@ -53,6 +53,9 @@ OpenShift Version Installed: OCP 4.1
   - [Deploying the Cluster Logging (EFK) stack](#deploying-the-cluster-logging-efk-stack)
   - [Verify the Cluster Logging installation](#verify-the-cluster-logging-installation)
   - [Access the Kibana Dashboard](#access-the-kibana-dashboard)
+- [Persistent Storage for Cluster Monitoring](#persistent-storage-for-cluster-monitoring)
+  - [About Cluster Monitoring](#about-cluster-monitoring)
+  - [Configuring Persistent Storage for Cluster Monitoring](#configuring-persistent-storage-for-cluster-monitoring)
 - [Appendices](#appendices)
   - [group_vars/all/vars.yml](#group_varsallvarsyml)
   - [group_vars/all/vault.yml](#group_varsallvaultyml)
@@ -1059,7 +1062,7 @@ A persistent volume is required for each Elasticsearch deployment to have one da
 | efk_es_pv_size          | Size of the Persistent Volume used to hold Elasticsearch data (default size is `'200G'`) |
 | efk_es_pv_storage_class | The Storage Class to use when creating Elasticsearch Persistent Volumes (default storage class name is `'thin'`) |
 
-After making the appropriate customizations to the above variables, deploy the EFK stack by changing into to the directory were you cloned the OpenShift-on-SimpliVity repository:
+After making the appropriate customizations to the above variables, deploy the EFK stack by changing into the directory where you cloned the OpenShift-on-SimpliVity repository:
 
 ```bash
 $ cd ~/OpenShift-on-SimpliVity
@@ -1100,6 +1103,43 @@ You should see several pods for cluster logging, Elasticsearch, Fluentd, and Kib
 Once the Cluster Logging instance has deployed successfully a new entry called `Logging` will appear under the `Monitoring` tab of the OpenShift Container Platform dashboard. Selecting the `Logging` entry will launch the Kibana Dashboard in a separate browser tab.
 
 The Kibana dashboard can also be accessed directly at: https://kibana-openshift-logging.apps.`<cluster_name>`.`<domain_name>` where `<cluster_name>` and `<domain_name>` match the `cluter_name` and `domain_name` variables configured in the `group_vars/all/vars.yml` file.
+
+# Persistent Storage for Cluster Monitoring
+
+As an OpenShift Container Platform cluster administrator, you can deploy persistent storage volumes to house the cluster monitoring data collected by your OCP 4.1 cluster.
+
+## About Cluster Monitoring
+
+OpenShift Container Platform 4.1 has built-in support for several cluster monitoring components, including: `Prometheus`, `Grafana`, and `Alertmanager`. When running OCP 4.1 in a non-production or temporary environment (i.e. for Proof of Concepts or as a developer training tool) it is usually not important to configure persistent storage for these components. However, Enterprise customers generally prefer to use persistent storage to maintain a permanent record of these cluster monitoring resources.
+
+For more information about the various cluster monitoring components included with OCP 4.1, see: <https://docs.openshift.com/container-platform/4.1/monitoring/cluster-monitoring/about-cluster-monitoring.html>.
+
+## Configuring Persistent Storage for Cluster Monitoring
+
+OCP cluster administrators can configure persistent storage for the cluster monitoring components using an HPE-provided Ansible playbook called `playbooks/monitoring.yml`. This playbook automates the configuration of persistent storage for the Prometheus and Alertmanager pods.
+
+A separate storage volume is created for each Prometheus and Alertmanager pod. On OpenShift Container Platform this is achieved using Persistent Volume Claims (PVC) and Persistent Volumes (PV). You can customize both the Storage Class and Size of the Persistent Volumes (PV) used to store Prometheus and Alertmanager data by editing the following variables in the `playbooks/roles/monitoring/vars/main.yml` file:
+
+| Variable Name                     | Purpose               |
+| --------------------------------- | --------------------- |
+| prometheus_pv_size                | Size of the Persistent Volume used to hold Prometheus data (default size is `'40Gi'`) |
+| prometheus_pv_storage_class       | The Storage Class to use when creating Prometheus Persistent Volumes (default storage class name is `'thin'`) |
+| alertmanager_pv_size              | Size of the Persistent Volume used to hold Alertmanager data (default size is `'40Gi'`) |
+| alertmanager_pv_storage_class     | The Storage Class to use when creating Alertmanager Persistent Volumes (default storage class name is `'thin'`) |
+
+After making the appropriate customizations to the above variables, re-deploy the  cluster monitoring components by changing into the directory where you cloned the OpenShift-on-SimpliVity repository:
+
+```bash
+$ cd ~/OpenShift-on-SimpliVity
+```
+
+and then running the playbook:
+
+```bash
+$ ansible-playbook -i hosts playbooks/monitoring.yml
+```
+
+The playbook takes approximately 1-2 minutes to complete.  However, it may take several additional minutes for the various Cluster Monitoring components to successfully re-launch with their newly created persistent storage volumes.
 
 # Appendices
 
