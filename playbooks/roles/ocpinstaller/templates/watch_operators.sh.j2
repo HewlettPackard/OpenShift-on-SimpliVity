@@ -1,5 +1,0 @@
-#
-# All cluster operators should be Available for this script to return an exit code of 0
-#
-oc get clusteroperator -o jsonpath='{range .items[*]}{.metadata.name}{":"}{.status.conditions[?(@.type=="Available")].status}{"\n"}{end}' | 
-  awk -F: '/:False/ {print $1 }'

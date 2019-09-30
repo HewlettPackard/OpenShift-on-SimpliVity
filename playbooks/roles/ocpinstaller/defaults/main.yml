@@ -1,2 +1,0 @@
----
-ocpinstaller_clusteroperators_timeout: 600     # this is 10mns

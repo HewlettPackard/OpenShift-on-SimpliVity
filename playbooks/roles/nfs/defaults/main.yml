@@ -1,5 +1,0 @@
----
-# number of shares wanted
-number_of_nfs_shares: 10
-# basename for exported directories
-nfs_share: /srv/share
