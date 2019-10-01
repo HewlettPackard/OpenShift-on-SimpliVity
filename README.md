@@ -1195,7 +1195,7 @@ hpe-ocp0   Ready    infra,worker   28m   v1.13.4+12ee15d4a   beta.kubernetes.io/
 You can control the placement of EFK components by patching the `clusterlogging` instance in the `openshift-logging` namespace.
 
 ```
-oc patch --type=merge  -n openshift-logging clusterlogging/instance -p '{"spec":{"curation":{"curator":{"nodeSelector":{"node-role.kubernetes.io/infra":""}}},"logStore":{"elasticsearch":{"nodeSelector":{"node-role.kubernetes.io/infra":""}}},"visualization":{"kibana":{"nodeSelector":{"node-role.kubernetes.io/infra":""}}}}}'
+# oc patch --type=merge  -n openshift-logging clusterlogging/instance -p '{"spec":{"curation":{"curator":{"nodeSelector":{"node-role.kubernetes.io/infra":""}}},"logStore":{"elasticsearch":{"nodeSelector":{"node-role.kubernetes.io/infra":""}}},"visualization":{"kibana":{"nodeSelector":{"node-role.kubernetes.io/infra":""}}}}}'
 ```
 
 This will cause the elasticsearch, kibana and curator pods to be rescheduled on the infrastructure nodes. Note that this may take several minutes before you see the end result because the pods are rescheduled one after each other.
