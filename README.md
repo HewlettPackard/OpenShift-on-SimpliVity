@@ -56,6 +56,11 @@ OpenShift Version Installed: OCP 4.1
 - [Persistent Storage for Cluster Monitoring](#persistent-storage-for-cluster-monitoring)
   - [About Cluster Monitoring](#about-cluster-monitoring)
   - [Configuring Persistent Storage for Cluster Monitoring](#configuring-persistent-storage-for-cluster-monitoring)
+- [Workload placement](#workload-placement)
+  * [Specifying node labels in the Ansible inventory](#specifying-node-labels-in-the-ansible-inventory)
+  * [Applying Labels](#applying-labels)
+  * [Controlling the placement of the EFK components](#controlling-the-placement-of-the-efk-components)
+  * [Controlling the placement of the default router replicas](#controlling-the-placement-of-the-default-router-replicas)
 - [Appendices](#appendices)
   - [group_vars/all/vars.yml](#group_varsallvarsyml)
   - [group_vars/all/vault.yml](#group_varsallvaultyml)
@@ -1140,6 +1145,94 @@ $ ansible-playbook -i hosts playbooks/monitoring.yml
 ```
 
 The playbook takes approximately 1-2 minutes to complete.  However, it may take several additional minutes for the various Cluster Monitoring components to successfully re-launch with their newly created persistent storage volumes.
+
+# Workload placement
+
+You may want to dedicate a number of worker nodes for management purposes. An example of that is the logging stack. By default, `playbooks/efk.yml` will deploy the elasticsearch and kibana pods on whichever worker node that matches the pods requirements in terms of CPU and memory.  However, you may want to have a better control on the placement of these components.  The best way for doing so is probably to use node labels. In this section, we will provide two examples. The first example will show you how you can control the placement of the kibana as well as the elasticsearch pods. The second example will show you how to control the placement of the default router replicas installed by the installer.  But let's start adding labels to the OCP nodes first
+
+## Specifying node labels in the Ansible inventory
+
+In order to add labels to OCP nodes you will need to edit your Ansible inventory file and then use the playbook `playbooks/labels.yml`.
+
+The `hosts.sample` file comes with 3 nodes, hpe-ocp0, hpe-ocp1 and hpe-ocp3 which specify labels. 
+
+```
+[rhcos_worker]
+hpe-worker0   ansible_host=10.15.152.213
+hpe-worker1   ansible_host=10.15.152.214
+hpe-ocp0   ansible_host=10.15.152.215  cpus=8 ram=32768  k8s_labels='{"node-role.kubernetes.io/infra":"","mylabel":"myvalue"}'
+hpe-ocp1   ansible_host=10.15.152.216  cpus=8 ram=32768  k8s_labels='{"node-role.kubernetes.io/infra":"","mylabel":"myvalue"}'
+hpe-ocp2   ansible_host=10.15.152.217  cpus=8 ram=32768  k8s_labels='{"node-role.kubernetes.io/infra":"","mylabel":"myvalue"}'
+```
+
+The labels are specified using the Ansible variable `k8s_labels` which defines a dictionary in json format. The first label is named `node-role.kubernetes.io/infra` and is defined with an empty value. This is the label will will leverage later to control pod placement. The second label (`mylabel)` is only here to illustrate how you can specify more than one label for each node in the inventory.
+
+Once you have updated your Ansible inventory, you are ready to use the playbook `playbooks/labels.yml`
+
+## Applying Labels
+
+To apply the labels you specified in your Ansible inventory (here the inventory is named `hosts`), enter the following command:
+
+```
+# ansible-playbook -i hosts playbooks/labels.yml
+```
+
+You can then verify that the labels have been applied with the following command:
+
+```
+# oc get node --show-labels [optional-node-name]
+```
+
+```
+[core@hpe-ansible OpenShift-on-SimpliVity]$ oc get node --show-labels hpe-ocp0
+NAME       STATUS   ROLES          AGE   VERSION             LABELS
+hpe-ocp0   Ready    infra,worker   28m   v1.13.4+12ee15d4a   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/hostname=hpe-ocp0,mylabel=myvalue,node-role.kubernetes.io/infra=,node-role.kubernetes.io/worker=,node.openshift.io/os_id=rhcos,node.openshift.io/os_version=4.1
+
+```
+
+## Controlling the placement of the EFK components
+
+You can control the placement of EFK components by patching the `clusterlogging` instance in the `openshift-logging` namespace.
+
+```
+oc patch --type=merge  -n openshift-logging clusterlogging/instance -p '{"spec":{"curation":{"curator":{"nodeSelector":{"node-role.kubernetes.io/infra":""}}},"logStore":{"elasticsearch":{"nodeSelector":{"node-role.kubernetes.io/infra":""}}},"visualization":{"kibana":{"nodeSelector":{"node-role.kubernetes.io/infra":""}}}}}'
+```
+
+This will cause the elasticsearch, kibana and curator pods to be rescheduled on the infrastructure nodes. Note that this may take several minutes before you see the end result because the pods are rescheduled one after each other.
+
+In the following example, you can see the curator pod being rescheduled on one of the infrastructure node
+
+```
+[core@hpe-ansible OpenShift-on-SimpliVity]$ oc get pod -n openshift-logging -o wide | grep -v fluentd
+NAME                                            READY   STATUS              RESTARTS   AGE     IP            NODE          NOMINATED NODE   READINESS GATES
+cluster-logging-operator-7dc8b868c5-5rrh9       1/1     Running             0          23m     10.128.0.4    hpe-worker0   <none>           <none>
+curator-1569937200-c4k4h                        0/1     Completed           0          10m     10.128.0.7    hpe-worker0   <none>           <none>
+curator-1569937800-p7flh                        0/1     ContainerCreating   0          5s      <none>        hpe-ocp2      <none>           <none>
+elasticsearch-cdm-7xpdh44p-1-5db94bb747-ghcdz   2/2     Running             0          5m11s   10.129.0.13   hpe-ocp0      <none>           <none>
+elasticsearch-cdm-7xpdh44p-2-59b77cdbcc-9n82r   2/2     Running             0          3m30s   10.131.2.15   hpe-ocp2      <none>           <none>
+elasticsearch-cdm-7xpdh44p-3-858494f88-f9mts    2/2     Running             0          108s    10.130.0.16   hpe-ocp1      <none>           <none>
+kibana-7567cc5b7f-6nfx4                         2/2     Running             0          5m39s   10.129.0.12   hpe-ocp0      <none>           <none>
+kibana-7567cc5b7f-gh6mm                         2/2     Running             0          4m49s   10.131.2.14   hpe-ocp2      <none>           <none>
+
+```
+
+
+
+## Controlling the placement of the default router replicas
+
+You can control the placement of the default router replicas (2 router replicas are created by the installer) using the following command
+
+```
+# oc patch ingresscontroller/default --type=merge -n openshift-ingress-operator -p '{"spec": {"nodePlacement":{"nodeSelector":{"matchLabels":{"node-role.kubernetes.io/infra": ""}}}}}'
+```
+
+Verify the placement of the router replicas with the following command:
+
+```
+# oc get pod -n openshift-ingress -o wide
+```
+
+
 
 # Appendices
 
