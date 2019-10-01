@@ -23,9 +23,9 @@ hpe-master2   ansible_host=10.15.152.212
 [rhcos_worker]
 hpe-worker0   ansible_host=10.15.152.213
 hpe-worker1   ansible_host=10.15.152.214
-hpe-worker2   ansible_host=10.15.152.215  cpus=8 ram=32768  # Larger worker node
-hpe-worker3   ansible_host=10.15.152.216  cpus=8 ram=32768  # Larger worker node
-hpe-worker4   ansible_host=10.15.152.217  cpus=8 ram=32768  # Larger worker node
+hpe-ocp0   ansible_host=10.15.152.215  cpus=8 ram=32768  k8s_labels='{"node-role.kubernetes.io/infra":"","mylabel":"myvalue"}'
+hpe-ocp1   ansible_host=10.15.152.216  cpus=8 ram=32768  k8s_labels='{"node-role.kubernetes.io/infra":"","mylabel":"myvalue"}'
+hpe-ocp2   ansible_host=10.15.152.217  cpus=8 ram=32768  k8s_labels='{"node-role.kubernetes.io/infra":"","mylabel":"myvalue"}'
 
 [rhel_worker]
 
