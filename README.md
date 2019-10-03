@@ -56,6 +56,13 @@ OpenShift Version Installed: OCP 4.1
 - [Persistent Storage for Cluster Monitoring](#persistent-storage-for-cluster-monitoring)
   - [About Cluster Monitoring](#about-cluster-monitoring)
   - [Configuring Persistent Storage for Cluster Monitoring](#configuring-persistent-storage-for-cluster-monitoring)
+- [Workload placement](#workload-placement)
+  * [Specifying node labels in the Ansible inventory](#specifying-node-labels-in-the-ansible-inventory)
+  * [Controlling the placement of infrastructure workloads](#controlling-the-placement-of-infrastructure-workloads)
+    + [Moving router replicas to infrastructure nodes](#moving-router-replicas-to-infrastructure-nodes)
+    + [Moving the registry to infrastructure nodes](#moving-the-registry-to-infrastructure-nodes)
+    + [Moving the monitoring resources to infrastructure nodes](#moving-the-monitoring-resources-to-infrastructure-nodes)
+    + [Moving the cluster logging resources to infrastructure nodes](#moving-the-cluster-logging-resources-to-infrastructure-nodes)
 - [Appendices](#appendices)
   - [group_vars/all/vars.yml](#group_varsallvarsyml)
   - [group_vars/all/vault.yml](#group_varsallvaultyml)
@@ -1140,6 +1147,185 @@ $ ansible-playbook -i hosts playbooks/monitoring.yml
 ```
 
 The playbook takes approximately 1-2 minutes to complete.  However, it may take several additional minutes for the various Cluster Monitoring components to successfully re-launch with their newly created persistent storage volumes.
+
+# Workload placement
+
+You may want to dedicate a number of worker nodes for management purposes. An example of that is the logging stack. By default, `playbooks/efk.yml` will deploy the elasticsearch and kibana pods on whichever worker node that matches the pods requirements in terms of CPU and memory.  However, you may want to have a better control on the placement of these components.  The best way for doing so is probably to use node labels. 
+
+## Specifying node labels in the Ansible inventory
+
+In order to add labels to OCP nodes you will need to edit your Ansible inventory file and then use the playbook `playbooks/label.yml`.
+
+Let's say you want to dedicate 3 of the worker nodes to OCP workloads such as monitoring, logging, routing, etc.  This type of worker nodes is named Infrastructure node in the OpenShift literature and Kubernetes defines a special role to support infrastructure nodes. This role is assigned to worker nodes by tagging a node with the label `node-role.kubernetes.io/infra`
+
+Let's assume we have just deployed a cluster with 5 worker nodes.  This is how our initial hosts file is looking:
+
+```
+[rhcos_worker]
+hpe-worker0   ansible_host=10.15.152.213  cpus=8 ram=32768
+hpe-worker1   ansible_host=10.15.152.214  cpus=8 ram=32768
+hpe-worker2   ansible_host=10.15.152.215  cpus=8 ram=32768
+hpe-worker3   ansible_host=10.15.152.216  cpus=8 ram=32768
+hpe-worker4   ansible_host=10.15.152.217  cpus=8 ram=32768
+```
+
+and what the "oc get node" command outputs:
+
+```
+[core@hpe-ansible OpenShift-on-SimpliVity]$ oc get node
+NAME          STATUS   ROLES    AGE    VERSION
+hpe-master0   Ready    master   141m   v1.13.4+12ee15d4a
+hpe-master1   Ready    master   141m   v1.13.4+12ee15d4a
+hpe-master2   Ready    master   141m   v1.13.4+12ee15d4a
+hpe-worker0   Ready    worker   141m   v1.13.4+12ee15d4a
+hpe-worker1   Ready    worker   141m   v1.13.4+12ee15d4a
+hpe-worker2   Ready    worker   141m   v1.13.4+12ee15d4a
+hpe-worker3   Ready    worker   141m   v1.13.4+12ee15d4a
+hpe-worker4   Ready    worker   141m   v1.13.4+12ee15d4a
+```
+
+To assign the Infrastructure role to a node, you need to tag this node with the label `node-role.kubernetest.io/infra`. To achieve this, edit the inventory file and specify a variable `k8s_labels` for those nodes you want to tag with a label.
+
+```
+[rhcos_worker]
+hpe-worker0   ansible_host=10.15.152.213  cpus=8 ram=32768 k8s_labels='{"node-role.kubernetes.io/infra":""}'
+hpe-worker1   ansible_host=10.15.152.214  cpus=8 ram=32768 k8s_labels='{"node-role.kubernetes.io/infra":""}'
+hpe-worker2   ansible_host=10.15.152.215  cpus=8 ram=32768 k8s_labels='{"node-role.kubernetes.io/infra":""}'
+hpe-worker3   ansible_host=10.15.152.216  cpus=8 ram=32768
+hpe-worker4   ansible_host=10.15.152.217  cpus=8 ram=32768
+```
+
+The Ansible variable `k8s_labels` defines a dictionary in json format. Once you have updated your Ansible inventory, you are ready to use the playbook `playbooks/label.yml`
+
+```
+# ansible-playbook -i hosts playbooks/label.com
+```
+
+After successful completion of the playbook you can use the oc get node command to verify that you have the nodes you want listed with the "Infra" role.
+
+```
+[core@hpe-ansible OpenShift-on-SimpliVity]$ oc get node
+NAME          STATUS   ROLES          AGE    VERSION
+hpe-master0   Ready    master         152m   v1.13.4+12ee15d4a
+hpe-master1   Ready    master         152m   v1.13.4+12ee15d4a
+hpe-master2   Ready    master         152m   v1.13.4+12ee15d4a
+hpe-worker0   Ready    infra,worker   152m   v1.13.4+12ee15d4a
+hpe-worker1   Ready    infra,worker   152m   v1.13.4+12ee15d4a
+hpe-worker2   Ready    infra,worker   152m   v1.13.4+12ee15d4a
+hpe-worker3   Ready    worker         152m   v1.13.4+12ee15d4a
+hpe-worker4   Ready    worker         153m   v1.13.4+12ee15d4a
+```
+
+You may want to use custom labels. Have a look at the inventory below:
+
+```
+[rhcos_worker]
+hpe-worker0   ansible_host=10.15.152.213  cpus=8 ram=32768 k8s_labels='{"node-role.kubernetes.io/infra":"",}'
+hpe-worker1   ansible_host=10.15.152.214  cpus=8 ram=32768 k8s_labels='{"node-role.kubernetes.io/infra":"",}'
+hpe-worker2   ansible_host=10.15.152.215  cpus=8 ram=32768 k8s_labels='{"node-role.kubernetes.io/infra":"","mylabel":"yes"}'
+hpe-worker3   ansible_host=10.15.152.216  cpus=8 ram=32768 k8s_labels='{"mylabel":"yes"}'
+hpe-worker4   ansible_host=10.15.152.217  cpus=8 ram=32768 k8s_labels='{"mylabel":"yes"}'
+```
+
+Running the playbook `playbooks/label.yml` against the above inventory would assign the labels `mylabel` and `node-roles.kubernetes.io/infra` to the worker nodes, one of them being assigned the two labels. You will need to use the --show-labels switch to view custom labels. The example below shows the labels assigned to the node `hpe-worker2`
+
+```
+[core@hpe-ansible OpenShift-on-SimpliVity]$ oc get node --show-labels hpe-worker2
+NAME          STATUS   ROLES          AGE    VERSION             LABELS
+hpe-worker2   Ready    infra,worker   164m   v1.13.4+12ee15d4a   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/hostname=hpe-worker2,mylabel=yes,node-role.kubernetes.io/infra=,node-role.kubernetes.io/worker=,node.openshift.io/os_id=rhcos,node.openshift.io/os_version=4.1
+```
+
+Note: The playbook will not let you delete existing labels, you will need to do it manually using the oc label command. The generic syntax is shown below. Take note of the - following the name of the label.
+
+```
+# oc label node <nodename> <labelname>-
+```
+
+## Controlling the placement of infrastructure workloads
+
+The OCP 4.1 documentation describes how you can control the placement of the main infrastructure resources in your cluster. This documentation leverages the label `node-role.kubernetes.io/infra` and hence use a single pool of infrastructure nodes to host all the infrastructure resources. 
+
+### Moving router replicas to infrastructure nodes
+
+Click [here](https://docs.openshift.com/container-platform/4.1/machine_management/creating-infrastructure-machinesets.html#infrastructure-moving-router_creating-infrastructure-machinesets) to learn how you can control the placement of the router replicas. If you have already configured your pool of infrastructure nodes (using the label `node-role.kubernetes.io/infra` label as explained above) these instructions can be summarized with a single `oc patch` command
+
+```
+# oc patch ingresscontroller/default --type=merge -n openshift-ingress-operator -p '{"spec": {"nodePlacement":{"nodeSelector":{"matchLabels":{"node-role.kubernetes.io/infra": ""}}}}}'
+```
+
+**note**: The data passed to the patch command above with the -p switch depends on the type of resource being patched. The `ingresscontroller` resource is a custom resource and the spec properties that can be specified for such resource objects can be found by querying the corresponding custom resource definition (CRD) `ingresscontrollers.operator.openshift.io`.
+
+Once you have patched the default ingress controller, you can type the following command to verify the placement of the router pods:
+
+```
+# oc get pod -n openshift-ingress -o wide
+```
+
+It may take a while (seconds) before all the router replicas are migrated to your pool of infrastructure nodes (hpe-worker0, hpe-worker1 and hpe-worker2 in our example)
+
+```
+[core@hpe-ansible OpenShift-on-SimpliVity]$ oc get pods -n openshift-ingress -o wide
+NAME                              READY   STATUS    RESTARTS   AGE   IP              NODE          NOMINATED NODE   READINESS GATES
+router-default-766d49447f-9rqxc   1/1     Running   0          40s   10.15.152.214   hpe-worker1   <none>           <none>
+router-default-766d49447f-pszjl   0/1     Running   0          18s   10.15.152.213   hpe-worker0   <none>           <none>
+```
+
+### Moving the registry to infrastructure nodes
+
+Click [here](https://docs.openshift.com/container-platform/4.1/machine_management/creating-infrastructure-machinesets.html#infrastructure-moving-registry_creating-infrastructure-machinesets) to learn how you can control the placement of the registry. 
+
+### Moving the monitoring resources to infrastructure nodes
+
+Click [here](https://docs.openshift.com/container-platform/4.1/machine_management/creating-infrastructure-machinesets.html#infrastructure-moving-monitoring_creating-infrastructure-machinesets) to learn how you can control the placement of the monitoring resources
+
+### Moving the cluster logging resources to infrastructure nodes
+
+Click [here](https://docs.openshift.com/container-platform/4.1/machine_management/creating-infrastructure-machinesets.html#infrastructure-moving-logging_creating-infrastructure-machinesets) to learn how you can control the placement of the logging resources.  If you have already configured your pool of infrastructure nodes (using the label `node-role.kubernetes.io/infra` label as explained above) these instructions can be summarized with a single `oc patch` command which moves the `curator`, `logStore`, and `visualization` pods to the pool of infrastructure nodes you defined when assigning the `node-role.kubernetes.io/infra` label.
+
+```
+# oc patch --type=merge  -n openshift-logging clusterlogging/instance -p '{"spec":{"curation":{"curator":{"nodeSelector":{"node-role.kubernetes.io/infra":""}}},"logStore":{"elasticsearch":{"nodeSelector":{"node-role.kubernetes.io/infra":""}}},"visualization":{"kibana":{"nodeSelector":{"node-role.kubernetes.io/infra":""}}}}}'
+```
+
+**note**: The data passed to the patch command above with the -p switch depends on the type of resource being patched. The `clusterlogging` resource is a custom resource and the spec properties that can be specified for such resource objects can be found by querying the corresponding custom resource definition (CRD) `clusterloggings.logging.openshift.io`.
+
+The listing below shows the distribution of the EFK pods **before** patching the `clusterlogging` instance. Some of the pods are running on non infrastructure OCP nodes
+
+```
+NAME                                            READY   STATUS      RESTARTS   AGE    IP            NODE          NOMINATED NODE   READINESS GATES
+curator-1570107600-fkwkh                        0/1     Completed   0          9m2s   10.128.2.20   hpe-worker3   <none>           <none>
+elasticsearch-cdm-ioj7ixl8-1-686654c497-7kg4l   2/2     Running     0          111m   10.128.0.9    hpe-worker2   <none>           <none>
+elasticsearch-cdm-ioj7ixl8-2-69675b94d4-jgkqq   2/2     Running     0          111m   10.130.0.10   hpe-worker1   <none>           <none>
+elasticsearch-cdm-ioj7ixl8-3-66ccb8954f-2v26w   2/2     Running     0          111m   10.129.0.10   hpe-worker4   <none>           <none>
+kibana-6c67d99996-27zzj                         2/2     Running     0          111m   10.128.0.7    hpe-worker2   <none>           <none>
+kibana-6c67d99996-rffxw                         2/2     Running     0          111m   10.128.2.8    hpe-worker3   <none>           <none>
+```
+
+The listing below shows the distribution of the EFK pods **after** patching the `clusterlogging` instance. All visualization, logStore and curator pods are running on Infrastructure nodes now as requested
+
+```
+[core@hpe-ansible OpenShift-on-SimpliVity]$ oc get pod -n openshift-logging -o wide | grep -E 'curator|elasticsearch|kibana'
+curator-1570108200-4gnpn                        0/1     Completed   0          7m17s   10.129.2.14   hpe-worker0   <none>           <none>
+elasticsearch-cdm-ioj7ixl8-1-78c9fc886b-snwv4   2/2     Running     0          6m55s   10.128.0.10   hpe-worker2   <none>           <none>
+elasticsearch-cdm-ioj7ixl8-2-bf879f995-qc2c7    2/2     Running     0          5m6s    10.130.0.12   hpe-worker1   <none>           <none>
+elasticsearch-cdm-ioj7ixl8-3-5bdb9b86c8-5g6ws   2/2     Running     0          2m42s   10.129.2.15   hpe-worker0   <none>           <none>
+kibana-7567cc5b7f-gwnqq                         2/2     Running     0          7m20s   10.129.2.13   hpe-worker0   <none>           <none>
+kibana-7567cc5b7f-zf5gz                         2/2     Running     0          6m29s   10.130.0.11   hpe-worker1   <none>           <none>
+```
+
+```
+[core@hpe-ansible OpenShift-on-SimpliVity]$ oc get node
+NAME          STATUS   ROLES          AGE     VERSION
+hpe-master0   Ready    master         3h44m   v1.13.4+12ee15d4a
+hpe-master1   Ready    master         3h44m   v1.13.4+12ee15d4a
+hpe-master2   Ready    master         3h44m   v1.13.4+12ee15d4a
+hpe-worker0   Ready    infra,worker   3h44m   v1.13.4+12ee15d4a
+hpe-worker1   Ready    infra,worker   3h44m   v1.13.4+12ee15d4a
+hpe-worker2   Ready    infra,worker   3h44m   v1.13.4+12ee15d4a
+hpe-worker3   Ready    worker         3h44m   v1.13.4+12ee15d4a
+hpe-worker4   Ready    worker         3h44m   v1.13.4+12ee15d4a
+```
+
+
 
 # Appendices
 
