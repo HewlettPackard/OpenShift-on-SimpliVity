@@ -1156,7 +1156,7 @@ You may want to dedicate a number of worker nodes for management purposes. An ex
 
 In order to add labels to OCP nodes you will need to edit your Ansible inventory file and then use the playbook `playbooks/label.yml`.
 
-Let's say you want to dedicate 3 of the worker nodes to OCP workloads such as monitoring, logging, routing, etc.  This type of worker nodes is named Infrastructure node in the OpenShift literature and Kubernetes defines a special role to support infrastructure nodes. This role is assigned to worker nodes by tagging a node with the label `node-role.kubernetest.io/infra`
+Let's say you want to dedicate 3 of the worker nodes to OCP workloads such as monitoring, logging, routing, etc.  This type of worker nodes is named Infrastructure node in the OpenShift literature and Kubernetes defines a special role to support infrastructure nodes. This role is assigned to worker nodes by tagging a node with the label `node-role.kubernetes.io/infra`
 
 Let's assume we have just deployed a cluster with 5 worker nodes.  This is how our initial hosts file is looking:
 
@@ -1216,7 +1216,7 @@ hpe-worker3   Ready    worker         152m   v1.13.4+12ee15d4a
 hpe-worker4   Ready    worker         153m   v1.13.4+12ee15d4a
 ```
 
-You may want to use your custom labels. Have a look at the inventory below:
+You may want to use custom labels. Have a look at the inventory below:
 
 ```
 [rhcos_worker]
@@ -1243,7 +1243,7 @@ Note: The playbook will not let you delete existing labels, you will need to do 
 
 ## Controlling the placement of infrastructure workloads
 
-The OCP 4.1 documentation describes how you can control the placement of the main infrastructure resources in your cluster. This documentation leverages the label `node-role.kubernetes.io/infra` label and hence use a single pool of infrastructure nodes to host all the infrastructure resources. S=
+The OCP 4.1 documentation describes how you can control the placement of the main infrastructure resources in your cluster. This documentation leverages the label `node-role.kubernetes.io/infra` and hence use a single pool of infrastructure nodes to host all the infrastructure resources. 
 
 ### Moving router replicas to infrastructure nodes
 
