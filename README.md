@@ -1055,12 +1055,14 @@ The example `hosts.sample` inventory file that ships with the OpenShift-on-Simpl
 [rhcos_worker]
 hpe-worker0   ansible_host=10.15.152.213
 hpe-worker1   ansible_host=10.15.152.214
-hpe-worker2   ansible_host=10.15.152.215  cpus=8 ram=32768  # Larger worker node for EFK
-hpe-worker3   ansible_host=10.15.152.216  cpus=8 ram=32768  # Larger worker node for EFK
-hpe-worker4   ansible_host=10.15.152.217  cpus=8 ram=32768  # Larger worker node for EFK
+hpe-worker2   ansible_host=10.15.152.215  cpus=8 ram=32768  k8s_labels='{"node-role.kubernetes.io/infra":"","mylabel":"myvalue"}'
+hpe-worker3   ansible_host=10.15.152.216  cpus=8 ram=32768  k8s_labels='{"node-role.kubernetes.io/infra":"","mylabel":"myvalue"}'
+hpe-worker4   ansible_host=10.15.152.217  cpus=8 ram=32768  k8s_labels='{"node-role.kubernetes.io/infra":"","mylabel":"myvalue"}'
 ```
 
-In the above example, each of these "large" CoreOS worker nodes will be allocated `8` virtual CPU cores and `32GB` of RAM. These values override the default limits of 4 virtual CPU cores and 16GB RAM defined in the `group_vars/worker.yml` file.
+In the above example, each of these "large" CoreOS worker nodes will be allocated `8` virtual CPU cores and `32GB` of RAM. These values override the default limits of 4 virtual CPU cores and 16GB RAM defined in the `group_vars/worker.yml` file. The above example also shows how custom Kubernetes labels can be configured on a per-node basis. For more information about labels and workload placement, refer to the "Workload placement" section later in this document.
+
+By default, the cluster logging services are deployed with no limits on their CPU and RAM resources. If you wish to limit the CPU and memory resources consumed by the elasticsearch, kibana, curator, and fluentd resources you can edit the `playbooks/roles/efk/templates/clo-crd.yml.j2` file. This Jinja2 template file has many commented lines that offer examples of how to restrict the CPU and RAM resources for each of these services.
 
 A persistent volume is required for each Elasticsearch deployment to have one data volume per data node. On OpenShift Container Platform this is achieved using Persistent Volume Claims (PVC) and Persistent Volumes (PV). You can customize both the Storage Class and Size of the Persistent Volumes (PV) used to store Elasticsearch data by editing the following variables in the `playbooks/roles/efk/vars/main.yml` file:
 
