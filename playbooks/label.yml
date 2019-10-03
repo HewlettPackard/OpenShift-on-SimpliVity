@@ -28,7 +28,7 @@
   - name: Adding labels
     shell: |
       oc label node --overwrite {{ inventory_hostname }} {{ item.key }}="{{ item.value }}"
-    loop: "{{ lookup('dict', k8s_labels) }}"
+    loop: "{{ lookup('dict', k8s_labels, wantlist=True) }}"
     delegate_to: localhost
     changed_when: "'not labeled' not in res.stdout"
     register: res
