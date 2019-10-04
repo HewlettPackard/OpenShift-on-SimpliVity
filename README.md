@@ -131,7 +131,7 @@ The playbook `site.yml` is used to deploy the control plane, and zero or more Co
 
 | Requirement (1)                                              | Choice Made                                               | Comment                                                      |
 | :----------------------------------------------------------- | :-------------------------------------------------------- | :----------------------------------------------------------- |
-| vCenter Infra 6.7U1                                          |                                                           | You need admin credentials                                   |
+| vCenter Infra 6.7U2                                          |                                                           | You need admin credentials                                   |
 | ESXi cluster of three machines                               |                                                           | If you want HA you need three machines in the cluster and you need to deploy 3 masters |
 | One proxy-free VLAN with access to Internet (to pull Red Hat artifacts) | a portgroup connected to all machines in your ESX cluster | The playbooks install DHCP services on this VLAN so no other DHCP service should be running on this VLAN |
 | One routed subnet for use on the above VLAN                  |                                                           | from your net admin.                                         |
@@ -151,7 +151,7 @@ The playbooks also creates the following VMs which provide additional infrastruc
 | VM                            | OS and Sizing | Comments                                                     |
 | :---------------------------- | :------------ | :----------------------------------------------------------- |
 | 0, 1 or 2  x load balancer(s) | Red Hat 7.6   | The playbooks can deploy one or two virtual machines (two for redundancy purposes) if you don't have an external load balancer. |
-| 1 or 2 x Infra                | Red Hat 7.6   | One or two VMs providing DHCP and DNS services on the internal VLAN. Configure two for HA purposes |
+| 1 or 2 x support VMs          | Red Hat 7.6   | One or two VMs providing DHCP and DNS services on the internal VLAN. Configure two for HA purposes |
 | 1 x NFS                       | Red Hat 7.6   | one NFS VM to hold the OpenShift Registry images             |
 
 ## Prepare an Ansible box
@@ -1360,9 +1360,9 @@ The file <https://github.com/HewlettPackard/OpenShift-on-SimpliVity/blob/master/
 The environment consists of a 4-node SimpliVity cluster running the latest OmniStack bits at the time of testing
 
 - Hardware Model: HPE SimpliVity 380 Series 6000
-- OmniStack 3.7.8.232 (PSI16)
+- OmniStack 3.7.10 (PSI18)
 - ESXi 6.7 EP 05 10764712
-- vCenter 6.7U1b (build 11726888)
+- vCenter 6.7U2c 
 
 ## Monitoring the deployment
 
