@@ -1,5 +1,5 @@
 ---
-# defaults file for infrastructure
+# defaults file for dhcp role
 #
 # ports 647 and 79111 needed if impleneting ISC DHCP Failover,
 #    it seems Failover is not needed when only static leases are configured

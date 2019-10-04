@@ -6,6 +6,10 @@ template: hpe-rhel760                                   # Override the default t
 ova_path: /kits/hpe-rhel760.ova                         # Name of the OVA used to import the template
 
 #
+# Nothing should be modified below this line
+#
+
+#
 # with cloud-init
 #
 customvalues: 

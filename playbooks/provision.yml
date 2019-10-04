@@ -46,7 +46,7 @@
 #
 #######################################################################
 - name: Prepare cloud-init data 
-  hosts: loadbalancer:infrastructure:nfs
+  hosts: loadbalancer:support:nfs
   gather_facts: false 
   roles:
   - role: cloudinit
@@ -59,7 +59,7 @@
 #
 #######################################################################
 - name: Provision Load Balancers
-  hosts: loadbalancer:infrastructure:nfs
+  hosts: loadbalancer:support:nfs
   gather_facts: false
   roles:
   - role: vspherevm

@@ -35,14 +35,14 @@
     - "{{ ocp_kubectl_path }}"
   
 
-- name: Create Infra Folder
+- name: Create Support Folder
   vcenter_folder:
     hostname: "{{ vcenter_hostname }}"
     username: "{{ vcenter_username }}"
     password: "{{ vcenter_password }}"
     validate_certs: "{{ vcenter_validate_certs }}"
     datacenter: "{{ datacenter }}"
-    folder_name: "{{ infra_folder }}"
+    folder_name: "{{ support_folder }}"
     folder_type: vm
     state: present
 

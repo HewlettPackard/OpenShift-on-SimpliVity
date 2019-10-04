@@ -35,13 +35,13 @@ dns_servers: ['10.10.173.1','10.10.173.31']                     # DNS servers in
 #
 # folders, templates and OVAs, templates are created using the corresponding OVA if they cannot be found (and only if they cannot be found)
 #
-infra_folder: 'hpeInfra'                                        # Folder for non-OCP VMs and templates (created if needed)
+support_folder: 'hpeSupport'                                    # Folder for non-OCP VMs and templates (created if needed)
 master_ova_path: '/kits/rhcos-4.1.0-x86_64-vmware.ova'          # Path to RHCOS OVA (file is expected to be there)
 worker_ova_path: '{{ master_ova_path }}'                        # Path to the OVA file used to create the VM template for OCP worker nodes
-infra_ova_path: '/kits/hpe-rhel760.ova'                         # Path to the OVA file used to create the VM template for infra machines (LBs etc)
+support_ova_path: '/kits/hpe-rhel760.ova'                       # Path to the OVA file used to create the VM template for support  machines (LBs etc)
 master_template: hpe-rhcos                                      # VMware template name for OCP master nodes
 worker_template: '{{ master_template }}'                        # VMware template name for OCP worker nodes (same as master nodes by default, ie RH CoreOS)
-infra_template: hpe-rhel760                                     # VMware template name for non OCP VMs (such as LBs etc)
+support_template: hpe-rhel760                                   # VMware template name for non OCP VMs (such as LBs etc)
 
 #
 # passwordless login
