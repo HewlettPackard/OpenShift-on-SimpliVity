@@ -29,11 +29,11 @@
 
 #######################################################################
 #
-# Play: Configure Infrastructure Nodes
+# Play: Configure support Nodes
 #
 #######################################################################
-- name: Configure Infrastructure Nodes
-  hosts: infrastructure
+- name: Configure support Nodes
+  hosts: support
   gather_facts: yes
   roles:
   - role: disks

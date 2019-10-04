@@ -21,7 +21,7 @@
     username: "{{ vcenter_username }}"
     password: "{{ vcenter_password }}"
     datacenter: "{{ datacenter }}"
-    folder: "{{ datacenter }}/vm/{{ infra_folder }}"
+    folder: "{{ datacenter }}/vm/{{ support_folder }}"
     validate_certs: no
     name: "{{ template }}"
   failed_when: false
@@ -49,7 +49,7 @@
     ova: "{{ ova_path }}"
     cluster: "{{ vcenter_cluster }}"
     datacenter: "{{ datacenter }}"
-    folder: "{{ datacenter }}/vm/{{ infra_folder }}"
+    folder: "{{ datacenter }}/vm/{{ support_folder }}"
     datastore: "{{ datastores | random }}"
     disk_provisioning: thin
     networks: '{"VM Network":"{{ vm_portgroup }}"}'
