@@ -22,7 +22,7 @@
 {% for host in groups.loadbalancer %}
 {{ hostvars[host].ansible_host }} {{ host }}
 {% endfor %}
-{% for host in groups.infrastructure %}
+{% for host in groups.support %}
 {{ hostvars[host].ansible_host }} {{ host }}
 {% endfor %}
 {% for host in groups.bootstrap %}

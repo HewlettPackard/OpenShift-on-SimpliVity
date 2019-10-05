@@ -98,11 +98,11 @@
 
 #######################################################################
 #
-# Play: Configure Infrastructure Nodes
+# Play: Configure Support Nodes
 #
 #######################################################################
-- name: Configure Infrastructure Nodes
-  hosts: infrastructure
+- name: Configure Support Nodes
+  hosts: support
   gather_facts: false
   roles:
   - role: dns

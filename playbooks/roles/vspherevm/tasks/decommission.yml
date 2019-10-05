@@ -55,7 +55,7 @@
     password: "{{ vcenter_password }}"
     validate_certs: "{{ vcenter_validate_certs }}"
     datacenter: "{{ datacenter }}"
-    folder: "{{ datacenter }}/vm/{{ infra_folder }}"
+    folder: "{{ datacenter }}/vm/{{ support_folder }}"
     name: "{{ item }}"
     state: absent
   with_items:

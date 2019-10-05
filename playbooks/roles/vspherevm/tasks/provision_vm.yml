@@ -16,7 +16,7 @@
 ---
 - name: Build list of DNS servers
   set_fact:
-    internal_dns_servers: "{{ groups['infrastructure'] | map('extract', hostvars, ['ansible_host']) | list }}"
+    internal_dns_servers: "{{ groups['support'] | map('extract', hostvars, ['ansible_host']) | list }}"
 
 - name: Load Ignition Data
   set_fact:

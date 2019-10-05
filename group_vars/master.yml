@@ -20,6 +20,11 @@ disk1_size: '120'                                       # Disk size in Gbs
 folder: "{{ cluster_name }}"                            # Where the VM will be stored
 template: "{{ master_template }}"                       # Name of the template to use
 ova_path: "{{ master_ova_path }}"                       # Name of the OVA file used to create the above template
+
+#
+# Nothing should be modified below this line
+#
+
 ignition_file: '{{ install_dir }}/master.ign'           # location of the ignition data for master nodes
 initial_port_check: 6443                                # This is the machine-config-server port
 initial_port_check_timeout: 900                         # Maximum number of seconds waiting for the OpenShift API on the master node

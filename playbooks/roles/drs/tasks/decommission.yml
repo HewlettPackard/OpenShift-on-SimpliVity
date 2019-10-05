@@ -20,7 +20,7 @@
 
 - include_tasks: decommission_drs.yml
   vars:
-    drs_group: infrastructure
+    drs_group: support
 
 - include_tasks: decommission_drs.yml
   vars:
