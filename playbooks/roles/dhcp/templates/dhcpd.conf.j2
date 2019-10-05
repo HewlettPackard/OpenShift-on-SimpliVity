@@ -23,7 +23,7 @@
 # Options that apply to all configured subnets
 #
 option domain-name                      "{{ cluster_name }}.{{ domain_name }}";
-option domain-name-servers              {{ groups['infrastructure'] | map('extract', hostvars, ['ansible_host']) | join(',') }};
+option domain-name-servers              {{ groups['support'] | map('extract', hostvars, ['ansible_host']) | join(',') }};
 option ntp-servers                      {{ ntp_servers | join (',') }};
 default-lease-time                      3600;
 max-lease-time                          7200;
