@@ -468,9 +468,7 @@ Here is what you should do before running the playbook:
      ldap_bind_user_password: 'YourPasswordHere'
    ```
 
-3. edit group_`vars/all/vars.yml` and specify the path to the custom resource file using the variable `ldap_cr_file`.  The file `playbooks/roles/ldap/vars/ldap_cr.yml` contains an **example** of such a file. The exact content of this file depends on the layout of your LDAP hierarchy and how you want to map the records in LDAP with users in OpenShift.
-
-4. The playbook supports secure LDAP which means you need to configure the identity provider with the CA Bundle of the LDAP server. This bundle should be exported in PEM format. How you retrieve this CA bundle depends on your environment and is beyond the scope of this documentation. Once you have this bundle, store it in a file somewhere on the Ansible box where your ansible user can access it and edit `group_vars/all/vars.yml` and the variable `ldap_ca_file` to have this variable point to your CA bundle.
+3. The playbook supports secure LDAP which means you need to configure the identity provider with the CA Bundle of the LDAP server. This bundle should be exported in PEM format. How you retrieve this CA bundle depends on your environment and is beyond the scope of this documentation. Once you have this bundle, store it in a file somewhere on the Ansible box where your ansible user can access it and edit `group_vars/all/vars.yml` and the variable `ldap_ca_file` to have this variable point to your CA bundle.
 
    **Note:** the playbook creates a ConfigMap to store this bundle.
 
