@@ -81,8 +81,10 @@ number_of_nfs_shares: 5                                         # The image regi
 #
 # LDAP integration
 #
-ldap_bind_user_dn: "cn=adreader,cn=Users,dc=am2,dc=cloudra,dc=local"       # DN of the user you use to bind with the LDAP service
-ldap_bind_user_password: "{{ vault.ldap_bind_user_password }}"             # password for the user above, the real password is encrypted in the vault file
+ldap_bind_user_dn: "cn=adreader,cn=Users,dc=am2,dc=cloudra,dc=local"  # DN of the user you use to bind with the LDAP service
+ldap_bind_user_password: "{{ vault.ldap_bind_user_password }}"        # password for the user above, the real password is encrypted in the vault file
+#ldap_ca_file: 'path to your LDAP CA certificate in pem format'       # a default ca file is provided in playbooks/ldap/files/ca.pem , it will likely not work in your environment
+#ldap_cr_file: 'path to your LDAP Custom resource file'               # a default cr file is provided in playbooks/ldap/vars/ldap_cr.yml, it will liklely not work in your environment
 
 #
 # OpenShift-Ansible Playbook

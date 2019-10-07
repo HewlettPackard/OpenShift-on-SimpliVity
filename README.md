@@ -1378,7 +1378,7 @@ You can monitor the progress of the ignition process in several places:
 
   **Note:** In my environment, the playbook finishes at 70 / 60 retries remaining.
 
-- You should see the `openshift-api-server` and the `machine-config-server` endpoints available on the bootstrap machine. Use the Load Balancer stats screen to check this out (URL [<http://your‑internal-lb-ip-address:9000>](<http://yourlb-ip-address:9000>))
+- You should see the `openshift-api-server` and the `machine-config-server` endpoints available on the bootstrap machine. Use the Load Balancer stats screen to check this out (URL [<http://your‑internal-lb-ip-address:9000>](<http://yourlb-ip-address:9000>))
 
 - SSH to the bootstrap VM and run the following command:
 
@@ -1444,3 +1444,4 @@ ldap://host:port/basedn?attribute?scope?filter
 Below is the corresponding LDAP tree.
 
 ![1563454212570](pics/ldap_tree)
+
