@@ -3,7 +3,7 @@ ram: '16384'                                            # RAM size in MBs
 disk1_size: '120'                                       # Disk size in GBs
 folder: "{{ cluster_name }}"                            # Where the VM will be stored
 template: hpe-rhel760                                   # Override the default template
-ova_path: /kits/hpe-rhel760.ova                         # Name of the OVA used to import the template
+ova_path: "{{ local_home }}/kits/hpe-rhel760.ova"       # Name of the OVA used to import the template
 
 #
 # Nothing should be modified below this line
