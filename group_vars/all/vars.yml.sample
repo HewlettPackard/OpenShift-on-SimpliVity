@@ -20,9 +20,9 @@
 #
 local_home: "{{ lookup('env','HOME') }}"                        # Local user's HOME directory
 install_dir: "{{ local_home }}/.ocp"                            # OCP installation dir
-ocp_installer_path: /kits/openshift-install                     # Path to the OCP installer
-ocp_oc_path: /kits/oc                                           # Path to the oc client 
-ocp_kubectl_path: /kits/kubectl                                 # Path to kubectl client
+ocp_installer_path: '{{ local_home }}/kits/openshift-install'   # Path to the OCP installer
+ocp_oc_path: '{{ local_home }}/kits/oc'                         # Path to the oc client 
+ocp_kubectl_path: '{{ local_home }}/kits/kubectl'               # Path to kubectl client
 pull_secret: '{{ vault.pull_secret }}'                          # pull secret
 
 #
@@ -52,9 +52,9 @@ dns_servers: ['10.10.173.1','10.10.173.31']                     # DNS servers in
 # folders, templates and OVAs, templates are created using the corresponding OVA if they cannot be found (and only if they cannot be found)
 #
 support_folder: 'hpeSupport'                                    # Folder for non-OCP VMs and templates (created if needed)
-master_ova_path: '/kits/rhcos-4.1.0-x86_64-vmware.ova'          # Path to RHCOS OVA (file is expected to be there)
+master_ova_path: '{{ local_home }}/kits/rhcos-4.1.0-x86_64-vmware.ova'          # Path to RHCOS OVA (file is expected to be there)
 worker_ova_path: '{{ master_ova_path }}'                        # Path to the OVA file used to create the VM template for OCP worker nodes
-support_ova_path: '/kits/hpe-rhel760.ova'                       # Path to the OVA file used to create the VM template for support  machines (LBs etc)
+support_ova_path: '{{ local_home }}/kits/hpe-rhel760.ova'       # Path to the OVA file used to create the VM template for support  machines (LBs etc)
 master_template: hpe-rhcos                                      # VMware template name for OCP master nodes
 worker_template: '{{ master_template }}'                        # VMware template name for OCP worker nodes (same as master nodes by default, ie RH CoreOS)
 support_template: hpe-rhel760                                   # VMware template name for non OCP VMs (such as LBs etc)
@@ -97,8 +97,10 @@ number_of_nfs_shares: 5                                         # The image regi
 #
 # LDAP integration
 #
-ldap_bind_user_dn: "cn=adreader,cn=Users,dc=am2,dc=cloudra,dc=local"       # DN of the user you use to bind with the LDAP service
-ldap_bind_user_password: "{{ vault.ldap_bind_user_password }}"             # password for the user above, the real password is encrypted in the vault file
+ldap_bind_user_dn: "cn=adreader,cn=Users,dc=am2,dc=cloudra,dc=local"  # DN of the user you use to bind with the LDAP service
+ldap_bind_user_password: "{{ vault.ldap_bind_user_password }}"        # password for the user above, the real password is encrypted in the vault file
+#ldap_ca_file: 'path to your LDAP CA certificate in pem format'       # a default ca file is provided in playbooks/ldap/files/ca.pem , it will likely not work in your environment
+#ldap_cr_file: 'path to your LDAP Custom resource file'               # a default cr file is provided in playbooks/ldap/vars/ldap_cr.yml, it will liklely not work in your environment
 
 #
 # OpenShift-Ansible Playbook

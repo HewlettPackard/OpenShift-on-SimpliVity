@@ -468,11 +468,11 @@ Here is what you should do before running the playbook:
      ldap_bind_user_password: 'YourPasswordHere'
    ```
 
-3. The playbook supports secure LDAP which means you need to configure the identity provider with the CA Bundle of the LDAP server. This bundle should be exported in PEM format. How you retrieve this CA bundle depends on your environment and is beyond the scope of this documentation. In any case, you **MUST** deposit this bundle under the name `ca.pem` in `playbooks/roles/ldap/files`. **The default bundle that comes with the repository will not work** but we leave it here for you to see which format is needed.
+3. The playbook supports secure LDAP which means you need to configure the identity provider with the CA Bundle of the LDAP server. This bundle should be exported in PEM format. How you retrieve this CA bundle depends on your environment and is beyond the scope of this documentation. Once you have this bundle, store it in a file somewhere on the Ansible box where your ansible user can access it and edit `group_vars/all/vars.yml` and the variable `ldap_ca_file` to have this variable point to your CA bundle.
 
    **Note:** the playbook creates a ConfigMap to store this bundle.
 
-4. Edit the file named `ldap_cr.yml` under `playbooks/roles/ldap/vars`. The OpenShift 4.1 documentation explains how to populate this file [here](https://docs.openshift.com/container-platform/4.1/authentication/identity_providers/configuring-ldap-identity-provider.html) . Because the content of this file is highly customizable we did not try to parameterize it. The url in this file is an [RFC 2255](https://tools.ietf.org/html/rfc2255) URL. An [Appendix](#ldap_cr_yml) later in this document reproduces and comments the default `ldap_cr.yml` that this repository ships. Remember, you **must** edit this file because it will not work in your environment.
+5. You also need to provide the playbook with a custom resource file.  The OpenShift 4.1 documentation explains how to populate this file [here](https://docs.openshift.com/container-platform/4.1/authentication/identity_providers/configuring-ldap-identity-provider.html) . Because the content of this file is highly customizable we did not try to parameterize it. The url in this file is an [RFC 2255](https://tools.ietf.org/html/rfc2255) URL. An [Appendix](#ldap_cr_yml) later in this document reproduces and comments the default `ldap_cr.yml` that this repository ships. Create your **own copy** of the `ldap_cr.yml` file, store it somewhere on your Ansible box where the Ansible user can access it then configure the variable `ldap_cr_file` in `group_vars/all/vars.yml` to point to your resource file. 
 
 **Note:** Before you attempt to run `playbooks/ldap.yml` you may want to test your settings with a tool like `ldapsearch` (for example). If you cannot query your LDAP with the Bind DN, Bind password and CA Bundle your configured earlier then the identity provider that the playbook configures will fail to interact with your LDAP service.
 
@@ -1376,7 +1376,7 @@ You can monitor the progress of the ignition process in several places:
 
   **Note:** In my environment, the playbook finishes at 70 / 60 retries remaining.
 
-- You should see the `openshift-api-server` and the `machine-config-server` endpoints available on the bootstrap machine. Use the Load Balancer stats screen to check this out (URL [<http://your‑internal-lb-ip-address:9000>](<http://yourlb-ip-address:9000>))
+- You should see the `openshift-api-server` and the `machine-config-server` endpoints available on the bootstrap machine. Use the Load Balancer stats screen to check this out (URL [<http://your‑internal-lb-ip-address:9000>](<http://yourlb-ip-address:9000>))
 
 - SSH to the bootstrap VM and run the following command:
 
@@ -1442,3 +1442,4 @@ ldap://host:port/basedn?attribute?scope?filter
 Below is the corresponding LDAP tree.
 
 ![1563454212570](pics/ldap_tree)
+
