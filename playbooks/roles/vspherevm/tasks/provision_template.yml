@@ -22,7 +22,7 @@
     password: "{{ vcenter_password }}"
     datacenter: "{{ datacenter }}"
     folder: "{{ datacenter }}/vm/{{ support_folder }}"
-    validate_certs: no
+    validate_certs: "{{ vcenter_validate_certs }}"
     name: "{{ template }}"
   failed_when: false
   register: vm_facts
