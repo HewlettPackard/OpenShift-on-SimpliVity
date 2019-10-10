@@ -27,7 +27,7 @@
 #    password: "{{ vcenter_password }}"
 #    datacenter: "{{ datacenter }}"
 #    folder: "{{ datacenter }}/vm/{{ hostvars[item].folder }}"
-#    validate_certs: no
+#    validate_certs: "{{ vcenter_validate_certs }}"
 #    name: "{{ item }}"
 #  failed_when: false
 #  register: vm_facts
@@ -48,7 +48,7 @@
 #    username: "{{ vcenter_username }}"
 #    password: "{{ vcenter_password }}"
 #    cluster_name: "{{ vcenter_cluster }}"
-#    validate_certs: no
+#    validate_certs: "{{ vcenter_validate_certs }}"
 #    drs_rule_name: "{{ cluster_name }}-{{ drs_group }}-anti-affinity-rule-001"
 #    state: absent
 #  when: provisionned_vms | count == 0
