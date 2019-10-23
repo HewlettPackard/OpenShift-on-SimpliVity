@@ -8,6 +8,6 @@ This solution takes HPE SimpliVity infrastructure and combines it with Red Hat's
 and popular open source tools, and deployment and advisory services that are available from HPE Pointnext. 
 
 The Deployment Guide provides detailed instructions on how to deploy the solution and is available 
-at [https://hewlettpackard.github.io/OpenShift-on-SimpliVity.](https://hewlettpackard.github.io/OpenShift-on-SimpliVity).
+at [https://hewlettpackard.github.io/OpenShift-on-SimpliVity](https://hewlettpackard.github.io/OpenShift-on-SimpliVity).
 
 The corresponding Reference Configuration will be available shortly.
