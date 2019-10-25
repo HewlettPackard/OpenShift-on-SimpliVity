@@ -14,7 +14,7 @@
 # limitations under the License.
 ### 
 ---
-# configure ntp
+# configure DHCP
 
 - name: Open ports in the firewall
   become: true
@@ -51,4 +51,10 @@
     src: dhcpd.conf.j2
     dest: /etc/dhcp/dhcpd.conf
   notify: restart DHCP
+
+- name: Enable DHCP Service 
+  become: true
+  systemd:
+    name: dhcpd
+    enabled: yes
 
