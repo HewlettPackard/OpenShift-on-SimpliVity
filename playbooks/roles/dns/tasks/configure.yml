@@ -51,3 +51,10 @@
     src: hosts.j2
     dest: /etc/hosts
   notify: Restart DNS Services
+
+- name: Enable DNS Service
+  become: true
+  systemd:
+    name: dnsmasq
+    enabled: yes
+
