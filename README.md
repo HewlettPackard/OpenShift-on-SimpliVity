@@ -10,4 +10,4 @@ and popular open source tools, and deployment and advisory services that are ava
 The Deployment Guide provides detailed instructions on how to deploy the solution and is available 
 at [https://hewlettpackard.github.io/OpenShift-on-SimpliVity](https://hewlettpackard.github.io/OpenShift-on-SimpliVity).
 
-The corresponding Reference Configuration will be available shortly.
+The corresponding Reference Configuration is available at [https://h20195.www2.hpe.com/V2/GetDocument.aspx?docname=a50000461enw](https://h20195.www2.hpe.com/V2/GetDocument.aspx?docname=a50000461enw).
