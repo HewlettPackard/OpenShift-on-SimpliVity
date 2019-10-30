@@ -116,3 +116,10 @@ backup_artifacts:                                               # additional ite
 - ./group_vars/
 - ./hosts
 
+#
+# VMWare CSI Storage plugin
+#
+csi_datastore_name: hpevols                                     # name of the datastore which will hold the PVs
+csi_storageclass_name: hpevols                                  # name of the storage class to create
+
+

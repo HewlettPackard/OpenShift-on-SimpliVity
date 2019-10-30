@@ -1,0 +1,4 @@
+---
+# defaults file for csi
+csi_datastore_name: Docker_CLH
+csi_storageclass_name: cnsclh
