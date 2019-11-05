@@ -1,0 +1,59 @@
+###
+# Copyright (2019) Hewlett Packard Enterprise Development LP
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# You may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+###
+---
+  - name: Query node
+    delegate_to: localhost
+    k8s_facts:
+      kind: node
+      field_selectors:
+        metadata.name={{ inventory_hostname }}
+    register: res
+    environment:
+      KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+    delay: 5
+    retries: "{{ csr_wait_for_node_retries }}"
+    until: res.resources | count > 0
+
+  - name: Sleep
+    delegate_to: localhost
+    shell: sleep 5
+   
+  - name: Query CSR
+    delegate_to: localhost
+    k8s_facts:
+      api_version: certificates.k8s.io/v1beta1
+      kind: CertificateSigningRequest
+    register: res
+    environment:
+      KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+
+  - name: Identify Pending CSR for this node
+    set_fact:
+      node_csr:  "{{ res.resources | json_query( query ) }}"
+    vars:
+       query:  "[? spec.username==`system:node:{{ inventory_hostname }}` && status.conditions == null ].metadata.name"
+
+  - debug: var=node_csr
+
+  - name: Approve CSRs for this node
+    delegate_to: localhost
+    shell: |
+      oc adm certificate approve {{ item }}
+    with_items:
+      "{{ node_csr }}"
+    environment:
+      KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+

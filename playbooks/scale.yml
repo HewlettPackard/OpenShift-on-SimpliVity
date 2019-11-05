@@ -226,3 +226,24 @@
       dest: "{{ install_dir }}/pull-secret.txt"
     when:
     - new_rhel_workers | count > 0
+
+
+#######################################################################
+#
+# Play: Approve CSRs for RHCOS nodes
+#
+#######################################################################
+- hosts: rhcos_worker
+  run_once: true
+  gather_facts: no
+  roles:
+  - role: csr
+    vars:
+      approve_bootstrap_csr: yes
+
+- hosts: rhcos_worker
+  gather_facts: no
+  roles:
+  - role: csr
+    vars:
+      approve_node_csr: yes
