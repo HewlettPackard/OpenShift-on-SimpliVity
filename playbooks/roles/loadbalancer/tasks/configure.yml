@@ -86,6 +86,17 @@
     immediate: yes
     state: enabled
 
+# Address issue were Network manager is reconfiguring the zone after reboot
+- name: Configure Network Manager Connections with  firewall zone 
+  become: true
+  shell:
+    nmcli connection mod 'System {{item.ifname }}' connection.zone {{ item.zone }}
+  with_items:
+    - ifname: "{{ loadbalancers.backend.interface }}"
+      zone: internal
+    - ifname: "{{ loadbalancers.frontend.interface }}"
+      zone: external
+
 # address issue with multihomed servers
 - name: Configure rp_filter
   become: true
