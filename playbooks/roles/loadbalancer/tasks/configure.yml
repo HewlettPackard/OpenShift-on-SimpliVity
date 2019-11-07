@@ -27,8 +27,8 @@
   firewalld:
     zone: internal
     port: "{{ item }}"
-    immediate: true
-    permanent: true
+    immediate: yes
+    permanent: yes
     state: enabled
   with_items:
    - 6443/tcp   # kubernetes API server
@@ -42,15 +42,17 @@
   firewalld:
     zone: internal
     rich_rule: 'rule protocol value="vrrp" accept'
-    immediate: true
-    permanent: true
+    immediate: yes
+    permanent: yes
     state: enabled
 
-- name: Configure internal zone
+- name: Add backend interface to internal zone
   become: true
   firewalld:
     zone: internal
     interface: "{{ loadbalancers.backend.interface }}"
+    permanent: yes
+    immediate: yes
     state: enabled
 
 - name: Configure required ports in external zone
@@ -58,8 +60,8 @@
   firewalld:
     zone: external
     port: "{{ item }}"
-    immediate: true
-    permanent: true
+    immediate: yes
+    permanent: yes
     state: enabled
   with_items:
    - 6443/tcp
@@ -71,15 +73,17 @@
   firewalld:
     zone: external
     rich_rule: 'rule protocol value="vrrp" accept'
-    immediate: true
-    permanent: true
+    immediate: yes
+    permanent: yes
     state: enabled
 
-- name: Configure External zone
+- name: Add frontend interface to External zone
   become: true
   firewalld:
     zone: external
     interface: "{{ loadbalancers.frontend.interface }}"
+    permanent: yes
+    immediate: yes
     state: enabled
 
 # address issue with multihomed servers
