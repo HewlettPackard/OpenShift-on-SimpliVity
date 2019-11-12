@@ -15,8 +15,5 @@
 ### 
 ---
 
-- include_tasks: approve_bootstrap_csr.yml
-  when: approve_bootstrap_csr is defined
-
 - include_tasks: approve_node_csr.yml
   when: approve_node_csr is defined
