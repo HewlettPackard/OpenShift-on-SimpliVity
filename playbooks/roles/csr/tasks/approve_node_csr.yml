@@ -56,7 +56,7 @@
   register: oc_get
   until:
   - oc_get is success
-  retries: 60
+  retries: "{{ csr_wait_for_bootstrap_csr_retries }}"
   delay: 5
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
@@ -94,7 +94,7 @@
   register: oc_get
   until:
   - oc_get is success
-  retries: 30
+  retries: "{{ csr_wait_for_node_csr_retries }}"
   delay: 5
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
@@ -110,7 +110,7 @@
   register: oc_get
   until:
   - oc_get.stdout == "True"
-  retries: 30
+  retries: "{{ csr_wait_for_node_ready_retries }}"
   delay: 5
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"

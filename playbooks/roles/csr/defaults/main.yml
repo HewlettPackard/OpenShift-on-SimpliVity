@@ -1,3 +1,5 @@
 ---
-csr_wait_for_node_retries: 25
-csr_wait_for_bootstrap_csr_retries: 30
+csr_wait_for_node_retries: 60
+csr_wait_for_node_ready_retries: 60
+csr_wait_for_bootstrap_csr_retries: 60
+csr_wait_for_node_csr_retries: 60
