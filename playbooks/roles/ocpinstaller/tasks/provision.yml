@@ -29,6 +29,28 @@
     src: install-config.yaml.j2
     dest: "{{ install_dir }}/install-config.yaml"
 
+# OCP 4.2 ++
+- name: Generate Kubernetes manifests
+  shell: |
+    {{ ocp_installer_path }} create manifests --dir={{ install_dir }}
+  register: res
+
+- name: Check presence of cluster scheduler manifest
+  stat:
+    path: "{{ install_dir }}/manifests/cluster-scheduler-02-config.yml"
+  register: stat_result
+
+- name: Disable POD scheduling on master nodes
+  replace:
+    path:  "{{ install_dir }}/manifests/cluster-scheduler-02-config.yml"
+    regexp: "mastersSchedulable: [tT]rue"
+    replace: "mastersSchedulable: False"
+    backup: yes
+#  shell: |
+#     sed -i=bak "s/mastersSchedulable: [tT]rue/mastersSchedulable: False/" "{{ install_dir }}/manifests/cluster-scheduler-02-config.yml"
+  when: stat_result.stat.exists == True
+# OCP 4.2 --  
+
 - name: Run the OpenShift Installer to generate the Ignition data Files
   shell: |
     {{ ocp_installer_path }} create ignition-configs --dir={{ install_dir }}
