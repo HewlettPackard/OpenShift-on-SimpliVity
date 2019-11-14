@@ -46,8 +46,6 @@
     regexp: "mastersSchedulable: [tT]rue"
     replace: "mastersSchedulable: False"
     backup: yes
-#  shell: |
-#     sed -i=bak "s/mastersSchedulable: [tT]rue/mastersSchedulable: False/" "{{ install_dir }}/manifests/cluster-scheduler-02-config.yml"
   when: stat_result.stat.exists == True
 # OCP 4.2 --  
 
