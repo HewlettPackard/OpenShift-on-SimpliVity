@@ -1,0 +1,116 @@
+###
+# Copyright (2019) Hewlett Packard Enterprise Development LP
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# You may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+###
+---
+
+- name: Retrieve the list of nodes in the cluster
+  delegate_to: localhost
+  k8s_facts:
+    kind: Node
+  register: res
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+
+- name: Build the lists of new worker nodes
+  set_fact:
+    new_rhel_workers: "{{ groups.rhel_worker | difference (res.resources | json_query(query)) }}"
+    new_rhcos_workers: "{{ groups.rhcos_worker | difference (res.resources | json_query(query)) }}"
+  vars:
+    query: '[].metadata.name'
+
+- name: Approve node-bootstrapper CSR
+  shell: >
+    count=0;
+    for csr in `oc get csr --no-headers \
+      | grep " system:serviceaccount:openshift-machine-config-operator:node-bootstrapper " \
+      | cut -d " " -f1`;
+    do
+      oc describe csr/$csr \
+        | grep " system:node:{{ item | lower }}$";
+      if [ $? -eq 0 ];
+      then
+        echo found
+        oc adm certificate approve ${csr};
+        if [ $? -eq 0 ];
+        then
+          count=$((count+1));
+        fi;
+      fi;
+    done;
+    exit $((!count));
+  loop: "{{ new_rhcos_workers }}"
+  delegate_to: localhost
+  run_once: true
+  register: oc_get
+  until:
+  - oc_get is success
+  retries: "{{ csr_wait_for_bootstrap_csr_retries }}"
+  delay: 5
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+
+- name: Query node
+  delegate_to: localhost
+  k8s_facts:
+    kind: node
+    field_selectors:
+      metadata.name={{ inventory_hostname }}
+  register: res
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+  delay: 5
+  retries: "{{ csr_wait_for_node_retries }}"
+  until: res.resources | count > 0
+
+- name: Approve node CSR
+  shell: >
+    count=0;
+    for csr in `oc get csr --no-headers \
+      | grep " system:node:{{ item | lower }} " \
+      | cut -d " " -f1`;
+    do
+      oc adm certificate approve ${csr};
+      if [ $? -eq 0 ];
+      then
+        count=$((count+1));
+      fi;
+    done;
+    exit $((!count));
+  loop: "{{ new_rhcos_workers }}"
+  delegate_to: localhost
+  run_once: true
+  register: oc_get
+  until:
+  - oc_get is success
+  retries: "{{ csr_wait_for_node_csr_retries }}"
+  delay: 5
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+
+
+- name: Wait for nodes to report ready
+  command: >
+    oc get node {{ item | lower }}
+    --output=jsonpath='{.status.conditions[?(@.type=="Ready")].status}'
+  loop: "{{ new_rhcos_workers }}"
+  delegate_to: localhost
+  run_once: true
+  register: oc_get
+  until:
+  - oc_get.stdout == "True"
+  retries: "{{ csr_wait_for_node_ready_retries }}"
+  delay: 5
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
