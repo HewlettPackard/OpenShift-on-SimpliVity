@@ -20,8 +20,8 @@ metadata:
   name: elasticsearch
   namespace: openshift-operators-redhat
 spec:
-  channel: {{ channel.stdout }}
+  channel: "{{ channel.stdout }}"
   installPlanApproval: Automatic
-  source: elasticsearch
-  sourceNamespace: openshift-operators-redhat
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
   name: elasticsearch-operator
