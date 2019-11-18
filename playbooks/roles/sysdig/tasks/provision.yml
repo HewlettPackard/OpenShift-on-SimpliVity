@@ -43,21 +43,80 @@
 
 - name: Label the nodes
   shell: |
-    
+    oc label node --all "app=sysdig-agent" --overwrite
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 
+- name: Create the service account for sysdig
+  k8s:
+    state: present
+    kubeconfig: "{{ install_dir }}/auth/kubeconfig"
+    definition:
+      kind: ServiceAccount
+      metadata:
+        name: sysdig-agent
+        namespace: sysdig-agent
+  register: res
 
-- name: more
+- name: Add the service account to privileged Security Context Constraints
   shell: |
-    # Label the node with the node selector:
-    # oc label node --all "app=sysdig-agent"
-    # Change to the new OpenShift Project for the Sysdig agent deployment:
-    # oc project sysdig-agent
-    # Create a service account for the project:
-    # oc create serviceaccount sysdig-account
-    # Add the service account to privileged Security Context Constraints:
-    # oc adm policy add-scc-to-user privileged -n sysdig-agent -z sysdig-account
-    # Add the service account to the cluster-reader Cluster Role:
-    # oc adm policy add-cluster-role-to-user cluster-reader -n sysdig-agent -z sysdig-account
-    #
-    # kubectl create secret generic sysdig-agent --from-literal=access-key={{ sysdig_access_key }} -n sysdig-agent
+    sysdig_user="system:serviceaccount:sysdig-agent:sysdig-agent"
+    found=false; changed=false
+    p_users=$(oc get scc privileged -o jsonpath='{.users[*]}')
+    for user in $p_users
+    do
+       if [ "$user" == "$sysdig_user" ]
+       then
+         found=true
+         break
+       fi
+    done
+    if [ $found != true ]
+    then
+      # add  sysdig user to SCC
+      oc adm policy add-scc-to-user privileged -n sysdig-agent -z sysdig-agent >/dev/null
+      changed=true
+    fi
+    echo changed: $changed
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+  register: res
+  changed_when: '"changed: true" in res.stdout_lines'
 
+- name: Add cluster-reader role to sysdig service account
+  k8s:
+    state: present
+    kubeconfig: "{{ install_dir }}/auth/kubeconfig"
+    definition:
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: ClusterRoleBinding
+      metadata:
+        name: cluster-reader
+      roleRef:
+        apiGroup: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: cluster-reader
+      subjects:
+      - kind: ServiceAccount
+        name: sysdig-account
+        namespace: sysdig-agent
+
+- name: Load the sysdig supplied manifests
+  set_fact:
+    sysdig_agent_configmap: "{{ lookup('file', sysdig_agent_configmap_manifest) }}"
+    sysdig_agent_daemonset: "{{ lookup('file', sysdig_agent_daemonset_manifest) }}"
+
+- name: Apply sysdig configmap
+  k8s:
+    state: present
+    kubeconfig: "{{ install_dir }}/auth/kubeconfig"
+    namespace: sysdig-agent
+    definition: "{{ sysdig_agent_configmap }}"
+
+- name: Apply sysdig daemonset
+  k8s:
+    state: present
+    kubeconfig: "{{ install_dir }}/auth/kubeconfig"
+    namespace: sysdig-agent
+    definition: "{{ sysdig_agent_daemonset }}"
+-  
