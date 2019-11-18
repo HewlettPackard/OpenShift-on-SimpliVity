@@ -47,13 +47,19 @@ You can now use the playbook `playbooks/sysdig.yml` to integrate your cluster wi
 
 Here are the variables that you must configure prior to using the `sysdig.yml` playbook.
 
-| Variable                          | File                       | Description                                                  |
-| --------------------------------- | -------------------------- | ------------------------------------------------------------ |
-| `sysdig_access_key`               | `group_vars/all/vars.yml`  | Value must be `"{{ vault.sysdig_access_key }}"` if you want to encrypt the actual access key (recommended) |
-| `vault.sysdig_access_key`         | `group_vars/all/vault.yml` | Your Sysdig access key                                       |
-| `sysdig_agent_configmap_manifest` | `group_vars/all/vars.yml`  | Optional: See note 1 below                                   |
 
-**note 1**:  The variable `sysdig_agent_configmap_manifest` is optional. The default value points to a manifest supplied by the `sysdig` Ansible role under `playbooks/roles/sysdig/file/`.   If you want to change the configmap used by the sysdig-agent, make a copy of the file named `sysdig-agent-configmap.yml`, edit the copy and have the `sysdig_agent_configmap_manifest` variable point to this file. More information can be found on the Sysdig documentation site https://docs.sysdig.com/en/openshift-agent-installation-steps.html
+
+| Variable                        | File                       | Description                                                  |
+| ------------------------------- | -------------------------- | ------------------------------------------------------------ |
+| `vault.sysdig_access_key`       | `group_vars/all/vault.yml` | Your Sysdig access key                                       |
+| `sysdig_access_key`             | `group_vars/all/vars.yml`  | Value must be `"{{ vault.sysdig_access_key }}"` if you want to encrypt the actual access key (recommended) |
+| `sysdig_k8s_cluster_name`       | `group_vars/all/vars.yml`  | Setting cluster name allows you to view, scope, and segment metrics in the Sysdig Monitor UI by Kubernetes cluster. |
+| `sysdig_tags`                   | `group_vars/all/vars.yml`  | Optional. Comma separated list of key:value pairs            |
+| `sysdig_collector`              | `group_vars/all/vars.yml`  | Optional. Defaults to `collector.sysdigcloud.com` which is the collector to use for the SaaS-based solution by Sysdig. |
+| `sysdig_collector_port`         | `group_vars/all/vars.yml`  | Optional. Defaults to 6666                                   |
+| `sysdig_ssl`                    | `group_vars/all/vars.yml`  | Optional. Defaults to `True`                                 |
+| `sysdig_ssl_verify_certificate` | `group_vars/all/vars.yml`  | Optional. Defaults to `True`                                 |
+| `sysdig_new_k8s`                | `group_vars/all/vars.yml`  | Optional. Defaults to `True`. Allows kube state metrics to be automatically detected, monitored, and displayed in Sysdig Monitor. |
 
 Before you use  the playbook, make sure the current context of the KUBECONFIG file used by Ansible is that of a user with the `cluster-admin` role. By default this file is  `<install_dir>/auth/kubeconfig` where `<install_dir>` is the value specified by the variable of the same name in `group_vars/all/vars.yml` which is usually (but not necessarily) `~/.ocp`.
 
