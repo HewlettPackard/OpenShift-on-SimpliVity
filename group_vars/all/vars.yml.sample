@@ -117,3 +117,8 @@ backup_artifacts:                                               # additional ite
 - ./group_vars/
 - ./hosts
 
+#
+# sysdig Integration
+#
+sysdig_access_key: "{{ vault.sysdig_access_key }}"          # required!. Your sysdig access key should be encrypted in vault.yml
+#sysdig_agent_configmap_manifest: 'path to config map'      # optional, if you wish to override the manifest shipping with the sysdig role
