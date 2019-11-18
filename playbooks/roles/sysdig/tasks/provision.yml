@@ -120,14 +120,14 @@
 # changed_when: set to false. Kubernetes will determine if there was a change or not
 - name: Generate configmap manifest
   template: 
-    src: "{{ sysdig_agent_configmap_manifest }}"
+    src: sysdig-agent-configmap.yml.j2
     dest: "{{ tempdir.path }}/cm.yml"
   changed_when: false
 
 # changed_when: set to false. Kubernetes will determine if there was a change or not
 - name: Generate daemonset manifest
   template: 
-    src: "{{ sysdig_agent_daemonset_manifest }}"
+    src: sysdig-agent-daemonset-v2.yml.j2
     dest: "{{ tempdir.path }}/ds.yml"
   changed_when: false
 

@@ -1,4 +1,10 @@
 ---
 # defaults file for sysdig
-sysdig_agent_daemonset_manifest: 'sysdig-agent-daemonset-v2.yml.j2'
-sysdig_agent_configmap_manifest: 'sysdig-agent-configmap.yml.j2'
+sysdig_access_key: ''                              # a valid access key must be supplied
+sysdig_tags: 'key1:value,key2:value'               # comma separated lits of key:value pairs
+sysdig_collector: collector.sysdigcloud.com        # collector FQDN or IP
+sysdig_collector_port: 6666                        # collector port
+sysdig_ssl: true
+sysdig_ssl_verify_certificate: true
+sysdig_new_k8s: true
+sysdig_k8s_cluster_name: 'hpe'

@@ -5,24 +5,24 @@ metadata:
 data:
   dragent.yaml: |
     configmap: true
-    {% if sysdig_tags is defined %}tags: {{ sysdig_tags }}{% endif %}
+    tags: '{{ sysdig_tags }}'
 
     #### Sysdig Software related config ####
     # Sysdig collector address
-    # collector: 192.168.1.1
+    collector: {{ sysdig_collector }}
 
     # Collector TCP port
-    # collector_port: 6666
+    collector_port: {{ sysdig_collector_port }}
 
     # Whether collector accepts ssl
-    # ssl: true
+    ssl: {{ sysdig_ssl }}
 
     # collector certificate validation
-    # ssl_verify_certificate: true
+    ssl_verify_certificate: {{ sysdig_ssl_verify_certificate }}
 
     #######################################
-    new_k8s: {{ sysdig_new_k8s | default('false') }}
-    k8s_cluster_name: {{ cluster_name }}
+    new_k8s: {{ sysdig_new_k8s }}
+    k8s_cluster_name: {{ sysdig_k8s_cluster_name }}
     security:
       k8s_audit_server_url: 0.0.0.0
       k8s_audit_server_port: 7765
