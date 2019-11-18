@@ -43,7 +43,15 @@
 
 - name: Label the nodes
   shell: |
+    label_before=$(oc get node  -o jsonpath='{.items[*].metadata.labels.app}')
     oc label node --all "app=sysdig-agent" --overwrite
+    label_after=$(oc get node  -o jsonpath='{.items[*].metadata.labels.app}')
+    if [ "$label_after" != "$label_before" ]
+    then
+      echo changed: true
+    fi
+  register: res
+  changed_when: '"changed: true" in res.stdout_lines'
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 
@@ -98,13 +106,35 @@
         name: cluster-reader
       subjects:
       - kind: ServiceAccount
-        name: sysdig-account
+        name: sysdig-agent
         namespace: sysdig-agent
+
+# do not report changes as they are irrelevant
+- name: create temporary build directory
+  tempfile:
+    state: directory
+    suffix: build
+  register: tempdir
+  changed_when: false
+
+# changed_when: set to false. Kubernetes will determine if there was a change or not
+- name: Generate configmap manifest
+  template: 
+    src: "{{ sysdig_agent_configmap_manifest }}"
+    dest: "{{ tempdir.path }}/cm.yml"
+  changed_when: false
+
+# changed_when: set to false. Kubernetes will determine if there was a change or not
+- name: Generate daemonset manifest
+  template: 
+    src: "{{ sysdig_agent_daemonset_manifest }}"
+    dest: "{{ tempdir.path }}/ds.yml"
+  changed_when: false
 
 - name: Load the sysdig supplied manifests
   set_fact:
-    sysdig_agent_configmap: "{{ lookup('file', sysdig_agent_configmap_manifest) }}"
-    sysdig_agent_daemonset: "{{ lookup('file', sysdig_agent_daemonset_manifest) }}"
+    sysdig_agent_configmap: "{{ lookup('file', '{{ tempdir.path }}/cm.yml') }}"
+    sysdig_agent_daemonset: "{{ lookup('file', '{{ tempdir.path }}/ds.yml') }}"
 
 - name: Apply sysdig configmap
   k8s:
@@ -119,4 +149,9 @@
     kubeconfig: "{{ install_dir }}/auth/kubeconfig"
     namespace: sysdig-agent
     definition: "{{ sysdig_agent_daemonset }}"
--  
+
+- name: Delete temporary files
+  file:
+    path: "{{ tempdir.path }}"
+    state: absent
+  changed_when: false  

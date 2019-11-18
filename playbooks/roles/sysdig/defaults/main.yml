@@ -1,4 +1,4 @@
 ---
 # defaults file for sysdig
-sysdig_agent_daemonset_manifest: 'sysdig-agent-daemonset-v2.yaml'
-sysdig_agent_configmap_manifest: 'sysdig-agent-configmap.yaml'
+sysdig_agent_daemonset_manifest: 'sysdig-agent-daemonset-v2.yml.j2'
+sysdig_agent_configmap_manifest: 'sysdig-agent-configmap.yml.j2'

@@ -120,5 +120,7 @@ backup_artifacts:                                               # additional ite
 #
 # sysdig Integration
 #
-sysdig_access_key: "{{ vault.sysdig_access_key }}"          # required!. Your sysdig access key should be encrypted in vault.yml
-#sysdig_agent_configmap_manifest: 'path to config map'      # optional, if you wish to override the manifest shipping with the sysdig role
+sysdig_access_key: "{{ vault.sysdig_access_key }}"          # required. Your sysdig access key should be encrypted in vault.yml
+#sysdig_agent_configmap_manifest: 'path to config map'      # optional. path to a custom configmap. Default to the role supplied configmap
+#sysdig_tags: location:Grenoble,platform:vcenter,owner:hpe  # optional. If using the role supplied configmap, list of tags to assign to captured data. no tag by default
+#sysdig_new_k8s: true                                       # optional. if using the role supplied configmap, defaults to false
