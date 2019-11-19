@@ -43,6 +43,23 @@
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 
+- name: Create CatalogSourceConfig Object for Elasticsearch
+  k8s:
+    state: present
+    definition:
+      api_version: operators.coreos.com/v1
+      kind: CatalogSourceConfig
+      metadata:
+        name: elasticsearch
+        namespace: openshift-marketplace
+      spec:
+        targetNamespace: openshift-operators-redhat 
+        packages: elasticsearch-operator
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+  when:
+    - ocp_version == '4.1'
+
 - name: Retrieve Channel for Elasticsearch Subscription
   shell: |
     oc get packagemanifest elasticsearch-operator -n openshift-marketplace -o jsonpath='{.status.channels[].name}'
@@ -118,6 +135,23 @@
         - openshift-logging
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+
+- name: Create CatalogSourceConfig Object for Cluster Logging
+  k8s:
+    state: present
+    definition:
+      api_version: operators.coreos.com/v1
+      kind: CatalogSourceConfig
+      metadata:
+        name: installed-redhat-openshift-logging
+        namespace: openshift-marketplace
+      spec:
+        targetNamespace: openshift-logging
+        packages: cluster-logging
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+  when:
+    - ocp_version == '4.1'
 
 - name: Retrieve Channel for Cluster Logging Subscription
   shell: |

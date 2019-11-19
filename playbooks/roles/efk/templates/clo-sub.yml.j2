@@ -22,6 +22,11 @@ metadata:
 spec:
   channel: "{{ channel.stdout }}"
   installPlanApproval: Automatic
+{% if ocp_version is '4.1' %}
+  source: installed-redhat-openshift-logging
+  sourceNamespace: openshift-logging
+{% else %}
   source: redhat-operators
   sourceNamespace: openshift-marketplace
+{% endif %}
   name: cluster-logging
