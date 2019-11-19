@@ -121,7 +121,7 @@ backup_artifacts:                                               # additional ite
 # sysdig Integration
 #
 sysdig_access_key: "{{ vault.sysdig_access_key }}"          # required. Your sysdig access key should be encrypted in vault.yml
-sysdig_k8s_cluster_name: {{ cluster_name }}                 # allows you to view, scope, and segment metrics in the Sysdig Monitor UI by Kubernetes cluster.
+sysdig_k8s_cluster_name: "{{ cluster_name }}"               # allows you to view, scope, and segment metrics in the Sysdig Monitor UI by Kubernetes cluster.
 #sysdig_tags: 'key1:value,key2:value'                       # comma separated lits of key:value pairs
 #sysdig_collector: collector.sysdigcloud.com                # optional, leave unchanged for SaaS Sysdig
 #sysdig_collector_port: 6666                                # optional, leave unchanged for SaaS Sysdig
