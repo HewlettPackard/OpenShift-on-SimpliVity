@@ -22,7 +22,7 @@ metadata:
 spec:
   channel: "{{ channel.stdout }}"
   installPlanApproval: Automatic
-{% if ocp_version is '4.1' %}
+{% if ocp_version == '4.1' %}
   source: elasticsearch
   sourceNamespace: openshift-operators-redhat
 {% else %}
