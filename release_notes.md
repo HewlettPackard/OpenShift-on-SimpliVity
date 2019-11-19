@@ -28,7 +28,7 @@
 
 - Scaling an OCP 4.2 cluster with RHEL worker nodes requires the use of an updated version of the OpenShift Ansible playbooks https://github.com/openshift/openshift-ansible.
 
-- HPE has tested with release 4.2.2-201910250432 of the OpenShift Ansible playbooks and recommends using this version when scaling an OCP 4.2 cluster with RHEL worker nodes. Use the following command to clone the openshift-ansible repository:
+- HPE has tested with release openshift-ansible-4.2.2-201910250432 of the OpenShift Ansible playbooks and recommends using this version when scaling an OCP 4.2 cluster with RHEL worker nodes. Use the following command to clone the openshift-ansible repository:
   
   ```
   # git clone -b openshift-ansible-4.2.2-201910250432 https://github.com/openshift/openshift-ansible.git
