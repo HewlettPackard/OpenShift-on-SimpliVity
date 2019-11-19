@@ -117,3 +117,15 @@ backup_artifacts:                                               # additional ite
 - ./group_vars/
 - ./hosts
 
+#
+# sysdig Integration
+#
+sysdig_access_key: "{{ vault.sysdig_access_key }}"          # required. Your sysdig access key should be encrypted in vault.yml
+sysdig_k8s_cluster_name: {{ cluster_name }}                 # allows you to view, scope, and segment metrics in the Sysdig Monitor UI by Kubernetes cluster.
+#sysdig_tags: 'key1:value,key2:value'                       # comma separated lits of key:value pairs
+#sysdig_collector: collector.sysdigcloud.com                # optional, leave unchanged for SaaS Sysdig
+#sysdig_collector_port: 6666                                # optional, leave unchanged for SaaS Sysdig
+#sysdig_ssl: true                                           # optional, leave unchanged for SaaS Sysdig
+#sysdig_ssl_verify_certificate: true                        # optional, leave unchanged for SaaS Sysdig
+#sysdig_new_k8s: true                                       # optional, allows kube state metrics to be automatically detected, monitored, and displayed in Sysdig Monitor.
+

@@ -39,3 +39,69 @@
 - The process of deploying the EFK (Elasticsearch, Fluentd, Kibana) logging stack has changed slightly in OCP 4.2.
 - The efk.yml playbook, and supporting efk role, have been updated to work with OCP 4.2.
 - NOTE - This updated version of the EFK playbooks will not work with an OCP 4.1 cluster.
+
+## New Features
+
+### Sysdig Integration
+You can now use the playbook `playbooks/sysdig.yml` to integrate your cluster with Sysdig. The implementation in this solution uses the Software as a Service (SaaS) version of Sysdig at [app.sysdigcloud.com](). The playbook deploys the Sysdig Agent software on all OpenShift node. Captured data is relayed back to your Sysdig SaaS Cloud portal.
+
+Here are the variables that you must configure prior to using the `sysdig.yml` playbook.
+
+
+
+| Variable                        | File                       | Description                                                  |
+| ------------------------------- | -------------------------- | ------------------------------------------------------------ |
+| `vault.sysdig_access_key`       | `group_vars/all/vault.yml` | Your Sysdig access key                                       |
+| `sysdig_access_key`             | `group_vars/all/vars.yml`  | Value must be `"{{ vault.sysdig_access_key }}"` if you want to encrypt the actual access key (recommended) |
+| `sysdig_k8s_cluster_name`       | `group_vars/all/vars.yml`  | Setting cluster name allows you to view, scope, and segment metrics in the Sysdig Monitor UI by Kubernetes cluster. |
+| `sysdig_tags`                   | `group_vars/all/vars.yml`  | Optional. Comma separated list of key:value pairs            |
+| `sysdig_collector`              | `group_vars/all/vars.yml`  | Optional. Defaults to `collector.sysdigcloud.com` which is the collector to use for the SaaS-based solution by Sysdig. |
+| `sysdig_collector_port`         | `group_vars/all/vars.yml`  | Optional. Defaults to 6666                                   |
+| `sysdig_ssl`                    | `group_vars/all/vars.yml`  | Optional. Defaults to `True`                                 |
+| `sysdig_ssl_verify_certificate` | `group_vars/all/vars.yml`  | Optional. Defaults to `True`                                 |
+| `sysdig_new_k8s`                | `group_vars/all/vars.yml`  | Optional. Defaults to `True`. Allows kube state metrics to be automatically detected, monitored, and displayed in Sysdig Monitor. |
+
+Before you use  the playbook, make sure the current context of the KUBECONFIG file used by Ansible is that of a user with the `cluster-admin` role. By default this file is  `<install_dir>/auth/kubeconfig` where `<install_dir>` is the value specified by the variable of the same name in `group_vars/all/vars.yml` which is usually (but not necessarily) `~/.ocp`.
+
+In the example below, we use the `kubeadmin` user which has enough privileges to deploy sysdig
+
+```
+# export KUBECONFIG=~/.ocp/auth/kubeconfig
+[core@hpe-ansible gen9cluster]$ oc login -u kubeadmin
+Authentication required for https://api.hpe.hpecloud.org:6443 (openshift)
+Username: kubeadmin
+Password:
+Login successful.
+
+You have access to 51 projects, the list has been suppressed. You can list all projects with 'oc projects'
+
+Using project "default".
+[core@hpe-ansible gen9cluster]$
+```
+
+Run the playbook
+
+```
+# cd <repodir>
+# ansible-playbook -i hosts playbooks/sysdig.yml
+```
+
+You can then monitor the progresses of the deployment by watching the status of the sysdig-agent project
+
+```
+# oc status -n sysdig-agent
+```
+
+```
+[core@hpe-ansible gen9cluster]$ oc status -n sysdig-agent
+In project sysdig-agent on server https://api.hpe.hpecloud.org:6443
+
+daemonset/sysdig-agent manages sysdig/agent
+  generation #1 running for 11 minutes - 5 pods
+
+
+1 info identified, use 'oc status --suggest' to see details.
+```
+
+Note: The number of pods deployed by the daemonset should match your number of nodes in your OpenShift cluster.
+
