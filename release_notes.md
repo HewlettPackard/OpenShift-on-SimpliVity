@@ -45,8 +45,7 @@
 ### EFK Logging Stack
 
 - The process of deploying the EFK (Elasticsearch, Fluentd, Kibana) logging stack has changed slightly in OCP 4.2.
-- The efk.yml playbook, and supporting efk role, have been updated to work with OCP 4.2.
-- NOTE - This updated version of the EFK playbooks will not work with an OCP 4.1 cluster.
+- The efk.yml playbook, and supporting efk role, have been updated to deploy successfully on either OCP 4.1 or OCP 4.2.
 
 ## New Features
 
