@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Exposing the image registry | Red Hat OpenShift Container Platform on HPE SimpliVity</title>
+    <meta name="description" content="">
+    
+    
+    <link rel="preload" href="/OpenShift-on-SimpliVity/assets/css/0.styles.88bd2481.css" as="style"><link rel="preload" href="/OpenShift-on-SimpliVity/assets/js/app.4d649184.js" as="script"><link rel="preload" href="/OpenShift-on-SimpliVity/assets/js/2.277d45f3.js" as="script"><link rel="preload" href="/OpenShift-on-SimpliVity/assets/js/34.0e7a1fc8.js" as="script"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/10.91bba0b3.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/11.3d4a725c.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/12.70b696dd.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/13.393d3783.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/14.f2d14ce6.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/15.48529812.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/16.20442118.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/17.063eb3de.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/18.f2acbb20.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/19.25b913a8.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/20.e5591390.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/21.dea81cae.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/22.dd6c1497.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/23.fd0ecc14.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/24.70325e91.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/25.8aec459f.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/26.1cea3f98.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/27.8f599669.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/28.118b6284.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/29.dc395765.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/3.cb13b8c4.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/30.0eb3b89d.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/31.341a5808.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/32.79cac86a.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/33.6cc96bdb.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/35.3149e151.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/36.7d0b8c66.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/37.af4645e8.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/38.55c06cb2.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/39.f87beaf3.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/4.34e28561.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/40.a07dcfce.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/41.8baf4eb1.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/42.b5ee5b7a.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/43.78aab63f.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/44.1056579b.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/45.e45e2b6b.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/46.63621754.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/47.5d768525.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/48.c0cb7b48.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/49.c2a0bea7.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/5.0f663ad8.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/50.953e3c87.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/51.41af93ac.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/52.48206ffa.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/53.c09755bf.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/54.46d92d3a.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/55.28b946d1.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/56.a14b43c2.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/57.5c998c3c.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/58.545e46fd.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/59.04f59679.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/6.20e23619.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/60.2e45e52d.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/61.76ce5abb.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/7.90206156.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/8.316575b9.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/9.73359652.js">
+    <link rel="stylesheet" href="/OpenShift-on-SimpliVity/assets/css/0.styles.88bd2481.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/OpenShift-on-SimpliVity/" class="home-link router-link-active"><!----> <span class="site-name">Red Hat OpenShift Container Platform on HPE SimpliVity</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/OpenShift-on-SimpliVity/" class="nav-link">Home</a></div><div class="nav-item"><a href="/OpenShift-on-SimpliVity/blog/" class="nav-link">Blog</a></div> <a href="https://github.com/HewlettPackard/Openshift-on-Simplivity" target="_blank" rel="noopener noreferrer" class="repo-link">
+    Contribute!
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/OpenShift-on-SimpliVity/" class="nav-link">Home</a></div><div class="nav-item"><a href="/OpenShift-on-SimpliVity/blog/" class="nav-link">Blog</a></div> <a href="https://github.com/HewlettPackard/Openshift-on-Simplivity" target="_blank" rel="noopener noreferrer" class="repo-link">
+    Contribute!
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav>  <ul class="sidebar-links"><li><a href="/OpenShift-on-SimpliVity/executive-summary.html" class="sidebar-link">Executive Summary</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Release Notes</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Solution overview</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Solution components</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Preparing the environment</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Configuring the solution</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Overview of the playbooks</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>Post deployment tasks</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/OpenShift-on-SimpliVity/post-deploy/post-deploy-intro.html" class="sidebar-link">Introduction</a></li><li><a href="/OpenShift-on-SimpliVity/post-deploy/first-login.html" class="sidebar-link">Logging into the OCP cluster for the first time</a></li><li><a href="/OpenShift-on-SimpliVity/post-deploy/example-app.html" class="sidebar-link">Deploy example application</a></li><li><a href="/OpenShift-on-SimpliVity/post-deploy/external-routes.html" class="sidebar-link">Configuring external routes</a></li><li><a href="/OpenShift-on-SimpliVity/post-deploy/expose-registry.html" class="active sidebar-link">Exposing the image registry</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/OpenShift-on-SimpliVity/post-deploy/expose-registry.html#check-the-registry-deployment" class="sidebar-link">Check the registry deployment</a></li><li class="sidebar-sub-header"><a href="/OpenShift-on-SimpliVity/post-deploy/expose-registry.html#add-a-route-for-the-image-registry" class="sidebar-link">Add a route for the image registry</a></li></ul></li><li><a href="/OpenShift-on-SimpliVity/post-deploy/ldap.html" class="sidebar-link">LDAP integration</a></li></ul></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Configuring storage</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Adding worker nodes</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Deploying cluster logging</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Backup and restore</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Appendices</span> <span class="arrow right"></span></p> <!----></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="exposing-the-image-registry"><a href="#exposing-the-image-registry" aria-hidden="true" class="header-anchor">#</a> Exposing the image registry</h1> <p>To allow access to the image registry from outside the cluster, you need to set up a route.</p> <h2 id="check-the-registry-deployment"><a href="#check-the-registry-deployment" aria-hidden="true" class="header-anchor">#</a> Check the registry deployment</h2> <p>Ensure that the image registry has been deployed successfully - <code>AVAILABLE</code> should be <code>True</code> for <code>image-registry</code>:</p> <div class="language- extra-class"><pre class="language-text"><code>$ oc get clusteroperators
+
+NAME                                 VERSION   AVAILABLE   PROGRESSING   DEGRADED   SINCE
+authentication                       4.1.14    True        False         False      110m
+cloud-credential                     4.1.14    True        False         False      126m
+cluster-autoscaler                   4.1.14    True        False         False      126m
+console                              4.1.14    True        False         False      117m
+dns                                  4.1.14    True        False         False      126m
+image-registry                       4.1.14    True        False         False      119m
+ingress                              4.1.14    True        False         False      120m
+...
+</code></pre></div><h2 id="add-a-route-for-the-image-registry"><a href="#add-a-route-for-the-image-registry" aria-hidden="true" class="header-anchor">#</a> Add a route for the image registry</h2> <p>There is no default route exposed to the image registry. To check all existing routes:</p> <div class="language- extra-class"><pre class="language-text"><code>$ oc get routes --all-namespaces
+
+NAMESPACE                  NAME                HOST/PORT                                                      PATH   SERVICES            PORT    TERMINATION            WILDCARD
+openshift-authentication   oauth-openshift     oauth-openshift.apps.ocp.hpecloud.org                                 oauth-openshift     6443    passthrough/Redirect   None
+openshift-console          console             console-openshift-console.apps.ocp.hpecloud.org                       console             https   reencrypt/Redirect     None
+openshift-console          downloads           downloads-openshift-console.apps.ocp.hpecloud.org                     downloads           http    edge                   None
+openshift-monitoring       alertmanager-main   alertmanager-main-openshift-monitoring.apps.ocp.hpecloud.org          alertmanager-main   web     reencrypt/Redirect     None
+openshift-monitoring       grafana             grafana-openshift-monitoring.apps.ocp.hpecloud.org                    grafana             https   reencrypt/Redirect     None
+openshift-monitoring       prometheus-k8s      prometheus-k8s-openshift-monitoring.apps.ocp.hpecloud.org             prometheus-k8s      web     reencrypt/Redirect     None
+</code></pre></div><p>There are two ways to add a default route. The first method involves editing the appropriate OCP configuration resource:</p> <div class="language- extra-class"><pre class="language-text"><code>$ oc edit configs.imageregistry.operator.openshift.io/cluster
+</code></pre></div><p>In the &quot;spec&quot; section, you will see <code>defaultRoute: false</code>. Edit the<code>defaultRoute</code> value and
+set it to <code>true</code> and then save the change.</p> <div class="language- extra-class"><pre class="language-text"><code>apiVersion: imageregistry.operator.openshift.io/v1
+kind: Config
+metadata:
+  creationTimestamp: &quot;2019-09-26T11:26:36Z&quot;
+  finalizers:
+  - imageregistry.operator.openshift.io/finalizer
+  generation: 2
+  name: cluster
+  resourceVersion: &quot;12677&quot;
+  selfLink: /apis/imageregistry.operator.openshift.io/v1/configs/cluster
+  uid: 80012535-e050-11e9-9ede-005056815623
+spec:
+  defaultRoute: true
+...   
+</code></pre></div><p>Alternatively, use the <code>oc patch</code> command instead of editing the resource directly:</p> <div class="language- extra-class"><pre class="language-text"><code>$ oc patch configs.imageregistry.operator.openshift.io/cluster --type merge -p '{&quot;spec&quot;:{&quot;defaultRoute&quot;:true}}'
+
+config.imageregistry.operator.openshift.io/cluster patched
+</code></pre></div><p>After setting the <code>defaultRoute</code> to <code>true</code>, re-run the <code>oc get routes</code> command:</p> <div class="language- extra-class"><pre class="language-text"><code>$ oc get routes --all-namespaces
+
+NAMESPACE                  NAME                HOST/PORT                                                      PATH   SERVICES            PORT    TERMINATION            WILDCARD
+...
+openshift-image-registry   default-route       default-route-openshift-image-registry.apps.ocp.hpecloud.org          image-registry      &lt;all&gt;   reencrypt              None
+...
+</code></pre></div><p>You should now be able to access the registry from outside the cluster at: ```default-route-openshift-image-registry.apps.ocp.hpecloud.org``</p> <p>To test access to the image registry, start by getting your token using <code>oc whoami -t</code>:</p> <div class="language- extra-class"><pre class="language-text"><code>$ oc whoami -t
+
+_UgOx6ujcndWWb8WXQM7sTEk7IwNSb8lpDPdWX-lRQI
+</code></pre></div><p>Now use the token in the following <code>curl</code> command, substituting your own cluster name and domain in the URL:</p> <div class="language- extra-class"><pre class="language-text"><code>$ curl -v -tlsv1.2 --insecure -H &quot;Authorization: Bearer _UgOx6ujcndWWb8WXQM7sTEk7IwNSb8lpDPdWX-lRQI&quot; &quot;https://default-route-openshift-image-registry.apps.ocp.hpecloud.org/healthz&quot;
+
+*   Trying 10.15.156.42...
+* TCP_NODELAY set
+* Connected to default-route-openshift-image-registry.apps.ocp.hpecloud.org (10.15.156.42) port 443 (#0)
+* ALPN, offering h2
+* ALPN, offering http/1.1
+* successfully set certificate verify locations:
+*   CAfile: /etc/pki/tls/certs/ca-bundle.crt
+  CApath: none
+* TLSv1.3 (OUT), TLS handshake, Client hello (1):
+* TLSv1.3 (IN), TLS handshake, Server hello (2):
+* TLSv1.2 (IN), TLS handshake, Certificate (11):
+* TLSv1.2 (IN), TLS handshake, Server key exchange (12):
+* TLSv1.2 (IN), TLS handshake, Server finished (14):
+* TLSv1.2 (OUT), TLS handshake, Client key exchange (16):
+* TLSv1.2 (OUT), TLS change cipher, Change cipher spec (1):
+* TLSv1.2 (OUT), TLS handshake, Finished (20):
+* TLSv1.2 (IN), TLS handshake, Finished (20):
+* SSL connection using TLSv1.2 / ECDHE-RSA-AES128-GCM-SHA256
+* ALPN, server did not agree to a protocol
+* Server certificate:
+*  subject: CN=*.apps.ocp.hpecloud.org
+*  start date: Sep 26 11:26:43 2019 GMT
+*  expire date: Sep 25 11:26:44 2021 GMT
+*  issuer: CN=ingress-operator@1569497203
+*  SSL certificate verify result: self signed certificate in certificate chain (19), continuing anyway.
+&gt; GET /healthz HTTP/1.1
+&gt; Host: default-route-openshift-image-registry.apps.ocp.hpecloud.org
+&gt; User-Agent: curl/7.61.1
+&gt; Accept: */*
+&gt; Authorization: Bearer _UgOx6ujcndWWb8WXQM7sTEk7IwNSb8lpDPdWX-lRQI
+&gt;
+&lt; HTTP/1.1 200 OK
+&lt; Cache-Control: no-cache
+&lt; Date: Thu, 26 Sep 2019 13:51:26 GMT
+&lt; Content-Length: 0
+&lt; Set-Cookie: 34727b82525eb26a530629c5bf0ec2f2=a086c79adfabfb34ab28ba82bf3646eb; path=/; HttpOnly; Secure
+&lt;
+* Connection #0 to host default-route-openshift-image-registry.apps.ocp.hpecloud.org left intact
+</code></pre></div><p>From inside the OCP cluster, the registry is available at: <code>image-registry.openshift-image-registry.svc:5000</code></p> <div class="language- extra-class"><pre class="language-text"><code>$ oc get svc  -n openshift-image-registry
+
+NAME             TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+image-registry   ClusterIP   172.30.146.74   &lt;none&gt;        5000/TCP   174m
+
+
+$  oc get pods  -n openshift-image-registry
+
+NAME                                               READY   STATUS    RESTARTS   AGE
+cluster-image-registry-operator-68586f74b7-fphjz   1/1     Running   0          175m
+image-registry-5cfcbdfccc-nlch7                    1/1     Running   0          175m
+node-ca-7qsx8                                      1/1     Running   0          175m
+node-ca-dxhnh                                      1/1     Running   0          175m
+node-ca-g48nv                                      1/1     Running   0          175m
+node-ca-t7j5r                                      1/1     Running   0          175m
+node-ca-v8grr                                      1/1     Running   0          175m
+</code></pre></div><p>To access the image registry logs, use the <code>oc logs</code> command:</p> <div class="language- extra-class"><pre class="language-text"><code>$ oc logs deployments/image-registry -n openshift-image-registry
+
+time=&quot;2019-09-26T11:28:11.62042027Z&quot; level=info msg=&quot;start registry&quot; distribution_version=v2.6.0+unknown go.version=go1.10.8 openshift_version=v4.1.14-201908291507+c92e458-dirty
+time=&quot;2019-09-26T11:28:11.620887953Z&quot; level=info msg=&quot;caching project quota objects with TTL 1m0s&quot; go.version=go1.10.8
+time=&quot;2019-09-26T11:28:11.621889213Z&quot; level=info msg=&quot;redis not configured&quot; go.version=go1.10.8
+time=&quot;2019-09-26T11:28:11.621950581Z&quot; level=info msg=&quot;Starting upload purge in 20m0s&quot; go.version=go1.10.8
+time=&quot;2019-09-26T11:28:11.636185987Z&quot; level=info msg=&quot;using openshift blob descriptor cache&quot; go.version=go1.10.8
+time=&quot;2019-09-26T11:28:11.636230049Z&quot; level=warning msg=&quot;Registry does not implement RempositoryRemover. Will not be able to delete repos and tags&quot; go.version=go1.10.8
+time=&quot;2019-09-26T11:28:11.637175407Z&quot; level=info msg=&quot;Using \&quot;image-registry.openshift-image-registry.svc:5000\&quot; as Docker Registry URL&quot; go.version=go1.10.8
+time=&quot;2019-09-26T11:28:11.637199471Z&quot; level=info msg=&quot;listening on :5000, tls&quot; go.version=go1.10.8
+time=&quot;2019-09-26T11:28:12.099368596Z&quot; level=info msg=response go.version=go1.10.8 http.request.host=&quot;10.128.2.8:5000&quot; http.request.id=b8a426d7-12eb-4471-b52c-00149c670af8 http.request.method=GET http.request.remoteaddr=&quot;10.128.2.1:47634&quot; http.request.uri=/healthz http.request.useragent=kube-probe/1.13+ http.response.duration=&quot;58.451µs&quot; http.response.status=200 http.response.written=0
+...
+</code></pre></div></div> <footer class="page-edit"><div class="edit-link"><a href="https://gitlab.com/gmcgoldrick/openshift-on-simplivity/edit/master/docs-src-v1/post-deploy/expose-registry.md" target="_blank" rel="noopener noreferrer">Help us improve this page!</a> <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></div> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/OpenShift-on-SimpliVity/post-deploy/external-routes.html" class="prev">Configuring external routes</a></span> <span class="next"><a href="/OpenShift-on-SimpliVity/post-deploy/ldap.html">LDAP integration</a>→
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/OpenShift-on-SimpliVity/assets/js/app.4d649184.js" defer></script><script src="/OpenShift-on-SimpliVity/assets/js/2.277d45f3.js" defer></script><script src="/OpenShift-on-SimpliVity/assets/js/34.0e7a1fc8.js" defer></script>
+  </body>
+</html>

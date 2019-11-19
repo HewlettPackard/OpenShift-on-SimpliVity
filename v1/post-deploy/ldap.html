@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>LDAP integration | Red Hat OpenShift Container Platform on HPE SimpliVity</title>
+    <meta name="description" content="">
+    
+    
+    <link rel="preload" href="/OpenShift-on-SimpliVity/assets/css/0.styles.88bd2481.css" as="style"><link rel="preload" href="/OpenShift-on-SimpliVity/assets/js/app.4d649184.js" as="script"><link rel="preload" href="/OpenShift-on-SimpliVity/assets/js/2.277d45f3.js" as="script"><link rel="preload" href="/OpenShift-on-SimpliVity/assets/js/36.7d0b8c66.js" as="script"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/10.91bba0b3.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/11.3d4a725c.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/12.70b696dd.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/13.393d3783.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/14.f2d14ce6.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/15.48529812.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/16.20442118.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/17.063eb3de.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/18.f2acbb20.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/19.25b913a8.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/20.e5591390.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/21.dea81cae.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/22.dd6c1497.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/23.fd0ecc14.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/24.70325e91.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/25.8aec459f.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/26.1cea3f98.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/27.8f599669.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/28.118b6284.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/29.dc395765.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/3.cb13b8c4.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/30.0eb3b89d.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/31.341a5808.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/32.79cac86a.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/33.6cc96bdb.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/34.0e7a1fc8.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/35.3149e151.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/37.af4645e8.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/38.55c06cb2.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/39.f87beaf3.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/4.34e28561.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/40.a07dcfce.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/41.8baf4eb1.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/42.b5ee5b7a.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/43.78aab63f.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/44.1056579b.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/45.e45e2b6b.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/46.63621754.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/47.5d768525.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/48.c0cb7b48.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/49.c2a0bea7.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/5.0f663ad8.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/50.953e3c87.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/51.41af93ac.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/52.48206ffa.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/53.c09755bf.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/54.46d92d3a.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/55.28b946d1.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/56.a14b43c2.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/57.5c998c3c.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/58.545e46fd.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/59.04f59679.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/6.20e23619.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/60.2e45e52d.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/61.76ce5abb.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/7.90206156.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/8.316575b9.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/9.73359652.js">
+    <link rel="stylesheet" href="/OpenShift-on-SimpliVity/assets/css/0.styles.88bd2481.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/OpenShift-on-SimpliVity/" class="home-link router-link-active"><!----> <span class="site-name">Red Hat OpenShift Container Platform on HPE SimpliVity</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/OpenShift-on-SimpliVity/" class="nav-link">Home</a></div><div class="nav-item"><a href="/OpenShift-on-SimpliVity/blog/" class="nav-link">Blog</a></div> <a href="https://github.com/HewlettPackard/Openshift-on-Simplivity" target="_blank" rel="noopener noreferrer" class="repo-link">
+    Contribute!
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/OpenShift-on-SimpliVity/" class="nav-link">Home</a></div><div class="nav-item"><a href="/OpenShift-on-SimpliVity/blog/" class="nav-link">Blog</a></div> <a href="https://github.com/HewlettPackard/Openshift-on-Simplivity" target="_blank" rel="noopener noreferrer" class="repo-link">
+    Contribute!
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav>  <ul class="sidebar-links"><li><a href="/OpenShift-on-SimpliVity/executive-summary.html" class="sidebar-link">Executive Summary</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Release Notes</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Solution overview</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Solution components</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Preparing the environment</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Configuring the solution</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Overview of the playbooks</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>Post deployment tasks</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/OpenShift-on-SimpliVity/post-deploy/post-deploy-intro.html" class="sidebar-link">Introduction</a></li><li><a href="/OpenShift-on-SimpliVity/post-deploy/first-login.html" class="sidebar-link">Logging into the OCP cluster for the first time</a></li><li><a href="/OpenShift-on-SimpliVity/post-deploy/example-app.html" class="sidebar-link">Deploy example application</a></li><li><a href="/OpenShift-on-SimpliVity/post-deploy/external-routes.html" class="sidebar-link">Configuring external routes</a></li><li><a href="/OpenShift-on-SimpliVity/post-deploy/expose-registry.html" class="sidebar-link">Exposing the image registry</a></li><li><a href="/OpenShift-on-SimpliVity/post-deploy/ldap.html" class="active sidebar-link">LDAP integration</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/OpenShift-on-SimpliVity/post-deploy/ldap.html#about-ldap-authentication-in-ocp" class="sidebar-link">About LDAP authentication in OCP</a></li><li class="sidebar-sub-header"><a href="/OpenShift-on-SimpliVity/post-deploy/ldap.html#configuring-ldap-variables" class="sidebar-link">Configuring LDAP variables</a></li><li class="sidebar-sub-header"><a href="/OpenShift-on-SimpliVity/post-deploy/ldap.html#testing-the-configuration" class="sidebar-link">Testing the configuration</a></li><li class="sidebar-sub-header"><a href="/OpenShift-on-SimpliVity/post-deploy/ldap.html#overview-of-the-playbook" class="sidebar-link">Overview of the playbook</a></li><li class="sidebar-sub-header"><a href="/OpenShift-on-SimpliVity/post-deploy/ldap.html#running-the-playbook" class="sidebar-link">Running the playbook</a></li><li class="sidebar-sub-header"><a href="/OpenShift-on-SimpliVity/post-deploy/ldap.html#verification" class="sidebar-link">Verification</a></li><li class="sidebar-sub-header"><a href="/OpenShift-on-SimpliVity/post-deploy/ldap.html#synchronizing-groups" class="sidebar-link">Synchronizing groups</a></li><li class="sidebar-sub-header"><a href="/OpenShift-on-SimpliVity/post-deploy/ldap.html#sync-example" class="sidebar-link">Sync example</a></li><li class="sidebar-sub-header"><a href="/OpenShift-on-SimpliVity/post-deploy/ldap.html#adding-cluster-admin-role-to-group" class="sidebar-link">Adding cluster admin role to group</a></li></ul></li></ul></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Configuring storage</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Adding worker nodes</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Deploying cluster logging</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Backup and restore</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Appendices</span> <span class="arrow right"></span></p> <!----></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="ldap-integration"><a href="#ldap-integration" aria-hidden="true" class="header-anchor">#</a> LDAP integration</h1> <p>By default, only a <code>kubeadmin</code> user exists on your cluster after the initial deployment. To specify an identity provider, you must create an OCP custom resource (CR) that describes the identity provider and then add it to the cluster. This solution
+provides a playbook to assist in the creation of such a custom resource for an LDAP identity provider.</p> <h2 id="about-ldap-authentication-in-ocp"><a href="#about-ldap-authentication-in-ocp" aria-hidden="true" class="header-anchor">#</a> About LDAP authentication in OCP</h2> <p>During authentication, the LDAP directory is searched for an entry that matches the provided user name. If a single unique match is found, a simple bind is attempted using the distinguished name (DN) of the entry plus the provided password. If the LDAP directory requires authentication to search, you must specify a bindDN and bindPassword for the account used when performing the entry search.</p> <p>For more information on using LDAP, see the OpenShift Container Platform 4.1
+documentation for
+<a href="https://docs.openshift.com/container-platform/4.1/authentication/identity_providers/configuring-ldap-identity-provider.html" target="_blank" rel="noopener noreferrer">Configuring LDAP Identity Provider<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></p> <h2 id="configuring-ldap-variables"><a href="#configuring-ldap-variables" aria-hidden="true" class="header-anchor">#</a> Configuring LDAP variables</h2> <p>All variables relating to LDAP configuration are described in the table below.</p> <table><thead><tr><th style="text-align:left;">Variable</th> <th style="text-align:left;">File</th> <th style="text-align:left;">Description</th></tr></thead> <tbody><tr><td style="text-align:left;"><code>ldap_bind_user_dn</code></td> <td style="text-align:left;">group_vars/all/vars.yml</td> <td style="text-align:left;">The name (or Bind DN) of the LDAP user required to perform the search.</td></tr> <tr><td style="text-align:left;"><code>vault.ldap_bind_user_password</code></td> <td style="text-align:left;"><b>group_vars/all/vault.yml</b></td> <td style="text-align:left;">Password for the LDAP user account used to perform the search.</td></tr> <tr><td style="text-align:left;"><code>ldap_ca_file</code></td> <td style="text-align:left;">group_vars/all/vars.yml</td> <td style="text-align:left;">Location of the CA Bundle of the LDAP server, exported in PEM format. A sample file is provided in <code>playbooks/roles/ldap/files/ca.pem</code></td></tr> <tr><td style="text-align:left;"><code>ldap_cr_file</code></td> <td style="text-align:left;">group_vars/all/vars.yml</td> <td style="text-align:left;">Location of the Custom Resource used to configure an Identity Provider. A sample file is provided in <code>playbooks/roles/ldap/vars/ldap_cr.yml</code></td></tr></tbody></table> <p>Extracting the CA bundle is specific to your particular LDAP server and is beyond the scope of this guide. Once you have
+obtained the information in the correct format, you should store it in a file on your Ansible controller.</p> <p>The parameters and values in the Custom Resource file are highly dependent on your particular environment and,
+as a result,
+these cannot be generalized in the solution. Appendix B provides a detailed overview of the sample Custom Resource file
+that comes with this solution and more information can be found in the OCP online documentation in the article
+<a href="https://docs.openshift.com/container-platform/4.1/authentication/understanding-identity-provider.html" target="_blank" rel="noopener noreferrer">Understanding identity provider configuration<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a>.</p> <h2 id="testing-the-configuration"><a href="#testing-the-configuration" aria-hidden="true" class="header-anchor">#</a> Testing the configuration</h2> <p>Before running the playbook, it can be helpful to manually test your configuration. Install a tool such as <code>ldapsearch</code>
+and attempt to perform a query using the configuration information you have established. Initially, it is easier to use
+insecure <code>ldap</code> access, rather than secure <code>ldaps</code>, to perform the search. The following example uses the bind DN
+of <code>adreader</code> and, as a result of specifying the <code>-W</code> flag, you will be prompted to enter the corresponding password. You will need to adapt the URI <code>ldap://mars-adds.am2.cloudra.local</code> and the parameters to your own environment.</p> <p>For the example to be successful, you must have added a user <code>adocpuser1</code> in the directory.</p> <div class="language- extra-class"><pre class="language-text"><code>$ dnf install -y openldap-clients
+
+$ ldapsearch -H ldap://mars-adds.am2.cloudra.local \
+         -x -W -D &quot;cn=adreader,cn=Users,dc=am2,dc=cloudra,dc=local&quot; \
+         -b &quot;cn=Users,dc=am2,dc=cloudra,dc=local&quot; \
+         &quot;(&amp;(objectClass=person)(sAMAccountName=adocpuser1))&quot;`
+
+</code></pre></div><p>The above query will replicate what the identity provider does when a user named <code>adocpuser1</code> attempts to log in. If this
+user exists in your LDAP directory, the search will return a single directory entry, similar to the following:</p> <div class="language- extra-class"><pre class="language-text"><code>filter: (&amp;(objectClass=person)(sAMAccountName=adocpuser1))
+requesting: All userApplication attributes
+# extended LDIF
+#
+# LDAPv3
+# base &lt;cn=Users,dc=am2,dc=cloudra,dc=local&gt; with scope subtree
+# filter: (&amp;(objectClass=person)(sAMAccountName=adocpuser1))
+# requesting: ALL
+#
+
+# adocp user1, Users, am2.cloudra.local
+dn: CN=adocp user1,CN=Users,DC=am2,DC=cloudra,DC=local
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: user
+cn: adocp user1
+sn: user1
+givenName: adocp
+distinguishedName: CN=adocp user1,CN=Users,DC=am2,DC=cloudra,DC=local
+instanceType: 4
+whenCreated: 20191111160653.0Z
+whenChanged: 20191112100318.0Z
+displayName: adocp user1
+uSNCreated: 188305
+memberOf: CN=adocpusers,CN=Users,DC=am2,DC=cloudra,DC=local
+uSNChanged: 188439
+name: adocp user1
+objectGUID:: FomFmxLnoEi0pnyxTbjHFg==
+userAccountControl: 66048
+badPwdCount: 0
+codePage: 0
+countryCode: 0
+badPasswordTime: 0
+lastLogoff: 0
+lastLogon: 0
+pwdLastSet: 132179620134013170
+primaryGroupID: 513
+objectSid:: AQUAAAAAAAUVAAAA1r8HwaYUleyBG+FYcgQAAA==
+accountExpires: 9223372036854775807
+logonCount: 0
+sAMAccountName: adocpuser1
+sAMAccountType: 805306368
+userPrincipalName: adocpuser1@am2.cloudra.local
+objectCategory: CN=Person,CN=Schema,CN=Configuration,DC=am2,DC=cloudra,DC=local
+dSCorePropagationData: 20191111160653.0Z
+dSCorePropagationData: 16010101000000.0Z
+lastLogonTimestamp: 132180265987003551
+
+# search result
+search: 2
+result: 0 Success
+
+# numResponses: 2
+# numEntries: 1
+</code></pre></div><p>Once your testing with insecure access is successful, configure <code>ldapsearch</code> with the appropriate CA certificate
+for your LDAP server and then switch to using <code>ldaps</code> to test secure access as performed by the playbook.</p> <h2 id="overview-of-the-playbook"><a href="#overview-of-the-playbook" aria-hidden="true" class="header-anchor">#</a> Overview of the playbook</h2> <p>To access the identity provider, the playbook creates an OpenShift Container Platform <code>Secret</code> named <code>ldap-secret</code> that contains the <code>bindPassword</code>.</p> <p>To support secure access to the identity provider, the playbook creates an OpenShift Container Platform <code>ConfigMap</code> named <code>ca-config-map</code> in the <code>openshift-config</code> namespace to contain the certificate authority bundle.</p> <h2 id="running-the-playbook"><a href="#running-the-playbook" aria-hidden="true" class="header-anchor">#</a> Running the playbook</h2> <p>When you have confirmed that your configuration supports secure access to the LDAP directory, you can run the integration playbook as follows:</p> <div class="language- extra-class"><pre class="language-text"><code>$ cd ~/OpenShift-on-SimpliVity
+
+$ ansible-playbook -i hosts playbooks/ldap.yml
+</code></pre></div><p>You may have to wait a few seconds after the playbook completes, before the authentication cluster operator is available.</p> <h2 id="verification"><a href="#verification" aria-hidden="true" class="header-anchor">#</a> Verification</h2> <p>You can now attempt to log in using the LDAP identity provider, using either the command line or the web console.</p> <div class="language- extra-class"><pre class="language-text"><code>$ oc login -u adocpuser1
+Authentication required for https://api.ocp.hpecloud.org:6443 (openshift)
+Username: adocpuser1
+Password:
+Login successful.
+
+You don't have any projects. You can try to create a new project, by running
+
+    oc new-project &lt;projectname&gt;
+
+
+$ oc whoami
+adocpuser1
+</code></pre></div><h2 id="synchronizing-groups"><a href="#synchronizing-groups" aria-hidden="true" class="header-anchor">#</a> Synchronizing groups</h2> <p>As an OpenShift administrator, you can use groups to manage users, change their permissions, and enhance collaboration.
+Your organization may have already created user groups and stored them in an LDAP server. OpenShift can sync those
+LDAP records with internal OpenShift records, enabling you to manage your groups in one place. OpenShift currently
+supports group sync with LDAP servers using three common schemas for defining group membership:
+RFC 2307, Active Directory, and augmented Active Directory. More information on LDAP synchronization is available
+in the OCP 3.11 documentation at
+<a href="https://docs.openshift.com/container-platform/3.11/install_config/syncing_groups_with_ldap.html" target="_blank" rel="noopener noreferrer">https://docs.openshift.com/container-platform/3.11/install_config/syncing_groups_with_ldap.html<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a>.</p> <p>This solution does not provide any playbooks to support synchronization. However, the following example shows how
+it can be performed manually. It assumes that you have created a group of ordinary users in your LDAP directory,
+named <code>adocpusers</code> and containing users <code>adocpuser1</code> and <code>adocpuser2</code>.
+It also assumes a group of administrators, <code>adocpadmins</code>, containing users <code>adocpadmin1</code> and <code>adocpadmin2</code>.</p> <h2 id="sync-example"><a href="#sync-example" aria-hidden="true" class="header-anchor">#</a> Sync example</h2> <p>In order to sync OpenShift group records with those from an external provider, determine which groups you wish to sync
+and where their records live. For instance, all or some groups may be selected from those stored on an LDAP
+server. The path to a sync configuration file is required in order to describe how data is requested from the external
+record store and migrated to OpenShift records. Default behavior is to do a dry-run without changing OpenShift records.
+Passing '--confirm' will sync all groups from the LDAP server returned by the LDAP query templates.</p> <p>Create a sync file <code>ad-config.yaml</code> similar to the following, adapting the parameters and values for your own environment.</p> <div class="language- extra-class"><pre class="language-text"><code>kind: LDAPSyncConfig
+apiVersion: v1
+url: ldaps://mars-adds.am2.cloudra.local
+ca: playbooks/roles/ldap/files/ca.pem
+insecure: false
+bindDN: cn=adreader,cn=Users,dc=am2,dc=cloudra,dc=local
+bindPassword: *******
+activeDirectory:
+  usersQuery:
+    baseDN: cn=Users,dc=am2,dc=cloudra,dc=local
+    scope: sub
+    derefAliases: never
+    filter: (objectClass=person)
+    pageSize: 0
+  userNameAttributes: [ sAMAccountName ]
+  groupMembershipAttributes: [ memberOf ]
+</code></pre></div><p>Run the sync command, without the <code>--confirm</code> flag, to identify the groups in your LDAP directory:</p> <div class="language- extra-class"><pre class="language-text"><code>$ oc adm groups sync --sync-config=ad-config.yaml
+</code></pre></div><p>This command will produce output similar to the following:</p> <div class="language- extra-class"><pre class="language-text"><code>...
+- metadata:
+    annotations:
+      openshift.io/ldap.sync-time: 2019-11-12T06:41:23-0500
+      openshift.io/ldap.uid: CN=adocpadmins,CN=Users,DC=am2,DC=cloudra,DC=local
+      openshift.io/ldap.url: mars-adds.am2.cloudra.local:636
+    creationTimestamp: &quot;2019-11-12T11:37:15Z&quot;
+    labels:
+      openshift.io/ldap.host: mars-adds.am2.cloudra.local
+    name: adocpadmins
+    resourceVersion: &quot;1924931&quot;
+    selfLink: /apis/user.openshift.io/v1/groups/adocpadmins
+    uid: c6c1ba9d-0540-11ea-bcd8-0a580a80021c
+  users:
+  - adocpadmin1
+  - adocpadmin2
+...
+- metadata:
+    annotations:
+      openshift.io/ldap.sync-time: 2019-11-12T06:41:23-0500
+      openshift.io/ldap.uid: CN=adocpusers,CN=Users,DC=am2,DC=cloudra,DC=local
+      openshift.io/ldap.url: mars-adds.am2.cloudra.local:636
+    creationTimestamp: &quot;2019-11-12T11:38:02Z&quot;
+    labels:
+      openshift.io/ldap.host: mars-adds.am2.cloudra.local
+    name: adocpusers
+    resourceVersion: &quot;1925158&quot;
+    selfLink: /apis/user.openshift.io/v1/groups/adocpusers
+    uid: e240adc2-0540-11ea-8e34-0a580a810017
+  users:
+  - adocpuser1
+  - adocpuser2
+</code></pre></div><p>Note how the <code>ldap.uid</code> fields use capital letters: <code>CN=adocpadmins,CN=Users,DC=am2,DC=cloudra,DC=local</code>.</p> <p>Before syncing the data, add <code>groupUIDNameMapping</code> to your sync configuration file to map the LDAP groups to the
+group names you want to use in OCP, in this instance <code>adocpusers</code> and <code>adocpadmins</code>:</p> <div class="language- extra-class"><pre class="language-text"><code>groupUIDNameMapping:
+  &quot;CN=adocpusers,CN=Users,DC=am2,DC=cloudra,DC=local&quot;: adocpusers
+  &quot;CN=adocpadmins,CN=Users,DC=am2,DC=cloudra,DC=local&quot;: adocpadmins
+</code></pre></div><p>So your complete sync file should now look like:</p> <div class="language- extra-class"><pre class="language-text"><code>kind: LDAPSyncConfig
+apiVersion: v1
+url: ldaps://mars-adds.am2.cloudra.local
+ca: playbooks/roles/ldap/files/ca.pem
+insecure: false
+bindDN: cn=myuser,cn=Users,dc=am2,dc=cloudra,dc=local
+bindPassword: ********
+groupUIDNameMapping:
+  &quot;CN=adocpusers,CN=Users,DC=am2,DC=cloudra,DC=local&quot;: adocpusers
+  &quot;CN=adocpadmins,CN=Users,DC=am2,DC=cloudra,DC=local&quot;: adocpadmins
+activeDirectory:
+  usersQuery:
+    baseDN: cn=Users,dc=am2,dc=cloudra,dc=local
+    scope: sub
+    derefAliases: never
+    filter: (objectClass=person)
+    pageSize: 0
+  userNameAttributes: [ sAMAccountName ]
+  groupMembershipAttributes: [ memberOf ]
+</code></pre></div><p>By default, the sync command will synchronize based on all the data found in your LDAP directory. You can limit the
+sync to specific groups by supplying a whitelist to the sync command. Run the command without the <code>--confirm</code> flag,
+and provide a whitelist of the groups you want to sync, using the <code>ldap.uid</code> values returned earlier:</p> <div class="language- extra-class"><pre class="language-text"><code>$ oc adm groups sync \
+   --sync-config=ad-config.yaml \
+   &quot;CN=adocpusers,CN=Users,DC=am2,DC=cloudra,DC=local&quot; \
+   &quot;CN=adocpadmins,CN=Users,DC=am2,DC=cloudra,DC=local&quot;
+</code></pre></div><p>The command will perform a dry-run and return the values it would have synchronized, showing the two groups and the
+corresponding users:</p> <div class="language- extra-class"><pre class="language-text"><code>apiVersion: v1
+items:
+- metadata:
+    annotations:
+      openshift.io/ldap.sync-time: 2019-11-14T05:54:50-0500
+      openshift.io/ldap.uid: CN=adocpusers,CN=Users,DC=am2,DC=cloudra,DC=local
+      openshift.io/ldap.url: mars-adds.am2.cloudra.local:636
+    creationTimestamp: &quot;2019-11-12T11:38:02Z&quot;
+    labels:
+      openshift.io/ldap.host: mars-adds.am2.cloudra.local
+    name: adocpusers
+    resourceVersion: &quot;1925158&quot;
+    selfLink: /apis/user.openshift.io/v1/groups/adocpusers
+    uid: e240adc2-0540-11ea-8e34-0a580a810017
+  users:
+  - adocpuser1
+  - adocpuser2
+- metadata:
+    annotations:
+      openshift.io/ldap.sync-time: 2019-11-14T05:54:50-0500
+      openshift.io/ldap.uid: CN=adocpadmins,CN=Users,DC=am2,DC=cloudra,DC=local
+      openshift.io/ldap.url: mars-adds.am2.cloudra.local:636
+    creationTimestamp: &quot;2019-11-12T11:37:15Z&quot;
+    labels:
+      openshift.io/ldap.host: mars-adds.am2.cloudra.local
+    name: adocpadmins
+    resourceVersion: &quot;1924931&quot;
+    selfLink: /apis/user.openshift.io/v1/groups/adocpadmins
+    uid: c6c1ba9d-0540-11ea-bcd8-0a580a80021c
+  users:
+  - adocpadmin1
+  - adocpadmin2
+kind: List
+metadata: {}
+</code></pre></div><p>Now run the sync command with the <code>--confirm</code> flag to synchronize the groups to your OCP cluster:</p> <div class="language- extra-class"><pre class="language-text"><code>$ oc adm groups sync \
+   --sync-config=ad-config.yaml \
+   &quot;CN=adocpusers,CN=Users,DC=am2,DC=cloudra,DC=local&quot; \
+   &quot;CN=adocpadmins,CN=Users,DC=am2,DC=cloudra,DC=local&quot; \
+   --confirm
+
+group/adocpusers
+group/adocpadmins
+</code></pre></div><p>You can confirm that the groups have been added to the cluster:</p> <div class="language- extra-class"><pre class="language-text"><code>$ oc get groups
+
+NAME          USERS
+adocpadmins   adocpadmin1, adocpadmin2
+adocpusers    adocpuser1, adocpuser2
+</code></pre></div><h2 id="adding-cluster-admin-role-to-group"><a href="#adding-cluster-admin-role-to-group" aria-hidden="true" class="header-anchor">#</a> Adding cluster admin role to group</h2> <p>Once you have added the <code>adocpadmins</code> group to your cluster, you can give administration privileges to
+members of the group.</p> <p>Log in with the initial <code>kubeadmin</code> user account, as outlined in the section <code>Logging into the OCP cluster for the first time</code>.</p> <p>Assign the <code>cluster-admin</code> role to the <code>adocpadmins</code> group:</p> <div class="language- extra-class"><pre class="language-text"><code>$ oc adm policy add-cluster-role-to-group cluster-admin adocpadmins
+</code></pre></div><p>Now , when a member of the <code>ocadmingroup</code> logs in to the cluster, the user will have cluster adminsitration privileges and access to all the projects/namespaces:</p> <div class="language- extra-class"><pre class="language-text"><code>$ oc login -u adocpadmin1
+Authentication required for https://api.ocp.hpecloud.org:6443 (openshift)
+Username: adocpadmin1
+Password:
+Login successful.
+
+You have access to the following projects and can switch between them with 'oc project &lt;projectname&gt;':
+
+  * default
+    kube-public
+    kube-system
+    openshift
+    openshift-apiserver
+    openshift-apiserver-operator
+    openshift-authentication
+    openshift-authentication-operator
+    openshift-cloud-credential-operator
+    openshift-cluster-machine-approver
+    openshift-cluster-node-tuning-operator
+    openshift-cluster-samples-operator
+...
+</code></pre></div><p>It is recommended that you delete the initial <code>kubeadmin</code> user, once you have successfully created and tested new admin user accounts:</p> <div class="language- extra-class"><pre class="language-text"><code>$ oc delete secret kubeadmin -n kube-system
+</code></pre></div></div> <footer class="page-edit"><div class="edit-link"><a href="https://gitlab.com/gmcgoldrick/openshift-on-simplivity/edit/master/docs-src-v1/post-deploy/ldap.md" target="_blank" rel="noopener noreferrer">Help us improve this page!</a> <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></div> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/OpenShift-on-SimpliVity/post-deploy/expose-registry.html" class="prev">Exposing the image registry</a></span> <span class="next"><a href="/OpenShift-on-SimpliVity/storage/storage-intro.html">Persistent storage</a>→
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/OpenShift-on-SimpliVity/assets/js/app.4d649184.js" defer></script><script src="/OpenShift-on-SimpliVity/assets/js/2.277d45f3.js" defer></script><script src="/OpenShift-on-SimpliVity/assets/js/36.7d0b8c66.js" defer></script>
+  </body>
+</html>
