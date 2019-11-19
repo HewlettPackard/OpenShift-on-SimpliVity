@@ -57,8 +57,7 @@
         packages: elasticsearch-operator
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
-  when:
-    - ocp_version == '4.1'
+  when: ocp_version == '4.1'
 
 - name: Retrieve Channel for Elasticsearch Subscription
   shell: |
@@ -150,8 +149,7 @@
         packages: cluster-logging
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
-  when:
-    - ocp_version == '4.1'
+  when: ocp_version == '4.1'
 
 - name: Retrieve Channel for Cluster Logging Subscription
   shell: |
