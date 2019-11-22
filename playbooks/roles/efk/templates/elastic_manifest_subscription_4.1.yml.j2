@@ -15,5 +15,16 @@
 ###
 
 ---
-# vars file for efk
-
+# ocp_version={{ ocp_version }}
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  generateName: "elasticsearch-"
+  name: elasticsearch
+  namespace: "openshift-operators-redhat"
+spec:
+  channel: "{{ channel.stdout }}"
+  installPlanApproval: "Automatic"
+  source: "elasticsearch"
+  sourceNamespace: "openshift-operators-redhat"
+  name: "elasticsearch-operator"

@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###
-#jinja2: trim_blocks:False
+
 apiVersion: "logging.openshift.io/v1"
 kind: "ClusterLogging"
 metadata:
@@ -25,12 +25,7 @@ spec:
     type: "elasticsearch"
     elasticsearch:
       nodeCount: 3
-      resources:
-        limits:
-          memory: 2Gi
-        requests:
-          cpu: 200m
-          memory: 2Gi
+      {% if efk_elasticsearch.resources is defined %}resources: {{ efk_elasticsearch.resources  }}{% endif %}{{''}}
       storage:
         storageClassName: {{ efk_es_pv_storage_class }}
         size: {{ efk_es_pv_size }}
@@ -38,38 +33,17 @@ spec:
   visualization:
     type: "kibana"
     kibana:
-      resources:
-        limits:
-          memory: 1Gi
-        requests:
-          cpu: 500m
-          memory: 1Gi
-      proxy:
-        resources:
-          limits:
-            memory: 100Mi
-          requests:
-            cpu: 100m
-            memory: 100Mi
       replicas: 2
+      {% if efk_kibana.resources is defined %}resources: {{ efk_kibana.resources  }}{% endif %}{{''}}
   curation:
     type: "curator"
     curator:
-      resources:
-        limits:
-          memory: 200Mi
-        requests:
-          cpu: 200m
-          memory: 200Mi
+      nodeSelector:
+        beta.kubernetes.io/os: linux
+      {% if efk_curator.resources is defined %}resources: {{ efk_curator.resources  }}{% endif %}{{''}}
       schedule: "*/10 * * * *"
   collection:
     logs:
       type: "fluentd"
       fluentd:
-        resources:
-          limits:
-            memory: 1Gi
-          requests:
-            cpu: 200m
-            memory: 1Gi
-      fluentd: {}
+        {% if efk_fluentd.resources is defined %}resources: {{ efk_fluentd.resources  }}{% endif %}{{''}}

@@ -16,3 +16,38 @@
 
 ---
 ocp_version: 4.2
+efk_es_pv_size: '200G'               # Size of Persistent Volume used for Elasticsearch data
+efk_es_pv_storage_class: 'thin'      # Storage class name used for Elasticsearch data
+
+efk_curator:
+  resources:
+    limits:
+      memory: 200Mi
+    requests:
+      cpu: 201m
+      memory: 200Mi
+
+efk_elasticsearch:
+  resources:
+    limits:
+      memory: 2Gi
+    requests:
+      cpu: 201m
+      memory: 2Gi
+
+efk_fluentd:
+  resources:
+    limits:
+      memory: 1Gi
+    requests:
+      cpu: 200m
+      memory: 1Gi
+
+efk_kibana:
+  resources:
+    limits:
+      memory: 736Mi
+    requests:
+      cpu: 100m
+      memory: 736Mi
+

@@ -14,50 +14,25 @@
 # limitations under the License.
 ### 
 ---
-- name: Create Namespace for Elasticsearch Operator
-  k8s:
-    state: present
-    definition:
-      api_version: v1
-      kind: Namespace
-      metadata:
-        name: openshift-operators-redhat
-        annotations:
-          openshift.io/node-selector: ""
-        labels:
-          openshift.io/cluster-logging: "true"
-          openshift.io/cluster-monitoring: "true"
-  environment:
-    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+- name: Create temporary folder 
+  tempfile:
+    state: directory
+    suffix: build
+  register: tempdir
+  changed_when: false
 
-- name: Create Elasticsearch Operator Group
-  k8s:
-    state: present
-    definition:
-      api_version: v1
-      kind: OperatorGroup
-      metadata:
-        name: openshift-operators-redhat
-        namespace: openshift-operators-redhat
-      spec: {}
-  environment:
-    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+# Files required by Elastic
+- set_fact:
+    elastic_manifest_prelim: 'elastic_manifest_prelim_{{ ocp_version }}.yml'
+    elastic_manifest_subscription: 'elastic_manifest_subscription_{{ ocp_version }}.yml.j2'
+    elastic_manifest_final: 'elastic_manifest_final_{{ ocp_version }}.yml'
 
-- name: Create CatalogSourceConfig Object for Elasticsearch
+- name: Create preliminary artifacts for Elasticsearch
   k8s:
     state: present
-    definition:
-      api_version: operators.coreos.com/v1
-      kind: CatalogSourceConfig
-      metadata:
-        name: elasticsearch
-        namespace: openshift-marketplace
-      spec:
-        targetNamespace: openshift-operators-redhat 
-        packages: elasticsearch-operator
+    definition: "{{ lookup('file',elastic_manifest_prelim) }}"
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
-  when: ocp_version == '4.1'
 
 - name: Retrieve Channel for Elasticsearch Subscription
   shell: |
@@ -67,25 +42,22 @@
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 
-- set_fact:
-    outfile: "{{ install_dir }}/eo-sub.yml"
-
-- name: Generate Elasticsearch Subscription Object
+- name: Generate Subscription Object from template
   template:
-    src: eo-sub.yml.j2
-    dest: "{{ outfile }}"
+    src: "{{ elastic_manifest_subscription }}"
+    dest:  "{{ tempdir.path }}/elastic_manifest_subscription.yml"
 
-- name: Create Elasticsearch Subscription
+- name: Create Subscription Object for Elastic
   k8s:
     state: present
-    src: "{{ outfile }}"
+    src:  ""{{ tempdir.path }}/elastic_manifest_subscription.yml"
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 
-- name: Create RBAC Object for Prometheus
+- name: Create Additional Objects for Elasticsearch
   k8s:
     state: present
-    src: "{{ role_path }}/files/eo-rbac.yml"
+    definition:  "{{ lookup('file',elastic_manifest_final) }}"
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 
@@ -104,52 +76,18 @@
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 
-- name: Create Namespace for Cluster Logging Operator
-  k8s:
-    state: present
-    definition:
-      api_version: v1
-      kind: Namespace
-      metadata:
-        name: openshift-logging
-        annotations:
-          openshift.io/node-selector: ""
-        labels:
-          openshift.io/cluster-logging: "true"
-          openshift.io/cluster-monitoring: "true"
-  environment:
-    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+# Files required by Cluster Logging
+- set_fact:
+    clo_manifest_prelim: 'clo_manifest_prelim_{{ ocp_version }}.yml'
+    clo_manifest_subscription: 'clo_manifest_subscription_{{ ocp_version }}.yml.j2'
+    clo_manifest_final: 'clo_manifest_final_{{ ocp_version }}.yml'
 
-- name: Create Cluster Logging Operator Group
+- name: Create preliminary artifacts for Cluster Logging
   k8s:
     state: present
-    definition:
-      api_version: v1
-      kind: OperatorGroup
-      metadata:
-        name: openshift-logging
-        namespace: openshift-logging
-      spec:
-        targetNamespaces:
-        - openshift-logging
+    definition: "{{ lookup('file',clo_manifest_prelim) }}"
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
-
-- name: Create CatalogSourceConfig Object for Cluster Logging
-  k8s:
-    state: present
-    definition:
-      api_version: operators.coreos.com/v1
-      kind: CatalogSourceConfig
-      metadata:
-        name: installed-redhat-openshift-logging
-        namespace: openshift-marketplace
-      spec:
-        targetNamespace: openshift-logging
-        packages: cluster-logging
-  environment:
-    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
-  when: ocp_version == '4.1'
 
 - name: Retrieve Channel for Cluster Logging Subscription
   shell: |
@@ -159,21 +97,20 @@
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 
-- set_fact:
-    outfile: "{{ install_dir }}/clo-sub.yml"
-
-- name: Generate Cluster Logging Subscription Object
+# At this stage in the console, under Operator Management, we should see a Custom Operator Catalog named Cluster Logging for the openshift-logging namespace
+- name: Generate Subscription for Cluster Logging form template
   template:
-    src: clo-sub.yml.j2
-    dest: "{{ outfile }}"
+    src: "{{ clo_manifest_subscription }}"
+    dest:  "{{ tempdir.path }}/clo_manifest_subscription.yml"
 
 - name: Create Cluster Logging Subscription
   k8s:
     state: present
-    src: "{{ outfile }}"
+    src: "{{ tempdir.path }}/clo_manifest_subscription.yml"
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 
+# At this stage in the console, under Operator Management, we should see a subscription for the openshift-logging namespace
 - name: Wait for Cluster Logging Operator installation to complete
   k8s_facts:
     api_version: operators.coreos.com/v1alpha1
@@ -190,16 +127,16 @@
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 
 - set_fact:
-    outfile: "{{ install_dir }}/clo-crd.yml"
+    clo_manifest_crd: 'clo_manifest_crd_{{ ocp_version }}.yml.j2'
 
-- name: Generate Cluster Logging Instance Object
+- name: Generate Cluster Logging CRD from template
   template:
-    src: clo-crd.yml.j2
-    dest: "{{ outfile }}"
+    src: "{{ clo_manifest_crd }}"
+    dest: "{{ tempdir.path }}/clo-crd.yml"
 
 - name: Create Cluster Logging Instance
   k8s:
     state: present
-    src: "{{ outfile }}"
+    src: "{{ tempdir.path }}/clo-crd.yml"
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
