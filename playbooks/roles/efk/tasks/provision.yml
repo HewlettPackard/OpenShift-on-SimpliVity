@@ -50,7 +50,7 @@
 - name: Create Subscription Object for Elastic
   k8s:
     state: present
-    src:  ""{{ tempdir.path }}/elastic_manifest_subscription.yml"
+    src:  "{{ tempdir.path }}/elastic_manifest_subscription.yml"
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 
