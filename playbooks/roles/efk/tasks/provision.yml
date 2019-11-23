@@ -23,9 +23,9 @@
 
 # Files required by Elastic
 - set_fact:
-    elastic_manifest_prelim: 'elastic_manifest_prelim_{{ ocp_version }}.yml'
-    elastic_manifest_subscription: 'elastic_manifest_subscription_{{ ocp_version }}.yml.j2'
-    elastic_manifest_final: 'elastic_manifest_final_{{ ocp_version }}.yml'
+    elastic_manifest_prelim: 'ocp_v_{{ ocp_version }}/eo-prelim.yml'
+    elastic_manifest_subscription: 'ocp_v_{{ ocp_version }}/eo-sub.yml.j2'
+    elastic_manifest_final: 'ocp_v_{{ ocp_version }}/eo-final.yml'
 
 - name: Create preliminary artifacts for Elasticsearch
   k8s:
@@ -78,9 +78,10 @@
 
 # Files required by Cluster Logging
 - set_fact:
-    clo_manifest_prelim: 'clo_manifest_prelim_{{ ocp_version }}.yml'
-    clo_manifest_subscription: 'clo_manifest_subscription_{{ ocp_version }}.yml.j2'
-    clo_manifest_final: 'clo_manifest_final_{{ ocp_version }}.yml'
+    clo_manifest_prelim: 'ocp_v_{{ ocp_version }}/clo-prelim.yml'
+    clo_manifest_subscription: 'ocp_v_{{ ocp_version }}/clo-sub.yml.j2'
+    clo_manifest_final: 'ocp_v_{{ ocp_version }}/clo-final.yml'
+    clo_manifest_crd: 'ocp_v_{{ ocp_version }}/clo-crd_{{ efk_profile }}.yml.j2'
 
 - name: Create preliminary artifacts for Cluster Logging
   k8s:
@@ -126,9 +127,6 @@
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 
-- set_fact:
-    clo_manifest_crd: 'clo_manifest_crd_{{ ocp_version }}.yml.j2'
-
 - name: Generate Cluster Logging CRD from template
   template:
     src: "{{ clo_manifest_crd }}"
@@ -140,3 +138,8 @@
     src: "{{ tempdir.path }}/clo-crd.yml"
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+
+- name: Delete the temporary folder
+  file:
+    path: "{{ tempdir.path }}"
+    state: absent

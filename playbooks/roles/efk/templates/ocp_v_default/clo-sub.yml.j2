@@ -14,16 +14,14 @@
 # limitations under the License.
 ###
 
----
-# ocp_version={{ ocp_version }}
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
-  name: elasticsearch
-  namespace: openshift-operators-redhat
+  name: cluster-logging
+  namespace: openshift-logging
 spec:
   channel: "{{ channel.stdout }}"
   installPlanApproval: Automatic
   source: redhat-operators
-  sourceNamespace: openshift-operators
-  name: elasticsearch-operator
+  sourceNamespace: openshift-marketplace
+  name: cluster-logging

@@ -13,7 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###
-
+#
+# Small profile for EFL (default)
+#
 apiVersion: "logging.openshift.io/v1"
 kind: "ClusterLogging"
 metadata:
@@ -24,26 +26,44 @@ spec:
   logStore:
     type: "elasticsearch"
     elasticsearch:
-      nodeCount: 3
-      {% if efk_elasticsearch.resources is defined %}resources: {{ efk_elasticsearch.resources  }}{% endif %}{{''}}
+      nodeCount: 1
+      resources:
+        limits:
+          memory: 2Gi
+        requests:
+          cpu: 200m
+          memory: 2Gi
       storage:
         storageClassName: {{ efk_es_pv_storage_class }}
         size: {{ efk_es_pv_size }}
-      redundancyPolicy: "SingleRedundancy"
+      redundancyPolicy: "ZeroRedundancy"
   visualization:
     type: "kibana"
     kibana:
       replicas: 2
-      {% if efk_kibana.resources is defined %}resources: {{ efk_kibana.resources  }}{% endif %}{{''}}
+      resources:
+        limits:
+          memory: 736Mi
+        requests:
+          cpu: 100m
+          memory: 736Mi
   curation:
     type: "curator"
     curator:
-      nodeSelector:
-        beta.kubernetes.io/os: linux
-      {% if efk_curator.resources is defined %}resources: {{ efk_curator.resources  }}{% endif %}{{''}}
+      resources:
+        limits:
+          memory: 200Mi
+        requests:
+          cpu: 200m
+          memory: 200Mi
       schedule: "*/10 * * * *"
   collection:
     logs:
       type: "fluentd"
       fluentd:
-        {% if efk_fluentd.resources is defined %}resources: {{ efk_fluentd.resources  }}{% endif %}{{''}}
+        resources:
+          limits:
+            memory: 736Mi
+          requests:
+            cpu: 200m
+            memory: 736Mi

@@ -13,7 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###
-#jinja2: trim_blocks:False
+#
+# Small profile for EFL (default)
+#
 apiVersion: "logging.openshift.io/v1"
 kind: "ClusterLogging"
 metadata:
@@ -24,7 +26,7 @@ spec:
   logStore:
     type: "elasticsearch"
     elasticsearch:
-      nodeCount: 3
+      nodeCount: 1
       resources:
         limits:
           memory: 2Gi
@@ -34,24 +36,17 @@ spec:
       storage:
         storageClassName: {{ efk_es_pv_storage_class }}
         size: {{ efk_es_pv_size }}
-      redundancyPolicy: "SingleRedundancy"
+      redundancyPolicy: "ZeroRedundancy"
   visualization:
     type: "kibana"
     kibana:
+      replicas: 2
       resources:
         limits:
-          memory: 1Gi
+          memory: 736Mi
         requests:
-          cpu: 500m
-          memory: 1Gi
-      proxy:
-        resources:
-          limits:
-            memory: 100Mi
-          requests:
-            cpu: 100m
-            memory: 100Mi
-      replicas: 2
+          cpu: 100m
+          memory: 736Mi
   curation:
     type: "curator"
     curator:
@@ -68,8 +63,7 @@ spec:
       fluentd:
         resources:
           limits:
-            memory: 1Gi
+            memory: 736Mi
           requests:
             cpu: 200m
-            memory: 1Gi
-      fluentd: {}
+            memory: 736Mi

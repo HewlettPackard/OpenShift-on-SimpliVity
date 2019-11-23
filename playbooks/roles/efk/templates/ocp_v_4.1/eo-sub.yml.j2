@@ -15,7 +15,16 @@
 ###
 
 ---
-ocp_version: "default"               # templates to use if no OCP version if specified
-efk_es_pv_size: '200G'               # Size of Persistent Volume used for Elasticsearch data
-efk_es_pv_storage_class: 'thin'      # Storage class name used for Elasticsearch data
-efk_profile: small                   # elasic search sizing: small = 2Gi RAM and 200m core of CPU, 'large' = 16Gi of RAM and 1 CPU core
+# ocp_version={{ ocp_version }}
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  generateName: "elasticsearch-"
+  name: elasticsearch
+  namespace: "openshift-operators-redhat"
+spec:
+  channel: "preview"
+  installPlanApproval: "Automatic"
+  source: "elasticsearch"
+  sourceNamespace: "openshift-operators-redhat"
+  name: "elasticsearch-operator"
