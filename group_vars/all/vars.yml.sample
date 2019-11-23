@@ -18,7 +18,7 @@
 #
 # OpenShift 4.X artifacts
 #
-ocp_version: "4.2"                                              # version of OCP to install, enclose with quotes, accepts "4.1"or "4.2"
+#ocp_version: "4.1"                                             # if absent installs 4.2, if present must be set to 4.1
 local_home: "{{ lookup('env','HOME') }}"                        # Local user's HOME directory
 install_dir: "{{ local_home }}/.ocp"                            # OCP installation dir
 ocp_installer_path: '{{ local_home }}/kits/openshift-install'   # Path to the OCP installer
@@ -53,7 +53,7 @@ dns_servers: ['10.10.173.1','10.10.173.31']                     # DNS servers in
 # folders, templates and OVAs, templates are created using the corresponding OVA if they cannot be found (and only if they cannot be found)
 #
 support_folder: 'hpeSupport'                                    # Folder for non-OCP VMs and templates (created if needed)
-master_ova_path: '{{ local_home }}/kits/rhcos-{{ ocp_version }}.0-x86_64-vmware.ova' # Path to RHCOS OVA (file is expected to be there)
+master_ova_path: '{{ local_home }}/kits/rhcos.ova'              # eg rhcos-4.1.0-x86_64-vmware.ova' (file is expected to be there)
 worker_ova_path: '{{ master_ova_path }}'                        # Path to the OVA file used to create the VM template for OCP worker nodes
 support_ova_path: '{{ local_home }}/kits/hpe-rhel760.ova'       # Path to the OVA file used to create the VM template for support  machines (LBs etc)
 master_template: hpe-rhcos                                      # VMware template name for OCP master nodes
