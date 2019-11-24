@@ -9,3 +9,7 @@
 ### DNS and DHCP services are not automatically restarted after a reboot of a support node
 
 - These services are now started automatically after a reboot.
+
+### EFK
+
+- Fix an issue where the EFK stack won't deploy since OCP 4.2 was relased
