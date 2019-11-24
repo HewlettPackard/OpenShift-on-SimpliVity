@@ -12,4 +12,4 @@
 
 ### EFK
 
-- Fix an issue where the EFK stack won;t deploy since OCP 4.2 was relased
+- Fix an issue where the EFK stack won't deploy since OCP 4.2 was relased
