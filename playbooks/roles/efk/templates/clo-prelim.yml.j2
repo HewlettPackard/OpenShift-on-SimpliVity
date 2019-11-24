@@ -14,14 +14,35 @@
 # limitations under the License.
 ###
 
-apiVersion: operators.coreos.com/v1alpha1
-kind: Subscription
+---
+apiVersion: v1
+kind: Namespace
 metadata:
-  name: cluster-logging
+  name: openshift-logging
+  annotations:
+    openshift.io/node-selector: "" 
+  labels:  
+    openshift.io/cluster-logging: "true"
+    openshift.io/cluster-monitoring: "true"
+
+---
+api_version: v1
+kind: OperatorGroup
+metadata:
+  name: openshift-logging
   namespace: openshift-logging
 spec:
-  channel: preview
-  installPlanApproval: Automatic
-  source: installed-redhat-openshift-logging
-  sourceNamespace: openshift-logging
-  name: cluster-logging
+  targetNamespaces:
+  - openshift-logging
+
+{% if efk_channel | lower == "preview" %}
+---
+api_version: operators.coreos.com/v1
+kind: CatalogSourceConfig
+metadata:
+  name: installed-redhat-openshift-logging
+  namespace: openshift-marketplace
+spec:
+  targetNamespace: openshift-logging
+  packages: cluster-logging
+{% endif %}

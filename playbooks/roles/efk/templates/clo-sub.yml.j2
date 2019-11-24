@@ -13,15 +13,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###
-
+---
+{% if efk_channel | lower == "preview" %}
+# efk_channel = {{ efk_channel }}
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
   name: cluster-logging
   namespace: openshift-logging
 spec:
-  channel: "{{ channel.stdout }}"
+  channel: preview
+  installPlanApproval: Automatic
+  source: installed-redhat-openshift-logging
+  sourceNamespace: openshift-logging
+  name: cluster-logging
+
+{% else %}
+# efk_channel = {{ efk_channel }}
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: cluster-logging
+  namespace: openshift-logging
+spec:
+  channel: "{{ efk_channel }}"
   installPlanApproval: Automatic
   source: redhat-operators
   sourceNamespace: openshift-marketplace
   name: cluster-logging
+
+{% endif %}

@@ -14,6 +14,15 @@
 # limitations under the License.
 ### 
 ---
+- name: Sanity check
+  fail:
+    msg: "EFK profile ({{i efk_profile }}) must be one of {{ supported_profiles }}"
+  when: efk_profile | lower not in supported_profiles
+  vars:
+    supported_profiles:
+    - small
+    - large
+
 - name: Create temporary folder 
   tempfile:
     state: directory
@@ -21,43 +30,56 @@
   register: tempdir
   changed_when: false
 
-# Files required by Elastic
-- set_fact:
-    elastic_manifest_prelim: 'ocp_v_{{ ocp_version }}/eo-prelim.yml'
-    elastic_manifest_subscription: 'ocp_v_{{ ocp_version }}/eo-sub.yml.j2'
-    elastic_manifest_final: 'ocp_v_{{ ocp_version }}/eo-final.yml'
+- name: Search the Elasticsearch Operator in the OpenShift Marketplace
+  k8s_facts:
+    namespace: openshift-marketplace
+    kind: PackageManifest
+    name: elasticsearch-operator
+  register: res
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+
+- name: Get the list of available channels
+  set_fact:
+    channels: "{{ res.resources | json_query ('[].status.channels[].name') }}"
+
+- name: Fail if the specified channel cannot be found
+  fail:
+    msg: "Invalid channel {{ efk_channel }} for EFK must be one of {{ channels }}" 
+  when: efk_channel not in channels 
+
+- name: Generate manifests from templates
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ tempdir.path }}/{{ item }}"
+  changed_when: false
+  with_items:
+  - clo-crd_large.yml
+  - clo-crd_small.yml
+  - clo-prelim.yml
+  - clo-sub.yml
+  - eo-final.yml
+  - eo-prelim.yml
+  - eo-sub.yml
 
 - name: Create preliminary artifacts for Elasticsearch
   k8s:
     state: present
-    definition: "{{ lookup('file',elastic_manifest_prelim) }}"
+    src: "{{ tempdir.path }}/eo-prelim.yml"
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
-
-- name: Retrieve Channel for Elasticsearch Subscription
-  shell: |
-    oc get packagemanifest elasticsearch-operator -n openshift-marketplace -o jsonpath='{.status.channels[].name}'
-  register: channel
-  changed_when: false
-  environment:
-    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
-
-- name: Generate Subscription Object from template
-  template:
-    src: "{{ elastic_manifest_subscription }}"
-    dest:  "{{ tempdir.path }}/elastic_manifest_subscription.yml"
 
 - name: Create Subscription Object for Elastic
   k8s:
     state: present
-    src:  "{{ tempdir.path }}/elastic_manifest_subscription.yml"
+    src:  "{{ tempdir.path }}/eo-sub.yml"
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 
 - name: Create Additional Objects for Elasticsearch
   k8s:
     state: present
-    definition:  "{{ lookup('file',elastic_manifest_final) }}"
+    src:  "{{ tempdir.path }}/eo-final.yml"
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 
@@ -76,42 +98,20 @@
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 
-# Files required by Cluster Logging
-- set_fact:
-    clo_manifest_prelim: 'ocp_v_{{ ocp_version }}/clo-prelim.yml'
-    clo_manifest_subscription: 'ocp_v_{{ ocp_version }}/clo-sub.yml.j2'
-    clo_manifest_final: 'ocp_v_{{ ocp_version }}/clo-final.yml'
-    clo_manifest_crd: 'ocp_v_{{ ocp_version }}/clo-crd_{{ efk_profile }}.yml.j2'
-
 - name: Create preliminary artifacts for Cluster Logging
   k8s:
     state: present
-    definition: "{{ lookup('file',clo_manifest_prelim) }}"
+    src: "{{ tempdir.path }}/clo-prelim.yml"
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
-
-- name: Retrieve Channel for Cluster Logging Subscription
-  shell: |
-    oc get packagemanifest cluster-logging -n openshift-marketplace -o jsonpath='{.status.channels[].name}'
-  register: channel
-  changed_when: false
-  environment:
-    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
-
-# At this stage in the console, under Operator Management, we should see a Custom Operator Catalog named Cluster Logging for the openshift-logging namespace
-- name: Generate Subscription for Cluster Logging form template
-  template:
-    src: "{{ clo_manifest_subscription }}"
-    dest:  "{{ tempdir.path }}/clo_manifest_subscription.yml"
 
 - name: Create Cluster Logging Subscription
   k8s:
     state: present
-    src: "{{ tempdir.path }}/clo_manifest_subscription.yml"
+    src: "{{ tempdir.path }}/clo-sub.yml"
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 
-# At this stage in the console, under Operator Management, we should see a subscription for the openshift-logging namespace
 - name: Wait for Cluster Logging Operator installation to complete
   k8s_facts:
     api_version: operators.coreos.com/v1alpha1
@@ -127,19 +127,19 @@
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 
-- name: Generate Cluster Logging CRD from template
-  template:
-    src: "{{ clo_manifest_crd }}"
-    dest: "{{ tempdir.path }}/clo-crd.yml"
-
 - name: Create Cluster Logging Instance
   k8s:
     state: present
-    src: "{{ tempdir.path }}/clo-crd.yml"
+    src: "{{ tempdir.path }}/clo-crd_{{ efk_profile | lower }}.yml"
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+
+- debug:
+    msg: "Deployed EFK with profile {{ efk_profile }}"
 
 - name: Delete the temporary folder
   file:
     path: "{{ tempdir.path }}"
     state: absent
+  changed_when: false
+  when: _debug is not defined

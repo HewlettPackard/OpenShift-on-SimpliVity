@@ -44,7 +44,7 @@
 
 ### EFK Logging Stack
 
-- The process of deploying the EFK (Elasticsearch, Fluentd, Kibana) logging stack has changed slightly in OCP 4.2.
+- The process of deploying the EFK (Elasticsearch, Fluentd, Kibana) logging stack has changed. This is described in the next section
 - The efk.yml playbook, and supporting efk role, have been updated to deploy successfully on either OCP 4.1 or OCP 4.2.
 
 ## New Features
@@ -111,4 +111,194 @@ daemonset/sysdig-agent manages sysdig/agent
 ```
 
 Note: The number of pods deployed by the daemonset should match your number of nodes in your OpenShift cluster.
+
+
+
+### Deployment of the logging Stack
+
+The following variables can be used to deploy the EFK stack. The `#` sign in front of the name of a variable means that the variable can be ommited and the default value will be used. If you want to override the defaults values, specify the variables in `group_vars/all/vars.yml` (without a # sign).
+
+| Variable                   | Default value | Description                                                  |
+| -------------------------- | ------------- | ------------------------------------------------------------ |
+| #`efk_channel`             | `"preview"`   | The "channel" to use in the Operatir Hub for the EFK stack. Must be "preview" when deploying on OCP 4.1 |
+| #`efk_es_pv_size`          | `200G`        | Size of the persistent volume which will holds the elasticsearch data. |
+| #`efk_es_pv_storage_class` | `thin`        | This is the name of the storage class to use for persistent storage. |
+| #`efk_profile`             | `small`       | `small` or `large`. the `small` profile deploys a single instance of elasticsearch and a single instance of kibana. There is no redundancy of the elasticsearch data. Also the elasticsearch resource limits are set to 100m core and 2Gi or RAM. |
+|                            |               | The `large` profile will deploy 3 elasticsearch instances and 2 kibana instances. The elasticsearch instances require 16Gi of RAM each and 1 CPU core so you will need to deploy 3 large worker nodes. |
+
+
+
+1- Populate the group_vars/vars/all.yml file with the above variables if you are not happy with the default values. 
+
+2- Make sure your current `kubeconfig` context is that of a cluster administrator.
+
+```
+# export KUBECONFIG ~/.ocp/auth/kubeconfig
+# oc login
+ (cluster admin creds, can those of kubeadmin if you did not delete the accout)
+```
+
+3- Make sure you have enough worker nodes to accommodate the EFK profile you chose. The following characteristics are recommended if you plan to use the `large` profile. Use the `scale.yml` playbook if you need to deploy additional worker nodes.
+
+```
+cpus=8 ram=32768
+```
+
+4- Once this is done you are ready to run the `efk.ym`l playbook:
+
+```
+# ansible-playbook -i hosts playbooks/efk.yml
+```
+
+The playbook INITIATE the deployment of the EFK stack. You will need to wait for all pods to be up and running before attempting to access the Kibana console. In the example below a large profile was deployed with 3 elasticsearch instances and 2 kibana instance.
+
+```
+[core@hpe-ansible gen9cluster]$ oc get pod
+NAME                                            READY   STATUS      RESTARTS   AGE
+cluster-logging-operator-57b78bf896-tzx8m       1/1     Running     0          54m
+curator-1574525400-vb2hp                        0/1     Completed   0          7m39s
+elasticsearch-cdm-rhq2scyw-1-6df7f4b488-fnvj5   2/2     Running     0          38m
+elasticsearch-cdm-rhq2scyw-2-76dfcf79c6-85x5k   2/2     Running     0          41m
+elasticsearch-cdm-rhq2scyw-3-667f9ccd64-8g2mm   2/2     Running     0          41m
+fluentd-2v4r7                                   1/1     Running     0          54m
+fluentd-4lsnp                                   1/1     Running     0          54m
+fluentd-7sp97                                   1/1     Running     0          44m
+fluentd-lvs4t                                   1/1     Running     0          54m
+fluentd-n26wz                                   1/1     Running     0          54m
+fluentd-r4fgv                                   1/1     Running     0          54m
+fluentd-t9jrr                                   1/1     Running     0          44m
+fluentd-tlclv                                   1/1     Running     0          44m
+kibana-84cdbf9cbd-5lkpt                         2/2     Running     0          54m
+kibana-84cdbf9cbd-jfrjn                         2/2     Running     0          41m
+[core@hpe-ansible gen9cluster]$
+```
+
+
+
+The Kibana console can be accessed at the "route" displayed by the following command:
+
+```
+# oc get route -n openshift-logging
+```
+
+```
+[core@hpe-ansible gen9cluster]$ oc get route -n openshift-logging
+NAME     HOST/PORT                                        PATH   SERVICES   PORT    TERMINATION          WILDCARD
+kibana   kibana-openshift-logging.apps.hpe.hpecloud.org          kibana     <all>   reencrypt/Redirect   None
+[core@hpe-ansible gen9cluster]$
+```
+
+You can then access the Kibana console using the host/port indicated
+
+#### Switching from one EFK profile to another profile
+
+If you want to deploy the large profile, you will need to add additional worker nodes. Each instance of elasticsearch in the large profile requires 16Gi of RAM and 1 CPU core.  Use the `scale.yml` playbook to grow your cluster with additional worker nodes.
+
+To switch from one EFK profile to the other, you need to configure the `efk_profile` variable in `group_vars/all/vars.yml` with the profile you want, either `small` or `large` then re-run the **efk.yml** playbook.
+
+In the example below the small model was deployed as indicated by the number of elasticsearch and kibana pods deployed.
+
+```
+[core@hpe-ansible gen9cluster]$ oc get pod -n openshift-logging
+NAME                                           READY   STATUS      RESTARTS   AGE
+cluster-logging-operator-57b78bf896-hcb9p      1/1     Running     0          19m
+curator-1574594400-bq7lk                       0/1     Completed   0          54s
+elasticsearch-cdm-hyr75ase-1-858468cb4-mk6s9   2/2     Running     0          18m
+fluentd-25rbm                                  1/1     Running     0          18m
+fluentd-4cth8                                  1/1     Running     0          18m
+fluentd-6d564                                  1/1     Running     0          18m
+fluentd-76bd5                                  1/1     Running     0          18m
+fluentd-qjtsz                                  1/1     Running     0          18m
+kibana-84cdbf9cbd-xvx8l                        2/2     Running     0          18m
+```
+
+
+
+We can deploy the large model by specifying `efk_profile: large` in `group_vars/vars.yml` or by specifying the variable in the ansible-playbook command line as shown below:
+
+```
+ # ansible-playbook -i hosts playbooks/efk.yml -e efk_profile=large
+```
+
+After a few seconds the deployment is updated.
+
+```
+[core@hpe-ansible gen9cluster]$ oc get pod -n openshift-logging
+NAME                                            READY   STATUS      RESTARTS   AGE
+cluster-logging-operator-57b78bf896-hcb9p       1/1     Running     0          70m
+curator-1574597400-2lddg                        0/1     Completed   0          2m35s
+elasticsearch-cdm-hyr75ase-1-858468cb4-mk6s9    2/2     Running     0          70m
+elasticsearch-cdm-hyr75ase-2-7954679f69-hrw7r   0/2     Pending     0          50s
+elasticsearch-cdm-hyr75ase-3-79d4897685-hxnpj   0/2     Pending     0          49s
+fluentd-25rbm                                   1/1     Running     0          70m
+fluentd-4cth8                                   1/1     Running     0          70m
+fluentd-6d564                                   1/1     Running     0          70m
+fluentd-76bd5                                   1/1     Running     0          70m
+fluentd-qjtsz                                   1/1     Running     0          70m
+kibana-84cdbf9cbd-5swvw                         2/2     Running     0          51s
+kibana-84cdbf9cbd-xvx8l                         2/2     Running     0          70m
+```
+
+However, the two additional elasticsearch instances remains in the `Pending` state and the `oc describe` command will give the reason:
+
+```
+[core@hpe-ansible gen9cluster]$ oc describe pod elasticsearch-cdm-hyr75ase-2-7954679f69-hrw7r -n openshift-logging | tail
+QoS Class:       Burstable
+Node-Selectors:  kubernetes.io/os=linux
+Tolerations:     node.kubernetes.io/disk-pressure:NoSchedule
+                 node.kubernetes.io/memory-pressure:NoSchedule
+                 node.kubernetes.io/not-ready:NoExecute for 300s
+                 node.kubernetes.io/unreachable:NoExecute for 300s
+Events:
+  Type     Reason            Age                  From               Message
+  ----     ------            ----                 ----               -------
+  Warning  FailedScheduling  82s (x5 over 3m59s)  default-scheduler  0/5 nodes are available: 5 Insufficient memory.
+```
+
+We deploy 3 additional worker nodes using the playbook `playbooks/scale.yml` with the following characteristics:
+
+```
+hpe-worker2   ansible_host=10.15.152.215 cpus=8 ram=32768 
+hpe-worker3   ansible_host=10.15.152.216 cpus=8 ram=32768 
+hpe-worker4   ansible_host=10.15.152.217 cpus=8 ram=32768 
+```
+
+We verify that the new nodes joined the cluster
+
+```
+[core@hpe-ansible gen9cluster]$ oc get node
+NAME          STATUS   ROLES    AGE    VERSION
+hpe-master0   Ready    master   99m    v1.14.6+c07e432da
+hpe-master1   Ready    master   99m    v1.14.6+c07e432da
+hpe-master2   Ready    master   99m    v1.14.6+c07e432da
+hpe-worker0   Ready    worker   99m    v1.14.6+c07e432da
+hpe-worker1   Ready    worker   99m    v1.14.6+c07e432da
+hpe-worker2   Ready    worker   108s   v1.14.6+c07e432da
+hpe-worker3   Ready    worker   91s    v1.14.6+c07e432da
+hpe-worker4   Ready    worker   99s    v1.14.6+c07e432da
+```
+
+And now verify the EFK deployment
+
+```
+[core@hpe-ansible gen9cluster]$ oc get pod -n openshift-logging
+NAME                                            READY   STATUS      RESTARTS   AGE
+cluster-logging-operator-57b78bf896-hcb9p       1/1     Running     0          84m
+curator-1574598000-vdxmv                        0/1     Completed   0          6m17s
+elasticsearch-cdm-hyr75ase-1-858468cb4-mk6s9    2/2     Running     0          83m
+elasticsearch-cdm-hyr75ase-2-7954679f69-hrw7r   1/2     Running     0          14m
+elasticsearch-cdm-hyr75ase-3-79d4897685-hxnpj   1/2     Running     0          14m
+fluentd-25rbm                                   1/1     Running     0          83m
+fluentd-4cth8                                   1/1     Running     0          83m
+fluentd-6d564                                   1/1     Running     0          83m
+fluentd-76bd5                                   1/1     Running     0          83m
+fluentd-794bl                                   1/1     Running     0          104s
+fluentd-8p6jx                                   1/1     Running     0          97s
+fluentd-gqrbx                                   1/1     Running     0          95s
+fluentd-qjtsz                                   1/1     Running     0          83m
+kibana-84cdbf9cbd-5swvw                         2/2     Running     0          14m
+kibana-84cdbf9cbd-xvx8l                         2/2     Running     0          83m
+```
+
+Of course you may have deployed the large worker nodes prior to redeploying the EFK stack using the large model. This would have worked as well but this workflow was used as it conveys more information on how OepnShift and Kubernetes are working.
 
