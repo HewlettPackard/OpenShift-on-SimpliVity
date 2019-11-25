@@ -300,5 +300,5 @@ kibana-84cdbf9cbd-5swvw                         2/2     Running     0          1
 kibana-84cdbf9cbd-xvx8l                         2/2     Running     0          83m
 ```
 
-Of course you may have deployed the large worker nodes prior to redeploying the EFK stack using the large model. This would have worked as well but this workflow was used as it conveys more information on how OepnShift and Kubernetes are working.
+Of course you may have deployed the large worker nodes prior to redeploying the EFK stack using the large model. This would have worked as well but this workflow was used as it conveys more information on how OpenShift and Kubernetes are working.
 
