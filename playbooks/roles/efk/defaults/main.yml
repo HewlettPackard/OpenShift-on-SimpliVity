@@ -15,7 +15,7 @@
 ###
 
 ---
-efk_channel: "4.2"                   # channel to use for the elasticsearch and cluster-logging operators if no OCP version if specified
+efk_channel: "4.2"                   # channel to use for the elasticsearch and cluster-logging operators
 efk_es_pv_size: '200G'               # Size of Persistent Volume used for Elasticsearch data
 efk_es_pv_storage_class: 'thin'      # Storage class name used for Elasticsearch data
-efk_profile: small                   # elasic search sizing: small = 2Gi RAM and 200m core of CPU, 'large' = 16Gi of RAM and 1 CPU core
+efk_profile: small                   # elastic search sizing: small = 2Gi RAM and 200m core of CPU, 'large' = 16Gi of RAM and 1 CPU core
