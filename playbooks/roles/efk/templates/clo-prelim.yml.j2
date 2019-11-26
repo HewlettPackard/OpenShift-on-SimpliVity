@@ -14,33 +14,35 @@
 # limitations under the License.
 ###
 
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: prometheus-k8s
-  namespace: openshift-operators-redhat
-rules:
-- apiGroups:
-  - ""
-  resources:
-  - services
-  - endpoints
-  - pods
-  verbs:
-  - get
-  - list
-  - watch
 ---
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
+apiVersion: v1
+kind: Namespace
 metadata:
-  name: prometheus-k8s
-  namespace: openshift-operators-redhat
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: prometheus-k8s
-subjects:
-- kind: ServiceAccount
-  name: prometheus-k8s
-namespace: openshift-operators-redhat
+  name: openshift-logging
+  annotations:
+    openshift.io/node-selector: "" 
+  labels:  
+    openshift.io/cluster-logging: "true"
+    openshift.io/cluster-monitoring: "true"
+
+---
+api_version: v1
+kind: OperatorGroup
+metadata:
+  name: openshift-logging
+  namespace: openshift-logging
+spec:
+  targetNamespaces:
+  - openshift-logging
+
+{% if efk_channel | lower == "preview" %}
+---
+api_version: operators.coreos.com/v1
+kind: CatalogSourceConfig
+metadata:
+  name: installed-redhat-openshift-logging
+  namespace: openshift-marketplace
+spec:
+  targetNamespace: openshift-logging
+  packages: cluster-logging
+{% endif %}

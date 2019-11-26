@@ -15,7 +15,34 @@
 ###
 
 ---
-efk_channel: "preview"               # templates to use if no OCP version if specified
-efk_es_pv_size: '200G'               # Size of Persistent Volume used for Elasticsearch data
-efk_es_pv_storage_class: 'thin'      # Storage class name used for Elasticsearch data
-efk_profile: small                   # elasic search sizing: small = 2Gi RAM and 200m core of CPU, 'large' = 16Gi of RAM and 1 CPU core
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: prometheus-k8s
+  namespace: openshift-operators-redhat
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - services
+  - endpoints
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: prometheus-k8s
+  namespace: openshift-operators-redhat
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: prometheus-k8s
+subjects:
+- kind: ServiceAccount
+  name: prometheus-k8s
+namespace: openshift-operators-redhat

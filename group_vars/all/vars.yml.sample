@@ -18,7 +18,7 @@
 #
 # OpenShift 4.X artifacts
 #
-ocp_version: 4.2                                                # Version of OpenShift being deployed
+#efk_channel: "preview"                                         # preview if OCP4.1, "4.x" if OCP 4.x (use quotes)
 local_home: "{{ lookup('env','HOME') }}"                        # Local user's HOME directory
 install_dir: "{{ local_home }}/.ocp"                            # OCP installation dir
 ocp_installer_path: '{{ local_home }}/kits/openshift-install'   # Path to the OCP installer
@@ -53,7 +53,7 @@ dns_servers: ['10.10.173.1','10.10.173.31']                     # DNS servers in
 # folders, templates and OVAs, templates are created using the corresponding OVA if they cannot be found (and only if they cannot be found)
 #
 support_folder: 'hpeSupport'                                    # Folder for non-OCP VMs and templates (created if needed)
-master_ova_path: '{{ local_home }}/kits/rhcos-{{ ocp_version }}.0-x86_64-vmware.ova'          # Path to RHCOS OVA (file is expected to be there)
+master_ova_path: '{{ local_home }}/kits/rhcos.ova'              # eg rhcos-4.1.0-x86_64-vmware.ova' (file is expected to be there)
 worker_ova_path: '{{ master_ova_path }}'                        # Path to the OVA file used to create the VM template for OCP worker nodes
 support_ova_path: '{{ local_home }}/kits/hpe-rhel760.ova'       # Path to the OVA file used to create the VM template for support  machines (LBs etc)
 master_template: hpe-rhcos                                      # VMware template name for OCP master nodes
@@ -118,7 +118,7 @@ backup_artifacts:                                               # additional ite
 - ./hosts
 
 #
-# sysdig Integration
+# Sysdig Integration
 #
 sysdig_access_key: "{{ vault.sysdig_access_key }}"          # required. Your sysdig access key should be encrypted in vault.yml
 sysdig_k8s_cluster_name: "{{ cluster_name }}"               # allows you to view, scope, and segment metrics in the Sysdig Monitor UI by Kubernetes cluster.
@@ -128,4 +128,3 @@ sysdig_k8s_cluster_name: "{{ cluster_name }}"               # allows you to view
 #sysdig_ssl: true                                           # optional, leave unchanged for SaaS Sysdig
 #sysdig_ssl_verify_certificate: true                        # optional, leave unchanged for SaaS Sysdig
 #sysdig_new_k8s: true                                       # optional, allows kube state metrics to be automatically detected, monitored, and displayed in Sysdig Monitor.
-

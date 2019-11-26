@@ -14,78 +14,72 @@
 # limitations under the License.
 ### 
 ---
-- name: Create Namespace for Elasticsearch Operator
-  k8s:
-    state: present
-    definition:
-      api_version: v1
-      kind: Namespace
-      metadata:
-        name: openshift-operators-redhat
-        annotations:
-          openshift.io/node-selector: ""
-        labels:
-          openshift.io/cluster-logging: "true"
-          openshift.io/cluster-monitoring: "true"
-  environment:
-    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+- name: Sanity check
+  fail:
+    msg: "EFK profile ({{i efk_profile }}) must be one of {{ supported_profiles }}"
+  when: efk_profile | lower not in supported_profiles
+  vars:
+    supported_profiles:
+    - small
+    - large
 
-- name: Create Elasticsearch Operator Group
-  k8s:
-    state: present
-    definition:
-      api_version: v1
-      kind: OperatorGroup
-      metadata:
-        name: openshift-operators-redhat
-        namespace: openshift-operators-redhat
-      spec: {}
-  environment:
-    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
-
-- name: Create CatalogSourceConfig Object for Elasticsearch
-  k8s:
-    state: present
-    definition:
-      api_version: operators.coreos.com/v1
-      kind: CatalogSourceConfig
-      metadata:
-        name: elasticsearch
-        namespace: openshift-marketplace
-      spec:
-        targetNamespace: openshift-operators-redhat 
-        packages: elasticsearch-operator
-  environment:
-    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
-  when: ocp_version == '4.1'
-
-- name: Retrieve Channel for Elasticsearch Subscription
-  shell: |
-    oc get packagemanifest elasticsearch-operator -n openshift-marketplace -o jsonpath='{.status.channels[].name}'
-  register: channel
+- name: Create temporary folder 
+  tempfile:
+    state: directory
+    suffix: build
+  register: tempdir
   changed_when: false
+
+- name: Search the Elasticsearch Operator in the OpenShift Marketplace
+  k8s_facts:
+    namespace: openshift-marketplace
+    kind: PackageManifest
+    name: elasticsearch-operator
+  register: res
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 
-- set_fact:
-    outfile: "{{ install_dir }}/eo-sub.yml"
+- name: Get the list of available channels
+  set_fact:
+    channels: "{{ res.resources | json_query ('[].status.channels[].name') }}"
 
-- name: Generate Elasticsearch Subscription Object
+- name: Fail if the specified channel cannot be found
+  fail:
+    msg: "Invalid channel {{ efk_channel }} for EFK must be one of {{ channels }}" 
+  when: efk_channel not in channels 
+
+- name: Generate manifests from templates
   template:
-    src: eo-sub.yml.j2
-    dest: "{{ outfile }}"
+    src: "{{ item }}.j2"
+    dest: "{{ tempdir.path }}/{{ item }}"
+  changed_when: false
+  with_items:
+  - clo-crd_large.yml
+  - clo-crd_small.yml
+  - clo-prelim.yml
+  - clo-sub.yml
+  - eo-final.yml
+  - eo-prelim.yml
+  - eo-sub.yml
 
-- name: Create Elasticsearch Subscription
+- name: Create preliminary artifacts for Elasticsearch
   k8s:
     state: present
-    src: "{{ outfile }}"
+    src: "{{ tempdir.path }}/eo-prelim.yml"
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 
-- name: Create RBAC Object for Prometheus
+- name: Create Subscription Object for Elastic
   k8s:
     state: present
-    src: "{{ role_path }}/files/eo-rbac.yml"
+    src:  "{{ tempdir.path }}/eo-sub.yml"
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+
+- name: Create Additional Objects for Elasticsearch
+  k8s:
+    state: present
+    src:  "{{ tempdir.path }}/eo-final.yml"
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 
@@ -104,73 +98,17 @@
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 
-- name: Create Namespace for Cluster Logging Operator
+- name: Create preliminary artifacts for Cluster Logging
   k8s:
     state: present
-    definition:
-      api_version: v1
-      kind: Namespace
-      metadata:
-        name: openshift-logging
-        annotations:
-          openshift.io/node-selector: ""
-        labels:
-          openshift.io/cluster-logging: "true"
-          openshift.io/cluster-monitoring: "true"
+    src: "{{ tempdir.path }}/clo-prelim.yml"
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
-
-- name: Create Cluster Logging Operator Group
-  k8s:
-    state: present
-    definition:
-      api_version: v1
-      kind: OperatorGroup
-      metadata:
-        name: openshift-logging
-        namespace: openshift-logging
-      spec:
-        targetNamespaces:
-        - openshift-logging
-  environment:
-    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
-
-- name: Create CatalogSourceConfig Object for Cluster Logging
-  k8s:
-    state: present
-    definition:
-      api_version: operators.coreos.com/v1
-      kind: CatalogSourceConfig
-      metadata:
-        name: installed-redhat-openshift-logging
-        namespace: openshift-marketplace
-      spec:
-        targetNamespace: openshift-logging
-        packages: cluster-logging
-  environment:
-    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
-  when: ocp_version == '4.1'
-
-- name: Retrieve Channel for Cluster Logging Subscription
-  shell: |
-    oc get packagemanifest cluster-logging -n openshift-marketplace -o jsonpath='{.status.channels[].name}'
-  register: channel
-  changed_when: false
-  environment:
-    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
-
-- set_fact:
-    outfile: "{{ install_dir }}/clo-sub.yml"
-
-- name: Generate Cluster Logging Subscription Object
-  template:
-    src: clo-sub.yml.j2
-    dest: "{{ outfile }}"
 
 - name: Create Cluster Logging Subscription
   k8s:
     state: present
-    src: "{{ outfile }}"
+    src: "{{ tempdir.path }}/clo-sub.yml"
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 
@@ -189,17 +127,19 @@
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 
-- set_fact:
-    outfile: "{{ install_dir }}/clo-crd.yml"
-
-- name: Generate Cluster Logging Instance Object
-  template:
-    src: clo-crd.yml.j2
-    dest: "{{ outfile }}"
-
 - name: Create Cluster Logging Instance
   k8s:
     state: present
-    src: "{{ outfile }}"
+    src: "{{ tempdir.path }}/clo-crd_{{ efk_profile | lower }}.yml"
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+
+- debug:
+    msg: "Deployed EFK with profile {{ efk_profile }}"
+
+- name: Delete the temporary folder
+  file:
+    path: "{{ tempdir.path }}"
+    state: absent
+  changed_when: false
+  when: _debug is not defined
