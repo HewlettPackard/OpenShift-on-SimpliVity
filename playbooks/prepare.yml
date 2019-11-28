@@ -27,3 +27,11 @@
   - role: prepare
     vars:
       provision: yes
+
+  - role: datastore
+    vars:
+      simplivity_datacenter: "{{ datacenter }}"
+      simplivity_cluster: "{{ vcenter_cluster }}"
+      simplivity_datastore: "{{ datastores[0] }}"
+      provision: yes
+

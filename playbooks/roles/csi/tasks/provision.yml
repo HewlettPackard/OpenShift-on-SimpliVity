@@ -45,39 +45,24 @@
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 
-#- name: Copy RBAC file 
-#  copy:
-#    src: vsphere-csi-controller-rbac.yml
-#    dest: /tmp/vsphere-csi-controller-rbac.yml
-#- name: Deploy RBAC artifacts
-#  shell:
-#    oc apply -f /tmp/vsphere-csi-controller-rbac.yml
-#  register: res
-#  environment:
-#    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
-
 - name: Deploy RBAC Artifacts
   k8s:
     state: present
-    definition: "{{ lookup('file','vsphere-csi-controller-rbac.yml') }}"
+    definition: "{{ lookup('file','vsphere-csi-controller-rbac.yaml') }}"
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 
-#- name: Copy deployment file
-#  copy:
-#    src: csi-driver-deploy.yml
-#    dest: /tmp/csi-driver-deploy.yml
-#- name: Deploy CSI 
-#  shell:
-#    oc apply -f /tmp/csi-driver-deploy.yml
-#  register: res
-#  environment:
-#    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
-
-- name: Deploy CSI plugin
+- name: Deploy Controller StatefulSet
   k8s:
     state: present
-    definition: "{{ lookup('file','csi-driver-deploy.yml') }}"
+    definition: "{{ lookup('file','vsphere-csi-controller-ss.yaml') }}"
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+
+- name: Deploy CSI DaemonSet
+  k8s:
+    state: present
+    definition: "{{ lookup('file','vsphere-csi-node-ds.yaml') }}"
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 

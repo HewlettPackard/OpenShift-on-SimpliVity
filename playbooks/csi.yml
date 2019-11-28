@@ -23,7 +23,13 @@
   hosts: localhost
   gather_facts: no
   roles:
+  - role: datastore
+    vars:
+      simplivity_datacenter: "{{ datacenter }}"
+      simplivity_cluster: "{{ vcenter_cluster }}"
+      simplivity_datastore: "{{ csi_datastore_name }}"
+      provision: yes
+
   - role: csi
     vars:
-      prepare: yes
-#      provision: yes
+      provision: yes
