@@ -66,10 +66,25 @@
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 
+- name: See if the Storage Class already exists
+  k8s_facts:
+    kind: StorageClass
+    name: "{{ csi_storageclass_name }}"
+  register: sc
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+
+- debug:
+    msg: "Found Storage Class with the name {{ csi_storageclass_name }}. Leaving it unchanged"
+  when:
+  -  sc.resources | count > 0
+
 - name: Generate the Storage Class
   k8s:
     state: present
     definition:  "{{ lookup('template','csi-sc.yml.j2') }}"
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+  when:
+  -  sc.resources | count < 1
 
