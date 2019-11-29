@@ -94,6 +94,12 @@
     msg: "Cannot find SimpliVity Backup Policy {{ simplivity_backup_policy }}"
   when: policies.json.count < 1
 
+#jinja2 s choking on numbers like number * 1024 * 1024 * 1024
+- name: Compute number of bytes
+  shell: |
+    echo $(( {{ simplivity_datastore_size }} * 1024 * 1024 * 1024 ))
+  register: size
+
 # Create the Datastore if it does not already exist
 - name: Create the Datastore
   uri:
@@ -103,12 +109,13 @@
       Content-Type: application/vnd.simplivity.v1+json
       Authorization: Bearer {{ ovc.token }}
     method: POST
+    timeout: 50
     body_format: json
     body:
       name: "{{ simplivity_datastore }}"
       omnistack_cluster_id: "{{ clusters.json.omnistack_clusters[0].id }}"
       policy_id: "{{ policies.json.policies[0].id }}"
-      size: "{{ simplivity_datastore_size * 1024 * 1024 * 1024 }}"
+      size: "{{ size.stdout }}"
     status_code: 202
   delegate_to: localhost
   register: task

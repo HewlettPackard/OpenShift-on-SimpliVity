@@ -27,7 +27,8 @@
     vars:
       simplivity_datacenter: "{{ datacenter }}"
       simplivity_cluster: "{{ vcenter_cluster }}"
-      simplivity_datastore: "{{ csi_datastore_name }}"
+      simplivity_datastore: "{{ csi_datastore_name | default (datastores[0]) }}"
+      simplivity_datastore_size: "{{ csi_datastore_size | default ('512') }}"
       provision: yes
 
   - role: csi

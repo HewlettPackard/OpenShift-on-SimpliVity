@@ -302,3 +302,87 @@ kibana-84cdbf9cbd-xvx8l                         2/2     Running     0          8
 
 Of course you may have deployed the large worker nodes prior to redeploying the EFK stack using the large model. This would have worked as well but this workflow was used as it conveys more information on how OpenShift and Kubernetes are working.
 
+### Datastores automatic Provisioning
+
+Some of the playbooks leverage a new Ansible role called `datastore` which can provision... datastores! The solution currently uses up to two datastores:
+
+1. The first datastore in the Ansible variable `datastores` (a list).  This is where all the virtual machines are created.
+2. The datastore designated by the Ansible variable `csi_datastore_name`.  This can actually be the same datastore as the first one.
+
+The playbook which requires these datastores leverage the new role which will verify that a datastore is present and will create it if not. This capability only works when the Cluster is a SimpliVity cluster. It should be disabled on all non SimpliVity platforms by defining the variable `dont_provision_datastores` which will neutralize the role. If this variable is configured (the value can be anything), the two datastores MUST be provisioned manually before using the playbooks.
+
+The datastore role uses the following Ansible variables which you need to define in group_vars/all/vars.yml
+
+The `simplivity_appliances` Ansible variable is the list of the IP addresses of your OmniStack Appliances.  You may have more than 3 IP addresses such as in a four node cluster for example. It is not mandatory to specify all OmniStack IP addresses but the playbook can tolerate the loss of appliances if you specify more than one appliance IP address.
+
+The `simplivity_username` is typically the username of a vcenter administrator and the password for this user is specified with the variable `simplivity_password`. The password itself is (or should be) encrypted in the `group_vars/all/vault.yml` file and the variable `simplivity_password` refers to the encrypted variable `vault.simplivity_password` in `group_vars/all/vault.yml` like any other secrets used by this solution.  Having it done this way outlines the fact that a password is required but let you encrypt all secrets in a separate file.
+
+Example of configuration
+
+```
+simplivity_appliances:
+- 10.10.173.109
+- 10.10.173.110
+- 10.10.173.111
+simplivity_username: 'Administrator@vsphere.local'
+simplivity_password: "{{ vault.simplivity_password }}"
+
+```
+
+If you don't want to enable the datastore role, simply define the following variable in `group_vars/all/vars.yml`.
+
+```
+dont_provision_datastores: "anyvalue"
+```
+
+
+
+### VMware CSI Storage integration
+
+By default, the vSphere Cloud provider storage plugin is installed.  if you are running ESX 6.7U3 you may install the vSphere Container Storage Interface Driver.  Installation instructions are provided by VMware [here](https://docs.vmware.com/en/VMware-vSphere/6.7/Cloud-Native-Storage/GUID-039425C1-597F-46FF-8BAA-C5A46FF10E63.html). A playbook (`playbooks/csi.yml`) is provided which will automate these instructions for you.
+
+The following Ansible variables will let you control the behaviour of this playbook:
+
+| Variable                 | Default value | Description                                                  |
+| ------------------------ | ------------- | ------------------------------------------------------------ |
+| `#csi_datastore_name`    | datastores[0] | Name of the datastore which will hold the volumes. By default the first datastore listed in the Ansible variable `datastores` is used. |
+| `#csi_datastore_size`    | 512           | Size in GiB of the CSI datastore, If the datastore exists, the size is left unchanged. |
+| `#csi_storageclass_name` | csivols       | Name of the storage class which will be created. If a storage class with the same name is found, it will be left unmodified. |
+
+In addition, if you want to leverage the new datastore role, you will need to define the `simplivity_*` variables (see paragraph above).
+
+To deploy the vSphere  CSI driver:
+
+1. If you want the playbooks to automatically provision the datastore which you will be using as backend storage for persistent volumes configure the `simplivity_*` Ansible variables in `group_vars/all/vars.yml`. You need a SimpliVity cluster for this to work.
+
+2. If you dont have a SimpliVity cluster, make sure you configure the Ansible variable `dont_provision_datastores` in group_vars/all/vars.yml and provision the datastore manually.
+
+3. Configure the csi_* variables in `group_vars/all/vars.yml`. This is how you specify the name of the datastore which will hold the persistent volumes and the name of the corresponding storage class. We recommend to use a dedicated datastore for this purpose.
+
+4. Make sure you have cluster admin credentials.  The account you use may be the `kubeadmin` account (if you did not already delete it), or any user in your LDAP environment which was granted the `cluster-admin` role.
+
+   ```
+   $ oc login -u <adminuser>
+   (enter password>
+   $ oc whoami
+   ```
+
+5. Run the playbook
+
+```
+# ansible-playbook -i hosts playbooks/csi.yml
+```
+
+It may take a few minutes (2 or 3 typically) for all the CSI pods to be operational (Running). these pods are deployed in the `kube-system` namespace. You can see their status using the following commands
+
+```
+[core@hpe-ansible]$ oc get pods -n kube-system
+[core@hpe-ansible gen9cluster]$ oc get pods -n kube-system -o wide
+NAME                       READY   STATUS    RESTARTS   AGE   IP              NODE          NOMINATED NODE   READINESS GATES
+vsphere-csi-controller-0   5/5     Running   0          8h    10.15.152.211   hpe-master1   <none>           <none>
+vsphere-csi-node-6t746     3/3     Running   0          8h    10.15.152.213   hpe-worker0   <none>           <none>
+vsphere-csi-node-lnhr7     3/3     Running   0          8h    10.15.152.214   hpe-worker1   <none>           <none>
+
+```
+
+You should have one vsphere-csi-node pod running on each worker node.

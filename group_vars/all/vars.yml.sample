@@ -120,9 +120,9 @@ backup_artifacts:                                               # additional ite
 #
 # VMWare CSI Storage plugin
 #
-csi_datastore_name: hpevols                                     # name of the datastore which will hold the PVs
-csi_storageclass_name: hpevols                                  # name of the storage class to create
-
+#csi_datastore_name: "{{ datastores[0] }}"                  # name of the datastore which will hold the persistent volumes
+#csi_storageclass_name: csivols                             # name of the storage class to create
+#csi_datastore_size: 512                                    # size of the datastore in GiB
 
 #
 # Sysdig Integration
@@ -135,4 +135,14 @@ sysdig_k8s_cluster_name: "{{ cluster_name }}"               # allows you to view
 #sysdig_ssl: true                                           # optional, leave unchanged for SaaS Sysdig
 #sysdig_ssl_verify_certificate: true                        # optional, leave unchanged for SaaS Sysdig
 #sysdig_new_k8s: true                                       # optional, allows kube state metrics to be automatically detected, monitored, and displayed in Sysdig Monitor.
->>>>>>> devel
+
+#
+# SimpliVity
+#
+simplivity_appliances:
+- 10.10.173.109
+- 10.10.173.110
+- 10.10.173.111
+
+simplivity_username: 'Administrator@vsphere.local'
+simplivity_password: "{{ vault.simplivity_password }}"
