@@ -120,7 +120,7 @@ The following variables can be used to deploy the EFK stack. The `#` sign in fro
 
 | Variable                   | Default value | Description                                                  |
 | -------------------------- | ------------- | ------------------------------------------------------------ |
-| #`efk_channel`             | `"4.2"`       | The "channel" to use in the Operator Hub for the EFK stack. Must be "preview" when deploying on OCP 4.1 |
+| `efk_channel`              |               | Mandatory. "preview" when deploying on OCP 4.1, "4.2: when deploying OCP 4.2 |
 | #`efk_es_pv_size`          | `200G`        | Size of the persistent volume which will holds the elasticsearch data. |
 | #`efk_es_pv_storage_class` | `thin`        | This is the name of the storage class to use for persistent storage. |
 | #`efk_profile`             | `small`       | `small` or `large`. the `small` profile deploys a single instance of elasticsearch and a single instance of kibana. There is no redundancy of the elasticsearch data. Also the elasticsearch resource limits are set to 100m core and 2Gi or RAM. |
