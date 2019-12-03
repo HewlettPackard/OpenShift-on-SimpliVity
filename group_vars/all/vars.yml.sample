@@ -44,7 +44,8 @@ simplivity_password: '{{ vault.simplivity_password }}'          # not used for n
 vcenter_validate_certs: false                                   # true not implemented/tested
 vcenter_cluster: OCP                                            # Name of your SimpliVity Cluster (must exist)
 datacenter: DEVOPS                                              # Name of your DATACENTER (must exist)
-datastores: ['Openshift_HPE']                                   # where to store the VMs (datastore must exist)
+datastores: ['Openshift_HPE']                                   # where to store the VMs (datastore must exist), only one datastore supported
+#datastore_size: 1024                                           # size in GiB of the VM datastore, only applies if the playbook creates the datastore
 cluster_name: hpe                                               # Name of the K8S Cluster. A VM folder with the same name is created if needed
 ntp_servers: ['10.12.2.1']                                      # NTP servers in your environment
 dns_servers: ['10.10.173.1','10.10.173.31']                     # DNS servers in your environment

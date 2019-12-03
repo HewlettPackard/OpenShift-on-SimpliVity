@@ -33,5 +33,6 @@
       simplivity_datacenter: "{{ datacenter }}"
       simplivity_cluster: "{{ vcenter_cluster }}"
       simplivity_datastore: "{{ datastores[0] }}"
+      simplivity_datastore_size: "{{ datastore_size | default ('1024') }}"
       provision: yes
 
