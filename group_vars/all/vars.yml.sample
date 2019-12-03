@@ -18,7 +18,7 @@
 #
 # OpenShift 4.X artifacts
 #
-#efk_channel: "preview"                                         # preview if OCP4.1, "4.x" if OCP 4.x (use quotes)
+efk_channel: "preview"                                          # "preview" if OCP4.1, "4.2" if OCP 4.2 (use quotes)
 local_home: "{{ lookup('env','HOME') }}"                        # Local user's HOME directory
 install_dir: "{{ local_home }}/.ocp"                            # OCP installation dir
 ocp_installer_path: '{{ local_home }}/kits/openshift-install'   # Path to the OCP installer
