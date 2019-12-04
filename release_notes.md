@@ -328,7 +328,7 @@ This feature requires a a SimpliVity cluster which means you need to configure t
 
 This solution currently uses up to two datastores:
 
-1. The datastore where all the VMS are landed.  This is the first member of the Ansible variable `datastores`.   Note that only one datastore is supported at this time.
+1. The datastore where all the VMS are landed.  This is the first member of the Ansible variable `datastores`.   Note that only one VM datastore is supported at this time.
 2. The datastore designated by the Ansible variable `csi_datastore_name`.  This is the datastore used to store persistent volumes created with the new CSI Storage driver. This can actually be the same datastore as the first one.
 
 The playbook which requires these datastores leverage a new role which will verify that a datastore is present and will create it if this is not the case, with the expected name and the expected size. If the datastores where pre-provisioned, the size of the datastores are left unchanged.
