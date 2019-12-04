@@ -29,6 +29,8 @@
       simplivity_cluster: "{{ vcenter_cluster }}"
       simplivity_datastore: "{{ csi_datastore_name | default (datastores[0]) }}"
       simplivity_datastore_size: "{{ csi_datastore_size | default ('512') }}"
+      simplivity_usernamed: "{{ vcenter_username }}" 
+      simplivity_password: "{{ vcenter_password }}"
       provision: yes
 
   - role: csi

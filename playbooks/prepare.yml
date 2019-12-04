@@ -34,5 +34,7 @@
       simplivity_cluster: "{{ vcenter_cluster }}"
       simplivity_datastore: "{{ datastores[0] }}"
       simplivity_datastore_size: "{{ datastore_size | default ('1024') }}"
+      simplivity_username: "{{ vcenter_username }}"
+      simplivity_password: "{{ vcenter_password }}"
       provision: yes
 

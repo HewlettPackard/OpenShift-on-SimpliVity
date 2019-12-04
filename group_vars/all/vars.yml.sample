@@ -140,10 +140,7 @@ sysdig_k8s_cluster_name: "{{ cluster_name }}"               # allows you to view
 #
 # SimpliVity
 #
-simplivity_appliances:
-- 10.10.173.109
-- 10.10.173.110
-- 10.10.173.111
-
-simplivity_username: 'Administrator@vsphere.local'
-simplivity_password: "{{ vault.simplivity_password }}"
+#simplivity_appliances:                                     # define if you want to enable SimpliVity specific capabilities
+#- 10.10.173.109
+#- 10.10.173.110
+#- 10.10.173.111

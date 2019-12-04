@@ -29,11 +29,11 @@
 - Scaling an OCP 4.2 cluster with RHEL worker nodes requires the use of an updated version of the OpenShift Ansible playbooks https://github.com/openshift/openshift-ansible.
 
 - HPE has tested with release openshift-ansible-4.2.2-201910250432 of the OpenShift Ansible playbooks and recommends using this version when scaling an OCP 4.2 cluster with RHEL worker nodes. Use the following command to clone the openshift-ansible repository:
-  
+
   ```
   # git clone -b openshift-ansible-4.2.2-201910250432 https://github.com/openshift/openshift-ansible.git
   ```
-  
+
   
 
 ### Make the master nodes non-schedulable
@@ -50,6 +50,7 @@
 ## New Features
 
 ### Sysdig Integration
+
 You can now use the playbook `playbooks/sysdig.yml` to integrate your cluster with Sysdig. The implementation in this solution uses the Software as a Service (SaaS) version of Sysdig at [app.sysdigcloud.com](). The playbook deploys the Sysdig Agent software on all OpenShift node. Captured data is relayed back to your Sysdig SaaS Cloud portal.
 
 Here are the variables that you must configure prior to using the `sysdig.yml` playbook.
@@ -302,54 +303,47 @@ kibana-84cdbf9cbd-xvx8l                         2/2     Running     0          8
 
 Of course you may have deployed the large worker nodes prior to redeploying the EFK stack using the large model. This would have worked as well but this workflow was used as it conveys more information on how OpenShift and Kubernetes are working.
 
-### Datastores automatic Provisioning
+### SimpliVity Specific Feature
 
-Some of the playbooks leverage a new Ansible role called `datastore` which can provision... datastores! The solution currently uses up to two datastores:
+The playbooks now leverage the SimpliVity API in some areas of the solution. In order to leverage this API you need to configure the following variable in `group_vars/all/vars.yml`:
 
-1. The first datastore in the Ansible variable `datastores` (a list).  This is where all the virtual machines are created.
-2. The datastore designated by the Ansible variable `csi_datastore_name`.  This can actually be the same datastore as the first one.
+`simplivity_appliances`: The list of IP address of each OmniStack appliances in the SimpliVity cluster. If you don't configure this variable (or if this list is empty) you disable all SimpliVity related capabilities which is the default.
 
-The playbook which requires these datastores leverage the new role which will verify that a datastore is present and will create it if not. This capability only works when the Cluster is a SimpliVity cluster. It should be disabled on all non SimpliVity platforms by defining the variable `dont_provision_datastores` which will neutralize the role. If this variable is configured (the value can be anything), the two datastores MUST be provisioned manually before using the playbooks.
+Strictly speaking, only one IP address is needed (a list with one IP address), however, for HA purposes, HE recommends you specify the IP address of each OmniStack appliance in your cluster.
 
-The datastore role uses the following Ansible variables which you need to define in group_vars/all/vars.yml
-
-The `simplivity_appliances` Ansible variable is the list of the IP addresses of your OmniStack Appliances.  You may have more than 3 IP addresses such as in a four node cluster for example. It is not mandatory to specify all OmniStack IP addresses but the playbook can tolerate the loss of appliances if you specify more than one appliance IP address.
-
-The `simplivity_username` is typically the username of a vcenter administrator and the password for this user is specified with the variable `simplivity_password`. The password itself is (or should be) encrypted in the `group_vars/all/vault.yml` file and the variable `simplivity_password` refers to the encrypted variable `vault.simplivity_password` in `group_vars/all/vault.yml` like any other secrets used by this solution.  Having it done this way outlines the fact that a password is required but let you encrypt all secrets in a separate file.
-
-Example of configuration
+Example:
 
 ```
 simplivity_appliances:
 - 10.10.173.109
 - 10.10.173.110
 - 10.10.173.111
-simplivity_username: 'Administrator@vsphere.local'
-simplivity_password: "{{ vault.simplivity_password }}"
-
-```
-
-If you don't want to enable the datastore role, simply define the following variable in `group_vars/all/vars.yml`.
-
-```
-dont_provision_datastores: "anyvalue"
 ```
 
 
 
-### VMware CSI Storage integration
+### Datastores automatic Provisioning
+
+Some of the playbooks leverage a new Ansible role called `datastore` which can provision... datastores! The solution currently uses up to two datastores:
+
+1. The datastore where all the VMS are landed.  This is the first member of the Ansible variable `datastores`.   Note that only one datastore is supported at this time.
+2. The datastore designated by the Ansible variable `csi_datastore_name`.  This is the datastore used to store persistent volumes created with the new CSI Storage driver. This can actually be the same datastore as the first one.
+
+The playbook which requires these datastores leverage the new role which will verify that a datastore is present and will create it if this is not the case, with the expected name and the expected size. If the datastores where pre-provisioned, the size of the datastores are left unchanged.
+
+
+
+### VMware CSI Storage driver Integration
 
 By default, the vSphere Cloud provider storage plugin is installed.  if you are running ESX 6.7U3 you may install the vSphere Container Storage Interface Driver.  Installation instructions are provided by VMware [here](https://docs.vmware.com/en/VMware-vSphere/6.7/Cloud-Native-Storage/GUID-039425C1-597F-46FF-8BAA-C5A46FF10E63.html). A playbook (`playbooks/csi.yml`) is provided which will automate these instructions for you.
 
-The following Ansible variables will let you control the behaviour of this playbook:
+The following Ansible variables can be configured in `group_vars/all/vars.yml` 
 
-| Variable                 | Default value | Description                                                  |
-| ------------------------ | ------------- | ------------------------------------------------------------ |
-| `#csi_datastore_name`    | datastores[0] | Name of the datastore which will hold the volumes. By default the first datastore listed in the Ansible variable `datastores` is used. |
-| `#csi_datastore_size`    | 512           | Size in GiB of the CSI datastore, If the datastore exists, the size is left unchanged. |
-| `#csi_storageclass_name` | csivols       | Name of the storage class which will be created. If a storage class with the same name is found, it will be left unmodified. |
-
-In addition, if you want to leverage the new datastore role, you will need to define the `simplivity_*` variables (see paragraph above).
+| Variable                 | Description                                                  |
+| ------------------------ | ------------------------------------------------------------ |
+| `#csi_datastore_name`    | Name of the datastore which will hold the persistent volumes. If this variable is not configured, the first datastore listed in the Ansible variable `datastores` is used. |
+| `#csi_datastore_size`    | Size in GiB of the CSI datastore, If the datastore exists, the size is left unchanged. If this variable is not configured and the datastore needs to be created, the size of the datastore will be 512GiB. |
+| `#csi_storageclass_name` | Name of the storage class which will be created. If a storage class with the same name is found, it will be left unmodified. If this variable is not configured and the storage class does not exist, the storage class will be configured with the name **csivols** |
 
 To deploy the vSphere  CSI driver:
 
@@ -384,5 +378,7 @@ vsphere-csi-node-6t746     3/3     Running   0          8h    10.15.152.213   hp
 vsphere-csi-node-lnhr7     3/3     Running   0          8h    10.15.152.214   hpe-worker1   <none>           <none>
 
 ```
+
+
 
 You should have one vsphere-csi-node pod running on each worker node.

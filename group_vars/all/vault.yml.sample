@@ -17,7 +17,6 @@
 ---
 vault:
   vcenter_password: 'YourvCenterAdminPassword'
-  simplivity_password: 'YourvCenterAdminPassword'
   rhn_orgid: 'YourRHNOrgId'
   rhn_key: 'YourRHNkey'
   rhn_user: 'YourRHNuser'

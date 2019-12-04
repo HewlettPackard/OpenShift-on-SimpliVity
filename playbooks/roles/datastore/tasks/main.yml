@@ -16,4 +16,4 @@
 - include_tasks: provision.yml
   when: 
   - provision is defined
-  - dont_provision_datastores is not defined
+  - simplivity_appliances | count > 0
