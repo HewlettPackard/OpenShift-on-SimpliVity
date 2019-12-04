@@ -309,7 +309,7 @@ The playbooks now leverage the SimpliVity API in some areas of the solution. In 
 
 `simplivity_appliances`: The list of IP address of each OmniStack appliances in the SimpliVity cluster. If you don't configure this variable (or if this list is empty) you disable all SimpliVity related capabilities which is the default.
 
-Strictly speaking, only one IP address is needed (a list with one IP address), however, for HA purposes, HE recommends you specify the IP address of each OmniStack appliance in your cluster.
+Strictly speaking, only one IP address is needed (a list with one IP address), however, for HA purposes, HPE recommends you specify the IP address of each OmniStack appliance in your cluster.
 
 Example:
 
