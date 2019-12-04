@@ -341,7 +341,7 @@ The size of the CSI  datastore can also be controlled and this is explained in t
 
 ### VMware CSI Storage driver Integration
 
-By default, the vSphere Cloud provider storage plugin is installed.  if you are running ESX 6.7U3 you may install the vSphere Container Storage Interface Driver.  Installation instructions are provided by VMware [here](https://docs.vmware.com/en/VMware-vSphere/6.7/Cloud-Native-Storage/GUID-039425C1-597F-46FF-8BAA-C5A46FF10E63.html). A playbook (`playbooks/csi.yml`) is provided which will automate these instructions for you.
+By default, the vSphere Cloud Provider legacy storage plugin is installed.  if you are running ESX 6.7U3 you may install the vSphere Container Storage Interface Driver.  Installation instructions are provided by VMware [here](https://docs.vmware.com/en/VMware-vSphere/6.7/Cloud-Native-Storage/GUID-039425C1-597F-46FF-8BAA-C5A46FF10E63.html). A playbook (`playbooks/csi.yml`) is provided which will automate these instructions for you.
 
 The following Ansible variables can be configured in `group_vars/all/vars.yml` 
 
@@ -353,11 +353,17 @@ The following Ansible variables can be configured in `group_vars/all/vars.yml`
 
 To deploy the vSphere  CSI driver:
 
-1. If you want the playbooks to automatically provision the datastore which you will be using as backend storage for persistent volumes configure the `simplivity_*` Ansible variables in `group_vars/all/vars.yml`. You need a SimpliVity cluster for this to work.
+1. If you want the playbooks to automatically provision the datastore which you will be using as backend storage for persistent volumes configure the `simplivity_appliances` Ansible variable in `group_vars/all/vars.yml`. You need a SimpliVity cluster for this to work.
 
-2. If you dont have a SimpliVity cluster, make sure you configure the Ansible variable `dont_provision_datastores` in group_vars/all/vars.yml and provision the datastore manually.
+2. If you don't have a SimpliVity cluster, make sure you don't configure the Ansible variable `simplivity_appliances`. Or make it en empty list. Make sure you provision the datastore manually.
 
-3. Configure the csi_* variables in `group_vars/all/vars.yml`. This is how you specify the name of the datastore which will hold the persistent volumes and the name of the corresponding storage class. We recommend to use a dedicated datastore for this purpose.
+   ```
+   simplivity_appliances: []  # do not enable SimpliVity features
+   ```
+
+   
+
+3. Configure the `csi_*` variables in `group_vars/all/vars.yml`. This is how you specify the name and size of the datastore which will hold the persistent volumes and the name of the corresponding storage class. We recommend to use a dedicated datastore for this purpose.
 
 4. Make sure you have cluster admin credentials.  The account you use may be the `kubeadmin` account (if you did not already delete it), or any user in your LDAP environment which was granted the `cluster-admin` role.
 
