@@ -324,12 +324,18 @@ simplivity_appliances:
 
 ### Datastores automatic Provisioning
 
-Some of the playbooks leverage a new Ansible role called `datastore` which can provision... datastores! The solution currently uses up to two datastores:
+This feature requires a a SimpliVity cluster which means you need to configure the `simplivity_appliances` variable.  If your cluster is not a SimpliVity cluster you MUST provision the datastores manually.
+
+This solution currently uses up to two datastores:
 
 1. The datastore where all the VMS are landed.  This is the first member of the Ansible variable `datastores`.   Note that only one datastore is supported at this time.
 2. The datastore designated by the Ansible variable `csi_datastore_name`.  This is the datastore used to store persistent volumes created with the new CSI Storage driver. This can actually be the same datastore as the first one.
 
-The playbook which requires these datastores leverage the new role which will verify that a datastore is present and will create it if this is not the case, with the expected name and the expected size. If the datastores where pre-provisioned, the size of the datastores are left unchanged.
+The playbook which requires these datastores leverage a new role which will verify that a datastore is present and will create it if this is not the case, with the expected name and the expected size. If the datastores where pre-provisioned, the size of the datastores are left unchanged.
+
+The size of the VM datastore can be controller by the variable `datastore_size` that you should configure in group_vars/all/vars.yml.  The default is to create a 1TB datastore.
+
+The size of the CSI  datastore can also be controlled and this is explained in the next section.
 
 
 
