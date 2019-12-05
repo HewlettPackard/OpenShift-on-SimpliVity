@@ -15,7 +15,7 @@
 ### 
 ---
 
-# try to connect to the Oministack Appliances
+# try to connect to the Omnistack Appliances
 - name: Retrieve a token for use with the SimpliVity API
   uri:
     url: "https://simplivity@{{ item  }}/api/oauth/token"

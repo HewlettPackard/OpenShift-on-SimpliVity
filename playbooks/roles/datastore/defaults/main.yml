@@ -14,12 +14,12 @@
 # limitations under the License.
 ###
 ---
-simplivity_appliances: []                                # List of OminStack appliances' IP addresses
+simplivity_appliances: []                                # List of OmniStack appliances' IP addresses
 simplivity_username: "Administrator@vsphere.local"       # Generally the vCenter Admin
 simplivity_password: "password"                          # 
 simplivity_validate_certs: false                         # verify Appliance CA certificate or not
 simplivity_datacenter: "DEVOPS"                          # name of the datacenter
-simplivity_cluster: "OCP"                                # name of the Simplivity cluster
+simplivity_cluster: "OCP"                                # name of the SimpliVity cluster
 simplivity_datastore: "datastore"                        # name of the datastore you want to use, will be created if not present
 simplivity_backup_policy: "Fixed Default Backup Policy"  # Backup Policy for the datastore. Must exist
 simplivity_datastore_size: 1024                          # Size in GiB of the datastore
