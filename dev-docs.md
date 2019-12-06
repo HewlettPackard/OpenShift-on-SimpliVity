@@ -1447,15 +1447,15 @@ Below is the corresponding LDAP tree.
 
 ## Cluster validation 
 
-During the solution deployment all components are validated as they are deployed.  Upon completion of the deploment playbooks the OCP cluster should be up, functioning correctly and ready for application deployments.  You have an option, as part of runing the site.yml playbook, to deploy, validate and remove a sample WordPress application.  This sample WordPress application can also be deployed, validated and removed at a later time by running the wordpress.yml playbook manually.
+During the solution deployment all components are validated as they are deployed.  Upon completion of the deployment playbooks the OCP cluster should be up, functioning correctly and ready for application deployments.  You have an option, as part of running the site.yml playbook, to deploy, validate and remove a sample WordPress application.  This sample WordPress application can also be deployed, validated and removed at a later time by running the wordpress.yml playbook manually.
 
 ### Sample WordPress application
 
 The sample WordPress application deployment performs the following operations:
 1. Deployment
    - Create a namespace for the WordPress application
-   - Create a storage class for the WordPress and MySQL for persistant storage
-   - Create persistant volume claims (PVC) for WordPress and MySQL
+   - Create a storage class for the WordPress and MySQL for persistent storage
+   - Create persistent volume claims (PVC) for WordPress and MySQL
    - Create deployments for WordPress and MySQL
    - Create services for WordPress and MySQL
    - Expose a route to the WordPress application server
@@ -1472,7 +1472,7 @@ The sample WordPress application deployment performs the following operations:
    - Remove storage class created for WordPress and MySQL
    - Remove WordPress application namespace
 
-### Automaticly deploying, validating and removing the WordPress application
+### Automatically deploying, validating and removing the WordPress application
 
 To enable the sample application to be run through the site.yml playbook add the following variable to the global vars file (group_vars/all/vars.yml)
 
@@ -1480,13 +1480,13 @@ To enable the sample application to be run through the site.yml playbook add the
 
 Doing this will enable the wordpress.yml playbook to be run when the site.yml playbook is run.
 
-### Manualy running the wordpress.yml playbook
+### Manually running the wordpress.yml playbook
 
 The wordpress.yml playbook can be manually run using the following command:
 
    `ansible-playbook -i hosts playbooks/wordpress.yml`
 
-With no options the playbook will deploy, validate and teardown the sample WordPress application.  Each operaion can be disabled to run by using the -e option with the ansible-playbook command.  For example:
+With no options the playbook will deploy, validate and teardown the sample WordPress application.  Each operation can be disabled to run by using the -e option with the ansible-playbook command.  For example:
 
 Only deploy the wordpress application:
 
