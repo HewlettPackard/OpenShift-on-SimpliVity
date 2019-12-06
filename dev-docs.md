@@ -70,7 +70,7 @@ OpenShift Version Installed: OCP 4.1
   - [Environment](#environment)
   - [Monitoring the deployment](#monitoring-the-deployment)
   - [LDAP sample ldap_cr.yml](#ldap-sample-ldap_cryml)
-  - [Cluster validation] (#cluster-validation)
+  - [Cluster validation](#cluster-validation)
 
 # Introduction
 
@@ -1474,9 +1474,9 @@ The sample WordPress application deployment performs the following operations:
 
 ### Automaticly deploying, validating and removing the WordPress application
 
-To enable the sample application to be run through the site.yml playbook add the following variable to the global vars file (OpenShift-on-SimpliVity/group_vars/all/vars.yml)
+To enable the sample application to be run through the site.yml playbook add the following variable to the global vars file (group_vars/all/vars.yml)
 
-   validate_deployment: yes
+   `validate_deployment: yes`
 
 Doing this will enable the wordpress.yml playbook to be run when the site.yml playbook is run.
 
