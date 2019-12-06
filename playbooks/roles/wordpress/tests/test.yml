@@ -13,13 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###
-
 ---
-- import_playbook: playbooks/prepare.yml
-- import_playbook: playbooks/provision.yml
-- import_playbook: playbooks/configure.yml
-- import_playbook: playbooks/poweron.yml
-- import_playbook: playbooks/finish.yml
-- import_playbook: playbooks/wordpress.yml
-  when: validate_deployment is defined
-
+- hosts: localhost
+  remote_user: root
+  roles:
+    - wordpress
