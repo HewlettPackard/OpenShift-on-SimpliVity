@@ -27,6 +27,13 @@ ocp_kubectl_path: '{{ local_home }}/kits/kubectl'               # Path to kubect
 pull_secret: '{{ vault.pull_secret }}'                          # pull secret
 
 #
+# Deployment settings
+#
+
+#validate_deployment: yes                                        # Deploy and validate a sample WordPress application
+                                                                 # after OCP cluster is started.  Removed after validation.
+
+#
 # You need a VLAN with transparent access to Internet
 #
 vm_portgroup: hpeOpenshift                                      # portgroup that the VMS connect to (must exist)

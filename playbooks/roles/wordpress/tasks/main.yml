@@ -1,3 +1,4 @@
+
 ###
 # Copyright (2019) Hewlett Packard Enterprise Development LP
 #
@@ -13,13 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###
-
 ---
-- import_playbook: playbooks/prepare.yml
-- import_playbook: playbooks/provision.yml
-- import_playbook: playbooks/configure.yml
-- import_playbook: playbooks/poweron.yml
-- import_playbook: playbooks/finish.yml
-- import_playbook: playbooks/wordpress.yml
-  when: validate_deployment is defined
-
+# tasks file for WordPress sample application
+- include_tasks: provision.yml
+  when: provision == "yes"
+- include_tasks: validate.yml
+  when: validate == "yes"
+- include_tasks: teardown.yml
+  when: teardown == "yes"
