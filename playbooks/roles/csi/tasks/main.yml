@@ -12,16 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-###
-
----
-vault:
-  vcenter_password: 'YourvCenterAdminPassword'
-  rhn_orgid: 'YourRHNOrgId'
-  rhn_key: 'YourRHNkey'
-  rhn_user: 'YourRHNuser'
-  rhn_pass: 'YourRHNpassword'
-  pull_secret: '...  replace with your pull secret  ...'
-  ssh_key: '...  replace with your ssh public key  ...'
-  ldap_bind_user_password: 'password of LDAP user used for binding with LDAP'
-  sysdig_access_key: 'your sysdig access key here
+### 
+- include_tasks: provision.yml
+  when: provision is defined

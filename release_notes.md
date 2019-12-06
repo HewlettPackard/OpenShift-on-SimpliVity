@@ -29,11 +29,11 @@
 - Scaling an OCP 4.2 cluster with RHEL worker nodes requires the use of an updated version of the OpenShift Ansible playbooks https://github.com/openshift/openshift-ansible.
 
 - HPE has tested with release openshift-ansible-4.2.2-201910250432 of the OpenShift Ansible playbooks and recommends using this version when scaling an OCP 4.2 cluster with RHEL worker nodes. Use the following command to clone the openshift-ansible repository:
-  
+
   ```
   # git clone -b openshift-ansible-4.2.2-201910250432 https://github.com/openshift/openshift-ansible.git
   ```
-  
+
   
 
 ### Make the master nodes non-schedulable
@@ -50,6 +50,7 @@
 ## New Features
 
 ### Sysdig Integration
+
 You can now use the playbook `playbooks/sysdig.yml` to integrate your cluster with Sysdig. The implementation in this solution uses the Software as a Service (SaaS) version of Sysdig at [app.sysdigcloud.com](). The playbook deploys the Sysdig Agent software on all OpenShift node. Captured data is relayed back to your Sysdig SaaS Cloud portal.
 
 Here are the variables that you must configure prior to using the `sysdig.yml` playbook.
@@ -302,3 +303,94 @@ kibana-84cdbf9cbd-xvx8l                         2/2     Running     0          8
 
 Of course you may have deployed the large worker nodes prior to redeploying the EFK stack using the large model. This would have worked as well but this workflow was used as it conveys more information on how OpenShift and Kubernetes are working.
 
+### SimpliVity Specific Feature
+
+The playbooks now leverage the SimpliVity API in some areas of the solution. In order to leverage this API you need to configure the following variable in `group_vars/all/vars.yml`:
+
+`simplivity_appliances`: The list of IP address of each OmniStack appliances in the SimpliVity cluster. If you don't configure this variable (or if this list is empty) you disable all SimpliVity related capabilities which is the default.
+
+Strictly speaking, only one IP address is needed (a list with one IP address), however, for HA purposes, HPE recommends you specify the IP address of each OmniStack appliance in your cluster.
+
+Example:
+
+```
+simplivity_appliances:
+- 10.10.173.109
+- 10.10.173.110
+- 10.10.173.111
+```
+
+
+
+### Datastores automatic Provisioning
+
+This feature requires a a SimpliVity cluster which means you need to configure the `simplivity_appliances` variable.  If your cluster is not a SimpliVity cluster you MUST provision the datastores manually.
+
+This solution currently uses up to two datastores:
+
+1. The datastore where all the VMS are landed.  This is the first member of the Ansible variable `datastores`.   Note that only one VM datastore is supported at this time.
+2. The datastore designated by the Ansible variable `csi_datastore_name`.  This is the datastore used to store persistent volumes created with the new CSI Storage driver. This can actually be the same datastore as the first one.
+
+The playbook which requires these datastores leverage a new role which will verify that a datastore is present and will create it if this is not the case, with the expected name and the expected size. If the datastores where pre-provisioned, the size of the datastores are left unchanged.
+
+The size of the VM datastore can be controller by the variable `datastore_size` that you should configure in group_vars/all/vars.yml.  The default is to create a 1TB datastore.
+
+The size of the CSI  datastore can also be controlled and this is explained in the next section.
+
+
+
+### VMware CSI Storage driver Integration
+
+By default, the vSphere Cloud Provider legacy storage plugin is installed.  if you are running ESX 6.7U3 you may install the vSphere Container Storage Interface Driver.  Installation instructions are provided by VMware [here](https://docs.vmware.com/en/VMware-vSphere/6.7/Cloud-Native-Storage/GUID-039425C1-597F-46FF-8BAA-C5A46FF10E63.html). A playbook (`playbooks/csi.yml`) is provided which will automate these instructions for you.
+
+The following Ansible variables can be configured in `group_vars/all/vars.yml` 
+
+| Variable                 | Description                                                  |
+| ------------------------ | ------------------------------------------------------------ |
+| `#csi_datastore_name`    | Name of the datastore which will hold the persistent volumes. If this variable is not configured, the first datastore listed in the Ansible variable `datastores` is used. |
+| `#csi_datastore_size`    | Size in GiB of the CSI datastore, If the datastore exists, the size is left unchanged. If this variable is not configured and the datastore needs to be created, the size of the datastore will be 512GiB. |
+| `#csi_storageclass_name` | Name of the storage class which will be created. If a storage class with the same name is found, it will be left unmodified. If this variable is not configured and the storage class does not exist, the storage class will be configured with the name **csivols** |
+
+To deploy the vSphere  CSI driver:
+
+1. If you want the playbooks to automatically provision the datastore which you will be using as backend storage for persistent volumes configure the `simplivity_appliances` Ansible variable in `group_vars/all/vars.yml`. You need a SimpliVity cluster for this to work.
+
+2. If you don't have a SimpliVity cluster, make sure you don't configure the Ansible variable `simplivity_appliances`. Or make it en empty list. Make sure you provision the datastore manually.
+
+   ```
+   simplivity_appliances: []  # do not enable SimpliVity features
+   ```
+
+   
+
+3. Configure the `csi_*` variables in `group_vars/all/vars.yml`. This is how you specify the name and size of the datastore which will hold the persistent volumes and the name of the corresponding storage class. We recommend to use a dedicated datastore for this purpose.
+
+4. Make sure you have cluster admin credentials.  The account you use may be the `kubeadmin` account (if you did not already delete it), or any user in your LDAP environment which was granted the `cluster-admin` role.
+
+   ```
+   $ oc login -u <adminuser>
+   (enter password>
+   $ oc whoami
+   ```
+
+5. Run the playbook
+
+```
+# ansible-playbook -i hosts playbooks/csi.yml
+```
+
+It may take a few minutes (2 or 3 typically) for all the CSI pods to be operational (Running). these pods are deployed in the `kube-system` namespace. You can see their status using the following commands
+
+```
+[core@hpe-ansible]$ oc get pods -n kube-system
+[core@hpe-ansible gen9cluster]$ oc get pods -n kube-system -o wide
+NAME                       READY   STATUS    RESTARTS   AGE   IP              NODE          NOMINATED NODE   READINESS GATES
+vsphere-csi-controller-0   5/5     Running   0          8h    10.15.152.211   hpe-master1   <none>           <none>
+vsphere-csi-node-6t746     3/3     Running   0          8h    10.15.152.213   hpe-worker0   <none>           <none>
+vsphere-csi-node-lnhr7     3/3     Running   0          8h    10.15.152.214   hpe-worker1   <none>           <none>
+
+```
+
+
+
+You should have one vsphere-csi-node pod running on each worker node.

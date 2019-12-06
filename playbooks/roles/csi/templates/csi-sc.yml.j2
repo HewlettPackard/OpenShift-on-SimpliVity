@@ -1,0 +1,11 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "false"
+  name: "{{ csi_storageclass_name }}"
+parameters:
+  datastoreurl: "{{ csi_datastore_facts.datastores[0].url }}"
+provisioner: csi.vsphere.vmware.com
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
