@@ -1445,7 +1445,11 @@ Below is the corresponding LDAP tree.
 ![1563454212570](pics/ldap_tree)
 
 
+<<<<<<< HEAD
 ## Cluster validation 
+=======
+##Cluster Validation - sample WordPress application
+>>>>>>> bb43718e00636453a76a21a499382483c5f39086
 
 During the solution deployment all components are validated as they are deployed.  Upon completion of the deploment playbooks the OCP cluster should be up, functioning correctly and ready for application deployments.  You have an option, as part of runing the site.yml playbook, to deploy, validate and remove a sample WordPress application.  This sample WordPress application can also be deployed, validated and removed at a later time by running the wordpress.yml playbook manually.
 
@@ -1503,7 +1507,6 @@ Only run the application validation tasks
 Deploy and validate the WordPress application, but do not tear it down
 
    ansible-playbook  -i hosts playbooks/wordpress.yml -e "teardown=no"
-
 
 Setting/names used for the sample WordPress application are found in the playbooks/roles/wordpress/defaults/main.yml file:
 
