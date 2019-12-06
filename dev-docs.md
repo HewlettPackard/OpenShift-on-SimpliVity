@@ -1504,7 +1504,6 @@ Deploy and validate the WordPress application, but do not tear it down
 
    ansible-playbook  -i hosts playbooks/wordpress.yml -e "teardown=no"
 
-
 Setting/names used for the sample WordPress application are found in the playbooks/roles/wordpress/defaults/main.yml file:
 
 WordPress general settings
