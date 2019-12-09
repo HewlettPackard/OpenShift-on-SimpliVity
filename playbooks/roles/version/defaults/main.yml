@@ -14,3 +14,10 @@
 # limitations under the License.
 ###
 ---
+vcenter_hostname: 'vcenter.example.com'
+vcenter_username: 'Administrator@vsphere.local'
+vcenter_password: 'YourPassword'
+vcenter_validate_certs: false
+esx_supported:
+  version: "6.7.0"
+  build: 14320388
