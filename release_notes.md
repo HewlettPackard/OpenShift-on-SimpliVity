@@ -394,3 +394,35 @@ vsphere-csi-node-lnhr7     3/3     Running   0          8h    10.15.152.214   hp
 
 
 You should have one vsphere-csi-node pod running on each worker node.
+
+### Proxy Support
+
+The playbooks now support deploying the OCP 4.2 solution in environments that require a proxy server to reach the open Internet. The default configuration assumes there is no proxy server in the environment. Both the solution playbook variables and the Ansible node must be properly configured for proxy support.
+
+#### Playbook Variables
+
+Three new variables were added to the `group_vars/all/vars.yml` file to add proxy support:
+
+| Variable                 | Description                                                  |
+| ------------------------ | ------------------------------------------------------------ |
+| `http_proxy`    | Hostname or IP address of the HTTP proxy server and the proxy port number separated by a colon.  For example: "http://10.12.7.21:8080". |
+| `https_proxy`    | Hostname or IP address of the HTTPS proxy server and the proxy port number separated by a colon. Typically this value is set identical to `http_proxy`. For example: "http://10.12.7.21:8080". |
+| `no_proxy` | A comma-separated list of hostnames, IP addresses, or network ranges that should bypass the proxy server. By default the list includes: localhost, the configured domain name used to deploy the OCP cluster (`domain_name` variable), the DHCP subnet CIDR (`dhcp_subnet` variable), and the vCenter hostname (`vcenter_hostname` variable). This value can be customized to include additional values required by the customer environment. |
+
+By default all three variables are commented-out, which is the proper configuration in environments where no proxy server is needed to reach the Internet.
+
+#### Ansible Node
+
+The Ansible node should be configured to match the proxy requirements of the customer environment. The only `required` proxy configuration on the Ansible node is to ensure the solution playbooks can install any necessary software packages, such as a local HTTP server. This can be done by either adding a proxy entry to the `/etc/dnf/dnf.conf` file or by setting system-wide proxy settings in the `/etc/environment` file.
+
+An example of configuring a proxy server in the `/etc/dnf/dnf.conf` file is:
+
+```bash
+[main]
+gpgcheck=1
+installonly_limit=3
+clean_requirements_on_remove=True
+best=False
+skip_if_unavailable=True
+proxy=http://10.12.7.21:8080
+```
