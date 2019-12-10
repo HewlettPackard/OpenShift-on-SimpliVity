@@ -25,3 +25,14 @@ users:
     lock_passwd: true
     ssh_authorized_keys:
       - {{ ssh_key }}
+write_files:
+  - content: |
+      {% if http_proxy is defined %}http_proxy={{ http_proxy }}{% endif %}
+
+      {% if https_proxy is defined %}https_proxy={{ https_proxy }}{% endif %}
+
+      {% if no_proxy is defined %}no_proxy={{ no_proxy }}{% endif %}
+
+    owner: root:root
+    path: /etc/environment
+    permissions: '0644'
