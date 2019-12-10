@@ -61,19 +61,6 @@
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 
-- name: Query node
-  delegate_to: localhost
-  k8s_facts:
-    kind: node
-    field_selectors:
-      metadata.name={{ inventory_hostname }}
-  register: res
-  environment:
-    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
-  delay: 5
-  retries: "{{ csr_wait_for_node_retries }}"
-  until: res.resources | count > 0
-
 - name: Approve node CSR
   shell: >
     count=0;

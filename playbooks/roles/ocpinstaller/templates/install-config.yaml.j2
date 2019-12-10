@@ -16,6 +16,14 @@
 
 apiVersion: v1
 baseDomain: {{ domain_name }}
+{% if http_proxy is defined %}
+proxy:
+  httpProxy: "{{ http_proxy }}"
+  {% if https_proxy is defined %}httpsProxy: "{{ https_proxy }}"{% endif %}
+
+  {% if no_proxy is defined %}noProxy: "{{ no_proxy }}"{% endif %}
+
+{% endif %}
 compute:
 - name: worker
   hyperthreading: Enabled

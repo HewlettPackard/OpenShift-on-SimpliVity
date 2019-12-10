@@ -144,3 +144,10 @@ sysdig_k8s_cluster_name: "{{ cluster_name }}"               # allows you to view
 #- 10.10.173.109
 #- 10.10.173.110
 #- 10.10.173.111
+
+#
+# Proxy Configuration
+#
+#http_proxy: "http://10.12.7.21:8080"
+#https_proxy: "http://10.12.7.21:8080"
+#no_proxy: "localhost,.{{ domain_name }},{{ dhcp_subnet }},{{ vcenter_hostname }}"
