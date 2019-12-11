@@ -148,6 +148,6 @@ sysdig_k8s_cluster_name: "{{ cluster_name }}"               # allows you to view
 #
 # Proxy Configuration
 #
-#http_proxy: "http://10.12.7.21:8080"
-#https_proxy: "http://10.12.7.21:8080"
+#http_proxy: "http://web-proxy.hpecloud.org:8080"
+#https_proxy: "http://web-proxy.hpecloud.org:8080"
 #no_proxy: "localhost,.{{ domain_name }},{{ dhcp_subnet }},{{ vcenter_hostname }}"
