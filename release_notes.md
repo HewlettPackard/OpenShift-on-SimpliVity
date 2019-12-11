@@ -405,8 +405,8 @@ Three new variables were added to the `group_vars/all/vars.yml` file to add prox
 
 | Variable                 | Description                                                  |
 | ------------------------ | ------------------------------------------------------------ |
-| `http_proxy`    | Hostname or IP address of the HTTP proxy server and the proxy port number separated by a colon.  For example: "http://10.12.7.21:8080". |
-| `https_proxy`    | Hostname or IP address of the HTTPS proxy server and the proxy port number separated by a colon. Typically this value is set identical to `http_proxy`. For example: "http://10.12.7.21:8080". |
+| `http_proxy`    | Hostname or IP address of the HTTP proxy server and the proxy port number separated by a colon.  For example: "http://web-proxy.hpecloud.org:8080". |
+| `https_proxy`    | Hostname or IP address of the HTTPS proxy server and the proxy port number separated by a colon. Typically this value is set identical to `http_proxy`. For example: "http://web-proxy.hpecloud.org:8080". |
 | `no_proxy` | A comma-separated list of hostnames, IP addresses, or network ranges that should bypass the proxy server. By default the list includes: localhost, the configured domain name used to deploy the OCP cluster (`domain_name` variable), the DHCP subnet CIDR (`dhcp_subnet` variable), and the vCenter hostname (`vcenter_hostname` variable). This value can be customized to include additional values required by the customer environment. |
 
 By default all three variables are commented-out, which is the proper configuration in environments where no proxy server is needed to reach the Internet.
@@ -424,5 +424,5 @@ installonly_limit=3
 clean_requirements_on_remove=True
 best=False
 skip_if_unavailable=True
-proxy=http://10.12.7.21:8080
+proxy=http://web-proxy.hpecloud.org:8080
 ```
