@@ -56,7 +56,9 @@
     name: image-registry
   register: res
   retries: "{{ ( ocpinstaller_clusteroperators_timeout / 10 ) | int }}"
-  until: res.resources | count > 0
+  until: 
+  - res.resources is defined
+  - res.resources | count > 0
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
 

@@ -98,6 +98,7 @@
 - name: Compute number of bytes
   shell: |
     echo $(( {{ simplivity_datastore_size }} * 1024 * 1024 * 1024 ))
+  changed_when: false
   register: size
 
 # Create the Datastore if it does not already exist

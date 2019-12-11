@@ -16,6 +16,25 @@
 ---
 #######################################################################
 #
+# Play: Make sure we have the required version of ESX
+#
+#######################################################################
+- name: verify ESX version
+  hosts: localhost
+  gather_facts: no
+  roles:
+  - role: version
+    vars:
+      esx_supported:
+        version: "6.7.0"
+        build: 14320388
+  tasks:
+  - fail:
+      msg: "You need ESXi {{ esx_supported.version }} minimum build {{ esx_supported.build }}"
+    when: not esxi_supported 
+
+#######################################################################
+#
 # Play: Deploy VMWare Cloud Native Storage 
 #
 #######################################################################
