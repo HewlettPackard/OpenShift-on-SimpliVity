@@ -14,6 +14,8 @@
 # limitations under the License.
 ###
 ---
+# the following are the parameters the role accepts as arguments, DO NOT enter your own values here
+# but in vars.yml and vault.yml (for the password)
 vcenter_hostname: 'vcenter.example.com'
 vcenter_username: 'Administrator@vsphere.local'
 vcenter_password: 'YourPassword'
