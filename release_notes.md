@@ -394,3 +394,93 @@ vsphere-csi-node-lnhr7     3/3     Running   0          8h    10.15.152.214   hp
 
 
 You should have one vsphere-csi-node pod running on each worker node.
+
+
+### Cluster verification (hpe_cluster_verification playbook)
+
+During the solution deployment all components are validated as they are deployed.  Upon completion of the deployment playbooks the OCP cluster should be up, functioning correctly and ready for application deployments. After the OCP cluster is sucessfully deployed using site.yml a final cluster verification playbook is run to execute additional verification tasks.  The roles run as part of this verification playbook are defined in the playbooks/roles/hpe_cluster_verification/defaults/main.yml file.
+
+The hpe_cluster_verification.yml playbook can be manually run, after the OCP cluster has been deployed, using the following command:
+
+   `ansible-playbook -i hosts playbooks/hpe_cluster_verification.yml`
+
+### Sample WordPress application deployment (wordpress.yml playbook)
+
+Included in the OpenShift-on-SimpliVity repository is a playpook that can be used to deploy, validate and remove a sample WordPress application on the OCP cluster.  This sample WordPress application is also used in the hpe_cluster_verification playbook to verify the cluster is ready to deploy user applications.
+
+
+The sample WordPress application deployment performs the following operations:
+1. Deployment
+   - Create a namespace for the WordPress application
+   - Create a storage class for the WordPress and MySQL for persistent storage
+   - Create persistent volume claims (PVC) for WordPress and MySQL
+   - Create deployments for WordPress and MySQL
+   - Create services for WordPress and MySQL
+   - Expose a route to the WordPress application server
+
+2. Validation
+   - Validate the MySQL and WordPress PODs are Ready
+   - Create an HTTP connection to the WordPress application server
+
+3. Teardown
+   - Remove the route exposed to the WordPress application server
+   - Remove the services for WordPress and MySQL
+   - Remove the WordPress and MySQL deployments
+   - Remove PVC's create for WordPress and MySQL
+   - Remove storage class created for WordPress and MySQL
+   - Remove WordPress application namespace
+
+### Automatically deploying, validating and removing the WordPress application
+
+This playbook is run from the hpe_cluster_verification playbook during initial cluster deployment (site.yml)
+
+### Manually running the wordpress.yml playbook
+
+The wordpress.yml playbook can be manually run using the following command:
+
+   `ansible-playbook -i hosts playbooks/wordpress.yml`
+
+With no options the playbook will deploy, validate and teardown the sample WordPress application.  Each operation can be disabled to run by using the -e option with the ansible-playbook command.  For example:
+
+Only deploy the wordpress application:
+
+   `ansible-playbook  -i hosts playbooks/wordpress.yml -e "teardown=no validate=no"`
+
+Only teardown the application
+
+   `ansible-playbook  -i hosts playbooks/wordpress.yml -e "provision=no validate=no"`
+
+Only run the application validation tasks
+
+   `ansible-playbook  -i hosts playbooks/wordpress.yml -e "teardown=no provision=no"`
+
+Deploy and validate the WordPress application, but do not tear it down
+
+   `ansible-playbook  -i hosts playbooks/wordpress.yml -e "teardown=no"`
+
+Setting/names used for the sample WordPress application are found in the playbooks/roles/wordpress/defaults/main.yml file:
+
+WordPress general settings
+```
+wp_app_name: 'hpe-wordpress'
+wp_proj_name: 'hpe-wordpress-ns'
+wp_disp_name: 'HPE WordPress/MySQL validation deployment'
+wp_desc: 'HPE Wordpress/MySQL Deployment'
+wp_storage_name: 'hpe-wp-storage-class'
+
+```
+MySQL settings
+```
+wp_mysql_pv_claim: 'hpe-mysql-pv-claim'
+wp_mysql_svc: 'hpe-mysql-service'
+wp_mysql_route: 'hpe-mysql-route'
+wp_mysql_deploy: 'hpe-mysql-deploy'
+```
+WordPress settings
+```
+wp_wp_pv_claim: 'hpe-wp-pv-claim'
+wp_wp_svc: 'hpe-wordpress-service'
+wp_wp_route: 'hpe-wordpress-route'
+wp_wp_deploy: 'hpe-wp-deploy'
+```
+
