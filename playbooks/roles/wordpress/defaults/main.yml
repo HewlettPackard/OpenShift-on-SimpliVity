@@ -13,11 +13,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###
-
 ---
-- import_playbook: playbooks/prepare.yml
-- import_playbook: playbooks/provision.yml
-- import_playbook: playbooks/configure.yml
-- import_playbook: playbooks/poweron.yml
-- import_playbook: playbooks/finish.yml
-- import_playbook: playbooks/hpe_cluster_verification.yml
+# WordPress general settings
+wp_app_name: 'hpe-wordpress'
+wp_proj_name: 'hpe-wordpress-ns'
+wp_disp_name: 'HPE WordPress/MySQL validation deployment'
+wp_desc: 'HPE Wordpress/MySQL Deployment'
+wp_storage_name: 'hpe-wp-storage-class'
+# MySQL settings
+wp_mysql_pv_claim: 'hpe-mysql-pv-claim'
+wp_mysql_svc: 'hpe-mysql-service'
+wp_mysql_route: 'hpe-mysql-route'
+wp_mysql_deploy: 'hpe-mysql-deploy'
+# WordPress settings
+wp_wp_pv_claim: 'hpe-wp-pv-claim'
+wp_wp_svc: 'hpe-wordpress-service'
+wp_wp_route: 'hpe-wordpress-route'
+wp_wp_deploy: 'hpe-wp-deploy'

@@ -14,10 +14,5 @@
 # limitations under the License.
 ###
 
----
-- import_playbook: playbooks/prepare.yml
-- import_playbook: playbooks/provision.yml
-- import_playbook: playbooks/configure.yml
-- import_playbook: playbooks/poweron.yml
-- import_playbook: playbooks/finish.yml
-- import_playbook: playbooks/hpe_cluster_verification.yml
+localhost
+

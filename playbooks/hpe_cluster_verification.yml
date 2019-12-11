@@ -12,12 +12,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-###
-
+### 
 ---
-- import_playbook: playbooks/prepare.yml
-- import_playbook: playbooks/provision.yml
-- import_playbook: playbooks/configure.yml
-- import_playbook: playbooks/poweron.yml
-- import_playbook: playbooks/finish.yml
-- import_playbook: playbooks/hpe_cluster_verification.yml
+#######################################################################
+#
+#  HPE OCP Cluster verification
+#
+#######################################################################
+- name:  HPE OCP Cluster verification
+  hosts: localhost
+  gather_facts: no
+
+  roles:
+  - role: hpe_cluster_verification

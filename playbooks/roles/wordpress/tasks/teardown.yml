@@ -1,0 +1,107 @@
+###
+# Copyright (2019) Hewlett Packard Enterprise Development LP
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# You may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+###
+---
+- name: Remove WordPress route
+  k8s:
+    state: absent
+    kubeconfig: "{{ install_dir }}/auth/kubeconfig"
+    api_version: v1
+    kind: Route
+    name: "{{ wp_wp_route }}"
+    namespace: "{{ wp_proj_name }}"
+
+- name: Remove WordPress service
+  k8s:
+    state: absent
+    kubeconfig: "{{ install_dir }}/auth/kubeconfig"
+    api_version: v1
+    kind: Service
+    name: "{{ wp_wp_svc }}"
+    namespace: "{{ wp_proj_name }}"
+
+- name: Remove MySQL service
+  k8s:
+    state: absent
+    kubeconfig: "{{ install_dir }}/auth/kubeconfig"
+    api_version: v1
+    kind: Service
+    name: "{{ wp_mysql_svc }}"
+    namespace:  "{{ wp_proj_name }}"
+
+- name: Remove WordPress Deployment
+  k8s:
+    state: absent
+    kubeconfig: "{{ install_dir }}/auth/kubeconfig"
+    api_version: v1
+    kind: Deployment
+    name: "{{ wp_wp_deploy }}"
+    namespace:  "{{ wp_proj_name }}"
+
+- name: Remove MySQL Deployment
+  k8s:
+    state: absent
+    kubeconfig: "{{ install_dir }}/auth/kubeconfig"
+    api_version: v1
+    kind: Deployment
+    name: "{{ wp_mysql_deploy }}"
+    namespace: "{{ wp_proj_name }}"
+
+- name: Remove MySQL secret
+  k8s:
+    state: absent
+    kubeconfig: "{{ install_dir }}/auth/kubeconfig"
+    api_version: v1
+    kind: Secret
+    name: mysql-pass
+    namespace:  "{{ wp_proj_name }}"
+
+- name: Remove WordPress PVC
+  k8s:
+    state: absent
+    kubeconfig: "{{ install_dir }}/auth/kubeconfig"
+    api_version: v1
+    kind: PersistentVolumeClaim
+    name: "{{ wp_wp_pv_claim }}"
+    namespace: "{{ wp_proj_name }}"
+
+- name: Remove MySQL PVC
+  k8s:
+    state: absent
+    kubeconfig: "{{ install_dir }}/auth/kubeconfig"
+    api_version: v1
+    kind: PersistentVolumeClaim
+    name: "{{ wp_mysql_pv_claim }}"
+    namespace:  "{{ wp_proj_name }}"
+
+- name: Remove storageclass for WordPress and MySQL PVC
+  k8s:
+    state: absent
+    kubeconfig: "{{ install_dir }}/auth/kubeconfig"
+    api_version: v1
+    kind: StorageClass
+    name: "{{ wp_storage_name }}"
+    namespace:  "{{ wp_proj_name }}"
+
+- name: Remove project/namespace for WordPress
+  k8s:
+    state: absent
+    kubeconfig: "{{ install_dir }}/auth/kubeconfig"
+    api_version: v1
+    kind: Namespace
+    name:  "{{ wp_proj_name }}"
+
+
+
