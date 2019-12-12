@@ -47,6 +47,16 @@
 - The process of deploying the EFK (Elasticsearch, Fluentd, Kibana) logging stack has changed. This is described in the next section
 - The efk.yml playbook, and supporting efk role, have been updated to deploy successfully on either OCP 4.1 or OCP 4.2.
 
+## Change in behaviour
+
+Deployment. The playbook site.yml no longer stops (fails) if the cluster operators are not loaded 30mns after the bootstrap of OCP. Instead control is passed to the OCP installer which is in charge of validating the installation (or invalidating it)
+
+Deployment. The playbook site.yml waits for the deployment of the image-registry cluster operator before it can configure it. In the previous release, the timer was set to 10mns and the playbook failed if this time was exceeded. This timer is now set to 20mns. These 20mns may be needed when deploying on a heavily loaded SimpliVity cluster. .
+
+
+
+
+
 ## New Features
 
 ### Sysdig Integration
