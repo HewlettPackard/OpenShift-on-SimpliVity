@@ -55,7 +55,7 @@
     kind: ClusterOperator
     name: image-registry
   register: res
-  retries: "{{ ( ocpinstaller_clusteroperators_timeout / 10 ) | int }}"
+  retries: "{{ ( ocpinstaller_imageregistry_timeout / 10 ) | int }}"
   until: 
   - res.resources is defined
   - res.resources | count > 0
@@ -116,10 +116,19 @@
     dest: /tmp/watch_operators.sh
     mode: u=rx,g=r,o=r
 
+#
+# The iteration below is not functionaly necessary because 'wait-for install-complete' is doing the same verification
+# However, because "wait-for" is silent and does not provide any kind of feedback to the user, the user might think
+#   something is going wrong if the plabook does not print anything during 30mns 
+# Because providing feedback is the sole purpose of the loop below, we don't fail the task if the cluster operators
+#   are not "Available" in the amount of time specified by the timer. If the timer expires, the "wait-for" will decide
+#   if the installation was successful or not
+#
 - name: Verify that all cluster operators are available 
   shell: |
     /tmp/watch_operators.sh
   register: res
+  failed_when: false
   delay: 10
   retries: "{{ ( ocpinstaller_clusteroperators_timeout / 10 ) | int }}"
   until: res.stdout_lines | count == 0

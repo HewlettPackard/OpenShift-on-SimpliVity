@@ -2,6 +2,16 @@
 
 ## Bug Fixes
 
+### Under heavy load, the deployment playbook exits with a timeout if it finds cluster operators which are not "Available"
+
+After a successful bootstrap of the OCP cluster, the deployment playbook (site.yml) enters a loop to verify that all cluster operators are "Available".   After a specific amount of time (10mns), the playbook failed is some of the cluster operators were not "Available". This has been changed to the following:
+
+- The above loop is maintained but the playbook will not fail if the condition for ending the loop is not met before the built-in timer expires.
+- Regardless the result of the loop, the OCP installer is called to wait for the end of the installation or until a built-in timer expires (30mns)
+- Note that the loop is maintained because is provides feedback to the end user. ON the other hand the OCP installer waits for the end of the installation but  only provides feedback when the installation is finished or when its built-in timer (30mns) expires. without any feedback, the end user might think that the process is stuck in some endless loop or wait for something that will never happen.
+
+
+
 ### Load balancers: firewall zone settings are lost after a reboot
 
 - After a reboot, the two interfaces of the load balancer VMs are now assigned to the correct firewall zones.
@@ -46,6 +56,10 @@
 
 - The process of deploying the EFK (Elasticsearch, Fluentd, Kibana) logging stack has changed. This is described in the next section
 - The efk.yml playbook, and supporting efk role, have been updated to deploy successfully on either OCP 4.1 or OCP 4.2.
+
+## 
+
+
 
 ## New Features
 
