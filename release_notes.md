@@ -67,6 +67,8 @@ After a successful bootstrap of the OCP cluster, the deployment playbook (site.y
 
 You can now use the playbook `playbooks/sysdig.yml` to integrate your cluster with Sysdig. The implementation in this solution uses the Software as a Service (SaaS) version of Sysdig at [app.sysdigcloud.com](). The playbook deploys the Sysdig Agent software on all OpenShift node. Captured data is relayed back to your Sysdig SaaS Cloud portal.
 
+`Note:` The SaaS version of Sysdig is not supported in environments where HTTP/HTTPS proxy servers are required to access the Internet.
+
 Here are the variables that you must configure prior to using the `sysdig.yml` playbook.
 
 
