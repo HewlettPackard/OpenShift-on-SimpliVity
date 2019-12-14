@@ -44,8 +44,8 @@
   set_fact:
     app_url: "http://{{ ans.stdout }}"
 
-- name: Wait for WordPress pods to become ready
-  shell: "kubectl wait --namespace={{ wp_proj_name }} --for=condition=Ready pods --selector tier=frontend --timeout=60s"
+- name: Wait for WordPress pods to become ready (maximum 5 minutes)
+  shell: "kubectl wait --namespace={{ wp_proj_name }} --for=condition=Ready pods --selector tier=frontend --timeout=5m"
   register: res
   environment:
     KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
@@ -64,3 +64,7 @@
     headers:
       Host: "{{ app_hostname }}"
     status_code: 302
+  retries: 10
+  delay: 2
+  register: result
+  until: result.status == 302
