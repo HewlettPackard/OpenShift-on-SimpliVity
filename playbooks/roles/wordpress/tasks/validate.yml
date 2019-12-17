@@ -44,18 +44,61 @@
   set_fact:
     app_url: "http://{{ ans.stdout }}"
 
-- name: Wait for WordPress pods to become ready (maximum 5 minutes)
-  shell: "kubectl wait --namespace={{ wp_proj_name }} --for=condition=Ready pods --selector tier=frontend --timeout=5m"
+- name: Wait for MySQL pod to be created (maximum 5 minutes)
+  k8s_facts:
+    kind: Pod
+    kubeconfig: "{{ install_dir }}/auth/kubeconfig"
+    namespace: "{{ wp_proj_name }}"
+    label_selectors:
+        - tier=mysql
   register: res
-  environment:
-    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+  retries: "{{ ( 300 / 10 ) | int }}"
+  until:
+  - res.resources is defined
+  - res.resources | count > 0
 
-#
-# Even though Pod is up it can take a little time before Apache Webserver is up - wait for 20 seconds
-#
-- name:  Give WordPress some time to complete startup
-  wait_for: 
-    timeout: 20
+- name: Wait for WordPress pod to be created (maximum 5 minutes)
+  k8s_facts:
+    kind: Pod
+    kubeconfig: "{{ install_dir }}/auth/kubeconfig"
+    namespace: "{{ wp_proj_name }}"
+    label_selectors:
+        - tier=frontend
+  register: res
+  retries: "{{ ( 300 / 10 ) | int }}"
+  until:
+  - res.resources is defined
+  - res.resources | count > 0
+
+- name: Wait for MySQL pod to start (maximum 5 minutes)
+  k8s_facts:
+    kind: Pod
+    kubeconfig: "{{ install_dir }}/auth/kubeconfig"
+    namespace: "{{ wp_proj_name }}"
+    label_selectors:
+        - tier=mysql
+    field_selectors:
+      - status.phase=Running
+  register: res
+  retries: "{{ ( 300 / 10 ) | int }}"
+  until:
+  - res.resources is defined
+  - res.resources | count > 0
+
+- name: Wait for WordPress pod to start (maximum 5 minutes)
+  k8s_facts:
+    kind: Pod
+    kubeconfig: "{{ install_dir }}/auth/kubeconfig"
+    namespace: "{{ wp_proj_name }}"
+    label_selectors:
+        - tier=frontend
+    field_selectors:
+      - status.phase=Running
+  register: res
+  retries: "{{ ( 300 / 10 ) | int }}"
+  until:
+  - res.resources is defined
+  - res.resources | count > 0
 
 - name: Validate WordPress Webserver access
   uri:
@@ -64,7 +107,7 @@
     headers:
       Host: "{{ app_hostname }}"
     status_code: 302
-  retries: 10
-  delay: 2
+  retries: 20
+  delay: 3
   register: result
   until: result.status == 302
