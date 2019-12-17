@@ -60,3 +60,14 @@
     purge: True
   when:
     - ansible_distribution == 'RedHat'
+
+- name: Install kernel headers package needed by Sysdig
+  become: true
+  package:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+    - kernel-headers-{{ ansible_kernel }}
+  when:
+    - ansible_distribution == 'RedHat'
