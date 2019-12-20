@@ -10,8 +10,6 @@ After a successful bootstrap of the OCP cluster, the deployment playbook (site.y
 - Regardless the result of the loop, the OCP installer is called to wait for the end of the installation or until a built-in timer expires (30mns)
 - Note that the loop is maintained because is provides feedback to the end user. ON the other hand the OCP installer waits for the end of the installation but  only provides feedback when the installation is finished or when its built-in timer (30mns) expires. without any feedback, the end user might think that the process is stuck in some endless loop or wait for something that will never happen.
 
-
-
 ### Load balancers: firewall zone settings are lost after a reboot
 
 - After a reboot, the two interfaces of the load balancer VMs are now assigned to the correct firewall zones.
@@ -44,8 +42,6 @@ After a successful bootstrap of the OCP cluster, the deployment playbook (site.y
   # git clone -b openshift-ansible-4.2.2-201910250432 https://github.com/openshift/openshift-ansible.git
   ```
 
-  
-
 ### Make the master nodes non-schedulable
 
 - By default, the OCP 4.2 installer generates Kubernetes manifests which will make the master nodes schedulable. This was done in an attempt to support clusters with smaller footprints.
@@ -60,7 +56,6 @@ After a successful bootstrap of the OCP cluster, the deployment playbook (site.y
 ## 
 
 
-
 ## New Features
 
 ### Sysdig Integration
@@ -70,7 +65,6 @@ You can now use the playbook `playbooks/sysdig.yml` to integrate your cluster wi
 `Note:` The SaaS version of Sysdig is not supported in environments where HTTP/HTTPS proxy servers are required to access the Internet.
 
 Here are the variables that you must configure prior to using the `sysdig.yml` playbook.
-
 
 
 | Variable                        | File                       | Description                                                  |
