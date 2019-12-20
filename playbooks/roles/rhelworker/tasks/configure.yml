@@ -56,7 +56,18 @@
     name:
       - rhel-7-server-rpms
       - rhel-7-server-extras-rpms
-      - rhel-7-server-ose-4.1-rpms
+      - 'rhel-7-server-ose-{{ ocp_version }}-rpms'
     purge: True
+  when:
+    - ansible_distribution == 'RedHat'
+
+- name: Install kernel headers package needed by Sysdig
+  become: true
+  package:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+    - kernel-headers-{{ ansible_kernel }}
   when:
     - ansible_distribution == 'RedHat'

@@ -13,34 +13,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###
-
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: prometheus-k8s
-  namespace: openshift-operators-redhat
-rules:
-- apiGroups:
-  - ""
-  resources:
-  - services
-  - endpoints
-  - pods
-  verbs:
-  - get
-  - list
-  - watch
 ---
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: prometheus-k8s
-  namespace: openshift-operators-redhat
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: prometheus-k8s
-subjects:
-- kind: ServiceAccount
-  name: prometheus-k8s
-namespace: openshift-operators-redhat
+# WordPress general settings
+wp_app_name: 'hpe-wordpress'
+wp_proj_name: 'hpe-wordpress-ns'
+wp_disp_name: 'HPE WordPress/MySQL validation deployment'
+wp_desc: 'HPE Wordpress/MySQL Deployment'
+wp_storage_name: 'hpe-wp-storage-class'
+# MySQL settings
+wp_mysql_pv_claim: 'hpe-mysql-pv-claim'
+wp_mysql_svc: 'hpe-mysql-service'
+wp_mysql_route: 'hpe-mysql-route'
+wp_mysql_deploy: 'hpe-mysql-deploy'
+# WordPress settings
+wp_wp_pv_claim: 'hpe-wp-pv-claim'
+wp_wp_svc: 'hpe-wordpress-service'
+wp_wp_route: 'hpe-wordpress-route'
+wp_wp_deploy: 'hpe-wp-deploy'

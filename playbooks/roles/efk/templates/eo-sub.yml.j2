@@ -13,15 +13,36 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###
+---
 
+{% if efk_channel | lower == "preview" %}
+# efk_channel = {{ efk_channel }}
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
+  generateName: "elasticsearch-"
   name: elasticsearch
-  namespace: openshift-operators-redhat
+  namespace: "openshift-operators-redhat"
 spec:
   channel: "preview"
-  installPlanApproval: Automatic
-  source: elasticsearch
-  sourceNamespace: openshift-operators-redhat
-  name: elasticsearch-operator
+  installPlanApproval: "Automatic"
+  source: "elasticsearch"
+  sourceNamespace: "openshift-operators-redhat"
+  name: "elasticsearch-operator"
+
+{% else %}
+# efk_channel = {{ efk_channel }}
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+#  generateName: "elasticsearch-"
+  name: "elasticsearch"
+  namespace: "openshift-operators-redhat" 
+spec:
+  channel: "{{ efk_channel }}"
+  installPlanApproval: "Automatic"
+  source: "redhat-operators"
+  sourceNamespace: "openshift-marketplace"
+  name: "elasticsearch-operator"
+
+{% endif %}

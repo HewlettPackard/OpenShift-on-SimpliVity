@@ -45,6 +45,7 @@
     when:
     - new_rhel_workers | count == 0
     - new_rhcos_workers | count == 0
+    - scale_retry is not defined
 
 #######################################################################
 #
@@ -226,3 +227,18 @@
       dest: "{{ install_dir }}/pull-secret.txt"
     when:
     - new_rhel_workers | count > 0
+
+
+#######################################################################
+#
+# Play: Approve CSRs for RHCOS nodes
+#
+#######################################################################
+- hosts: rhcos_worker
+  run_once: true
+  gather_facts: no
+  roles:
+  - role: csr
+    vars:
+      approve_node_csr: yes
+

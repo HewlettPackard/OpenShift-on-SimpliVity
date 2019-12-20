@@ -15,4 +15,5 @@
 ###
 
 ---
-ocpinstaller_clusteroperators_timeout: 600     # this is 10mns
+ocpinstaller_clusteroperators_timeout: 1800   # this is 30mns
+ocpinstaller_imageregistry_timeout:    1200   # this is 20mns

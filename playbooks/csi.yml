@@ -1,0 +1,57 @@
+###
+# Copyright (2019) Hewlett Packard Enterprise Development LP
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# You may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+### 
+---
+#######################################################################
+#
+# Play: Make sure we have the required version of ESX
+#
+#######################################################################
+- name: verify ESX version
+  hosts: localhost
+  gather_facts: no
+  roles:
+  - role: version
+    vars:
+      esx_supported:
+        version: "6.7.0"
+        build: 14320388
+  tasks:
+  - fail:
+      msg: "You need ESXi {{ esx_supported.version }} minimum build {{ esx_supported.build }}"
+    when: not esxi_supported 
+
+#######################################################################
+#
+# Play: Deploy VMWare Cloud Native Storage 
+#
+#######################################################################
+- name: Deploy VMWare Cloud Native Storage (CSI)
+  hosts: localhost
+  gather_facts: no
+  roles:
+  - role: datastore
+    vars:
+      simplivity_datacenter: "{{ datacenter }}"
+      simplivity_cluster: "{{ vcenter_cluster }}"
+      simplivity_datastore: "{{ csi_datastore_name | default (datastores[0]) }}"
+      simplivity_datastore_size: "{{ csi_datastore_size | default ('512') }}"
+      simplivity_username: "{{ vcenter_username }}" 
+      simplivity_password: "{{ vcenter_password }}"
+      provision: yes
+
+  - role: csi
+    vars:
+      provision: yes

@@ -16,3 +16,4 @@
 
 ---
 # defaults file for rhelworker
+ocp_version: 4.2

@@ -16,8 +16,9 @@
 
 ---
 #
-# Openshift 4.1 artifacts
+# OpenShift 4.X artifacts
 #
+efk_channel: "4.2"                                              # "preview" if OCP4.1, "4.2" if OCP 4.2 (use quotes)
 local_home: "{{ lookup('env','HOME') }}"                        # Local user's HOME directory
 install_dir: "{{ local_home }}/.ocp"                            # OCP installation dir
 ocp_installer_path: '{{ local_home }}/kits/openshift-install'   # Path to the OCP installer
@@ -39,11 +40,11 @@ domain_name: hpecloud.org                                       # you can keep t
 vcenter_hostname: vcentergen10.am2.cloudra.local                # name of your vCenter server
 vcenter_username: Administrator@vsphere.local                   # Admin user for your vCenter environment
 vcenter_password: '{{ vault.vcenter_password }}'                # Password for the above
-simplivity_password: '{{ vault.simplivity_password }}'          # not used for now
 vcenter_validate_certs: false                                   # true not implemented/tested
 vcenter_cluster: OCP                                            # Name of your SimpliVity Cluster (must exist)
 datacenter: DEVOPS                                              # Name of your DATACENTER (must exist)
-datastores: ['Openshift_HPE']                                   # where to store the VMs (datastore must exist)
+datastores: ['Openshift_HPE']                                   # where to store the VMs (datastore must exist), only one datastore supported
+#datastore_size: 1024                                           # size in GiB of the VM datastore, only applies if the playbook creates the datastore
 cluster_name: hpe                                               # Name of the K8S Cluster. A VM folder with the same name is created if needed
 ntp_servers: ['10.12.2.1']                                      # NTP servers in your environment
 dns_servers: ['10.10.173.1','10.10.173.31']                     # DNS servers in your environment
@@ -52,7 +53,7 @@ dns_servers: ['10.10.173.1','10.10.173.31']                     # DNS servers in
 # folders, templates and OVAs, templates are created using the corresponding OVA if they cannot be found (and only if they cannot be found)
 #
 support_folder: 'hpeSupport'                                    # Folder for non-OCP VMs and templates (created if needed)
-master_ova_path: '{{ local_home }}/kits/rhcos-4.1.0-x86_64-vmware.ova'          # Path to RHCOS OVA (file is expected to be there)
+master_ova_path: '{{ local_home }}/kits/rhcos.ova'              # eg rhcos-4.1.0-x86_64-vmware.ova' (file is expected to be there)
 worker_ova_path: '{{ master_ova_path }}'                        # Path to the OVA file used to create the VM template for OCP worker nodes
 support_ova_path: '{{ local_home }}/kits/hpe-rhel760.ova'       # Path to the OVA file used to create the VM template for support  machines (LBs etc)
 master_template: hpe-rhcos                                      # VMware template name for OCP master nodes
@@ -116,3 +117,36 @@ backup_artifacts:                                               # additional ite
 - ./group_vars/
 - ./hosts
 
+#
+# VMWare CSI Storage plugin
+#
+#csi_datastore_name: "{{ datastores[0] }}"                  # name of the datastore which will hold the persistent volumes
+#csi_storageclass_name: csivols                             # name of the storage class to create
+#csi_datastore_size: 512                                    # size of the datastore in GiB
+
+#
+# Sysdig Integration
+#
+sysdig_access_key: "{{ vault.sysdig_access_key }}"          # required. Your sysdig access key should be encrypted in vault.yml
+sysdig_k8s_cluster_name: "{{ cluster_name }}"               # allows you to view, scope, and segment metrics in the Sysdig Monitor UI by Kubernetes cluster.
+#sysdig_tags: 'key1:value,key2:value'                       # comma separated lits of key:value pairs
+#sysdig_collector: collector.sysdigcloud.com                # optional, leave unchanged for SaaS Sysdig
+#sysdig_collector_port: 6666                                # optional, leave unchanged for SaaS Sysdig
+#sysdig_ssl: true                                           # optional, leave unchanged for SaaS Sysdig
+#sysdig_ssl_verify_certificate: true                        # optional, leave unchanged for SaaS Sysdig
+#sysdig_new_k8s: true                                       # optional, allows kube state metrics to be automatically detected, monitored, and displayed in Sysdig Monitor.
+
+#
+# SimpliVity
+#
+#simplivity_appliances:                                     # define if you want to enable SimpliVity specific capabilities
+#- 10.10.173.109
+#- 10.10.173.110
+#- 10.10.173.111
+
+#
+# Proxy Configuration
+#
+#http_proxy: "http://web-proxy.hpecloud.org:8080"
+#https_proxy: "http://web-proxy.hpecloud.org:8080"
+#no_proxy: "localhost,.{{ domain_name }},{{ dhcp_subnet }},{{ vcenter_hostname }}"

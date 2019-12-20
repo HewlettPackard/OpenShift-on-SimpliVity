@@ -15,4 +15,7 @@
 ###
 
 ---
-# defaults file for efk
+efk_channel: null                    # Mandatory. Must be supplied by the caller
+efk_es_pv_size: '200G'               # Size of Persistent Volume used for Elasticsearch data
+efk_es_pv_storage_class: 'thin'      # Storage class name used for Elasticsearch data
+efk_profile: small                   # elasic search sizing: small = 2Gi RAM and 200m core of CPU, 'large' = 16Gi of RAM and 1 CPU core

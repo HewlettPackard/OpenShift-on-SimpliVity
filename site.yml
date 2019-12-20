@@ -20,3 +20,4 @@
 - import_playbook: playbooks/configure.yml
 - import_playbook: playbooks/poweron.yml
 - import_playbook: playbooks/finish.yml
+- import_playbook: playbooks/hpe_cluster_verification.yml

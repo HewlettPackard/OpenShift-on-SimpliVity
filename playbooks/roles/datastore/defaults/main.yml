@@ -1,0 +1,25 @@
+###
+# Copyright (2019) Hewlett Packard Enterprise Development LP
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# You may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+###
+---
+simplivity_appliances: []                                # List of OmniStack appliances' IP addresses
+simplivity_username: "Administrator@vsphere.local"       # Generally the vCenter Admin
+simplivity_password: "password"                          # 
+simplivity_validate_certs: false                         # verify Appliance CA certificate or not
+simplivity_datacenter: "DEVOPS"                          # name of the datacenter
+simplivity_cluster: "OCP"                                # name of the SimpliVity cluster
+simplivity_datastore: "datastore"                        # name of the datastore you want to use, will be created if not present
+simplivity_backup_policy: "Fixed Default Backup Policy"  # Backup Policy for the datastore. Must exist
+simplivity_datastore_size: 1024                          # Size in GiB of the datastore

@@ -1,0 +1,145 @@
+###
+# Copyright (2019) Hewlett Packard Enterprise Development LP
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# You may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+### 
+---
+
+# try to connect to the Omnistack Appliances
+- name: Retrieve a token for use with the SimpliVity API
+  uri:
+    url: "https://simplivity@{{ item  }}/api/oauth/token"
+    method: POST
+    timeout: 4
+    status_code:
+    - -1
+    - 200
+    - 400
+    validate_certs: "{{ simplivity_validate_certs }}"
+    body_format: form-urlencoded
+    body:
+      grant_type: password
+      username: "{{ simplivity_username }}"
+      password: "{{ simplivity_password }}"
+    force_basic_auth: yes
+  delegate_to: localhost
+  register: res
+  with_items: "{{ simplivity_appliances }}"
+
+# Fail if we could not log in any of the appliances
+- set_fact:
+    ovcs: "{{ res.results | json_query ('[? status == `200`]') }}"
+- fail:
+    msg: "Cannot login into any of the appliances: {{ simplivity_appliances }}"
+  when: ovcs | count < 1
+
+- name: Store the token for use with the SimpliVity API
+  set_fact:
+    ovc:
+      ip:  "{{ (ovcs | first ).item }}"
+      token:   "{{ (ovcs | first ).json.access_token }}"
+
+# See if the datastore is already existing
+- name: Find the datastore
+  uri:
+    url: "https://{{ ovc.ip }}/api/datastores?name={{ simplivity_datastore }}"
+    headers:
+      Content-Type: application/vnd.simplivity.v1+json
+      Authorization: Bearer {{ ovc.token }}
+    method: GET
+    validate_certs: "{{ simplivity_validate_certs }}"
+  delegate_to: localhost
+  register: csi_datastore_specs
+
+# We need the cluster ID to create the datastore
+- name: Find the Cluster ID
+  uri:
+    url: "https://{{ ovc.ip }}/api/omnistack_clusters?name={{ simplivity_cluster }}"
+    method: GET
+    headers:
+        Content-Type: application/vnd.simplivity.v1+json
+        Authorization: Bearer {{ ovc.token }}
+    validate_certs: "{{ simplivity_validate_certs }}"
+  delegate_to: localhost
+  register: clusters
+
+# Fail if the cluster ID could not be found
+- fail: 
+    msg: "The cluster {{ simplivity_cluster }} was not found"
+  when : clusters.json.omnistack_clusters | count < 1
+
+# Verify that the backup policy exists
+- name: Find the Backup Policy ID
+  uri:
+    url: "https://{{ ovc.ip }}/api/policies?name={{ simplivity_backup_policy | urlencode() }}"
+    method: GET
+    headers:
+        Content-Type: application/vnd.simplivity.v1+json
+        Authorization: Bearer {{ ovc.token }}
+    validate_certs: "{{ simplivity_validate_certs }}"
+  delegate_to: localhost
+  register: policies
+
+- fail:
+    msg: "Cannot find SimpliVity Backup Policy {{ simplivity_backup_policy }}"
+  when: policies.json.count < 1
+
+#jinja2 s choking on numbers like number * 1024 * 1024 * 1024
+- name: Compute number of bytes
+  shell: |
+    echo $(( {{ simplivity_datastore_size }} * 1024 * 1024 * 1024 ))
+  changed_when: false
+  register: size
+
+# Create the Datastore if it does not already exist
+- name: Create the Datastore
+  uri:
+    url: "https://{{ ovc.ip }}/api/datastores"
+    validate_certs: "{{ simplivity_validate_certs }}"
+    headers:
+      Content-Type: application/vnd.simplivity.v1+json
+      Authorization: Bearer {{ ovc.token }}
+    method: POST
+    timeout: 50
+    body_format: json
+    body:
+      name: "{{ simplivity_datastore }}"
+      omnistack_cluster_id: "{{ clusters.json.omnistack_clusters[0].id }}"
+      policy_id: "{{ policies.json.policies[0].id }}"
+      size: "{{ size.stdout }}"
+    status_code: 202
+  delegate_to: localhost
+  register: task
+  when: csi_datastore_specs.json.count < 1
+
+# Wait for the successful completion of the task
+- name: Loop until task is finished
+  uri:
+    url: "https://{{ ovc.ip }}/api/tasks/{{ task.json.task.id }}"
+    headers:
+      Content-Type: application/vnd.simplivity.v1+json
+      Authorization: Bearer {{ ovc.token }}
+    method: GET
+    validate_certs: "{{ simplivity_validate_certs }}"
+  until: task_status.json.task.state == "COMPLETED"
+  retries: 10
+  delegate_to: localhost
+  register: task_status
+  when: csi_datastore_specs.json.count < 1
+
+# Set changed status
+- debug: 
+    msg: "Datastore {{ simplivity_datastore }} Created"
+  changed_when: true
+  when: csi_datastore_specs.json.count < 1
+  
