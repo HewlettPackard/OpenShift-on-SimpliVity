@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Build and deploy an application | Red Hat OpenShift Container Platform on HPE SimpliVity</title>
+    <meta name="description" content="">
+    
+    
+    <link rel="preload" href="/OpenShift-on-SimpliVity/assets/css/0.styles.807d69a1.css" as="style"><link rel="preload" href="/OpenShift-on-SimpliVity/assets/js/app.1fbc0a9a.js" as="script"><link rel="preload" href="/OpenShift-on-SimpliVity/assets/js/2.b9bcc03f.js" as="script"><link rel="preload" href="/OpenShift-on-SimpliVity/assets/js/37.7e5778a6.js" as="script"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/10.6d3c3089.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/11.1f30642c.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/12.3599ae02.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/13.8884f7c0.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/14.98d195fd.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/15.f36e8d11.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/16.035bbdae.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/17.c916ed06.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/18.26149793.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/19.589833f2.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/20.8ed9ef4b.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/21.379cc40a.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/22.27ffdee4.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/23.0e96a78a.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/24.3da87bb8.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/25.10e84b57.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/26.d030bafa.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/27.ddf3160f.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/28.845a00c7.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/29.37e56e26.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/3.d30377a7.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/30.e5701e54.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/31.ea77b0b3.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/32.17722b48.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/33.a52e48ea.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/34.b0a57c11.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/35.8a12c86e.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/36.dd229b2e.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/38.48d3249b.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/39.37199aae.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/4.259fd772.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/40.0f94a617.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/41.aa902df1.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/42.bcb2dda6.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/43.4b8bbc86.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/44.e65b7f88.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/45.2ec18ef5.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/46.ac8be670.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/47.cc03354f.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/48.0abafeb1.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/49.dd254d33.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/5.796ec272.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/50.c6a4f384.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/51.2bd65eb1.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/52.49595838.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/53.816799fa.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/54.d350b02b.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/55.204fd268.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/56.87e6bd34.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/57.f8102967.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/58.3361c527.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/59.8a5955fb.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/6.f90d1042.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/60.61e3388d.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/61.17e8a69e.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/62.21d9b819.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/63.47f89eeb.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/64.232cd3a4.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/65.f3788652.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/66.a313896a.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/67.67db3c98.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/68.74e6bfa4.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/69.82089181.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/7.7cc779cf.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/8.bbb83cef.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/9.c99366f4.js">
+    <link rel="stylesheet" href="/OpenShift-on-SimpliVity/assets/css/0.styles.807d69a1.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/OpenShift-on-SimpliVity/" class="home-link router-link-active"><!----> <span class="site-name">Red Hat OpenShift Container Platform on HPE SimpliVity</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/OpenShift-on-SimpliVity/" class="nav-link">Home</a></div><div class="nav-item"><a href="/OpenShift-on-SimpliVity/blog/" class="nav-link">Blog</a></div> <a href="https://github.com/HewlettPackard/OpenShift-on-SimpliVity" target="_blank" rel="noopener noreferrer" class="repo-link">
+    Contribute!
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/OpenShift-on-SimpliVity/" class="nav-link">Home</a></div><div class="nav-item"><a href="/OpenShift-on-SimpliVity/blog/" class="nav-link">Blog</a></div> <a href="https://github.com/HewlettPackard/OpenShift-on-SimpliVity" target="_blank" rel="noopener noreferrer" class="repo-link">
+    Contribute!
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav>  <ul class="sidebar-links"><li><a href="/OpenShift-on-SimpliVity/executive-summary.html" class="sidebar-link">Executive Summary</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Release Notes</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Solution overview</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Solution components</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Preparing the environment</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Configuring the solution</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Overview of the playbooks</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>Post deployment tasks</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/OpenShift-on-SimpliVity/post-deploy/post-deploy-intro.html" class="sidebar-link">Introduction</a></li><li><a href="/OpenShift-on-SimpliVity/post-deploy/first-login.html" class="sidebar-link">Logging into the OCP cluster for the first time</a></li><li><a href="/OpenShift-on-SimpliVity/post-deploy/cluster-verification.html" class="sidebar-link">Cluster verification</a></li><li><a href="/OpenShift-on-SimpliVity/post-deploy/example-app.html" class="sidebar-link">Deploy example application</a></li><li><a href="/OpenShift-on-SimpliVity/post-deploy/external-routes.html" class="sidebar-link">Configuring external routes</a></li><li><a href="/OpenShift-on-SimpliVity/post-deploy/expose-registry.html" class="sidebar-link">Exposing the image registry</a></li><li><a href="/OpenShift-on-SimpliVity/post-deploy/build-deploy-app.html" class="active sidebar-link">Build and deploy an application</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/OpenShift-on-SimpliVity/post-deploy/build-deploy-app.html#build-the-image" class="sidebar-link">Build the image</a></li><li class="sidebar-sub-header"><a href="/OpenShift-on-SimpliVity/post-deploy/build-deploy-app.html#create-the-project" class="sidebar-link">Create the project</a></li><li class="sidebar-sub-header"><a href="/OpenShift-on-SimpliVity/post-deploy/build-deploy-app.html#deploy-the-application" class="sidebar-link">Deploy the application</a></li><li class="sidebar-sub-header"><a href="/OpenShift-on-SimpliVity/post-deploy/build-deploy-app.html#access-the-application" class="sidebar-link">Access the application</a></li><li class="sidebar-sub-header"><a href="/OpenShift-on-SimpliVity/post-deploy/build-deploy-app.html#access-from-outside-the-cluster" class="sidebar-link">Access from outside the cluster</a></li><li class="sidebar-sub-header"><a href="/OpenShift-on-SimpliVity/post-deploy/build-deploy-app.html#known-issue" class="sidebar-link">Known issue</a></li></ul></li><li><a href="/OpenShift-on-SimpliVity/post-deploy/ldap.html" class="sidebar-link">LDAP integration</a></li><li><a href="/OpenShift-on-SimpliVity/post-deploy/placement.html" class="sidebar-link">Workload placement</a></li><li><a href="/OpenShift-on-SimpliVity/post-deploy/sysdig.html" class="sidebar-link">Sysdig integration</a></li></ul></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Configuring storage</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Adding worker nodes</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Deploying cluster logging</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Backup and restore</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Appendices</span> <span class="arrow right"></span></p> <!----></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="build-and-deploy-an-application"><a href="#build-and-deploy-an-application" aria-hidden="true" class="header-anchor">#</a> Build and deploy an application</h1> <p>In this example, you will see how to build an image from source code, and then store it in the registry and use that image
+when deploying an application in the cluster.</p> <p>As a prerequisite, you should provide a route for the image registry as outlined in the section <a href="expose-registry">Exposing the image registry</a>. You should also install a program that allows you to build images, for example, <code>podman</code> or <code>docker</code>. To install <code>podman</code> on Fedora:</p> <div class="language- extra-class"><pre class="language-text"><code>$ dnf install -y podman
+</code></pre></div><p>For more information on <code>podman</code>, see the RedHat article
+<a href="https://developers.redhat.com/blog/2019/02/21/podman-and-buildah-for-docker-users/" target="_blank" rel="noopener noreferrer">Podman and Buildah for Docker users<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a>.</p> <h2 id="build-the-image"><a href="#build-the-image" aria-hidden="true" class="header-anchor">#</a> Build the image</h2> <p>This example takes a simple NodeJS web application and builds an image using <code>podman</code>. Download the sample from GitHub:</p> <div class="language- extra-class"><pre class="language-text"><code>$ cd 
+
+$ git clone https://github.com/gabrielmcg/helloworld-nodejs
+
+$ cd helloworld-nodejs
+</code></pre></div><p>The program creates a trivial web server and responds with the message &quot;Hello World&quot; when a user accesses the home page.
+The following excerpt from <code>index.js</code> shows the primary components of the application:</p> <div class="language- extra-class"><pre class="language-text"><code>const express = require(&quot;express&quot;);
+const app = express();
+
+app.get(&quot;/&quot;, (req, res) =&gt; {
+  console.log(&quot;Hello world received a request.&quot;);
+
+  const target = process.env.TARGET || &quot;World&quot;;
+  res.send(`Hello ${target}!`);
+
+});
+
+
+const port = process.env.PORT || 8080;
+app.listen(port, () =&gt; {
+  console.log(&quot;Hello world listening on port&quot;, port);
+});
+
+</code></pre></div><p>The accompanying <code>Dockerfile</code> builds an image based on the official <code>node:10</code> image, installs dependencies, copies in the source code and starts the webserver. You can use the <code>podman</code> or <code>docker</code> command, depending on your setup, to build the image.</p> <div class="language- extra-class"><pre class="language-text"><code>$ podman build -t helloworld:v1 .
+
+STEP 1: FROM node:10
+STEP 2: WORKDIR /usr/src/app
+9f57296b3b50125d693af6f559d671d3a577a5f3ba07f9dc752d229709411cbb
+STEP 3: COPY package*.json ./
+bd2ec027a14617a9cdbbadc9d3b8f3f55fd29611dda6e49d403e667d1ffe8c5e
+STEP 4: RUN npm install --only=production
+npm WARN helloworld-nodejs@1.0.0 No description
+npm WARN helloworld-nodejs@1.0.0 No repository field.
+
+added 48 packages from 36 contributors and audited 121 packages in 1.064s
+found 0 vulnerabilities
+
+153a13d7ff2f69fa76d82bb9561ffdbe09fe29b3ddf490f07efde963922c2daf
+STEP 5: COPY . .
+02a99699b19f7c1ae2cfa4ebf9653a15281d5fb757ab2c877fc287d5df812916
+STEP 6: ENV PORT 8080
+1b6e214c8f29a74124098c994ad9eb32ef970e1525c03dc7aa346e4dffda7ea7
+STEP 7: CMD [ &quot;npm&quot;, &quot;start&quot; ]
+STEP 8: COMMIT helloworld:v1
+3d05913e32f639e9d80f402e32c53be9471687b74fb5ff8e3c30353b0c835b41
+</code></pre></div><p>Check that the image has been created locally:</p> <div class="language- extra-class"><pre class="language-text"><code>$ podman images
+
+REPOSITORY                                 TAG      IMAGE ID       CREATED        SIZE
+localhost/helloworld                       v1       3d05913e32f6   17 hours ago   935 MB
+
+</code></pre></div><h2 id="create-the-project"><a href="#create-the-project" aria-hidden="true" class="header-anchor">#</a> Create the project</h2> <p>Create a new project named <code>helloworld</code>:</p> <div class="language- extra-class"><pre class="language-text"><code>$ oc new-project helloworld
+
+
+Now using project &quot;helloworld&quot; on server &quot;https://api.ocp.hpecloud.org:6443&quot;.
+
+You can add applications to this project with the 'new-app' command. For example, try:
+
+    oc new-app django-psql-example
+
+to build a new example application in Python. Or use kubectl to deploy a simple Kubernetes application:
+
+    kubectl create deployment hello-node --image=gcr.io/hello-minikube-zero-install/hello-node
+</code></pre></div><h1 id="tag-and-push-the-image"><a href="#tag-and-push-the-image" aria-hidden="true" class="header-anchor">#</a> Tag and push the image</h1> <p>Tag the image before pushing to the local image registry, using the default route created earlier in the section
+<a href="expose-registry">Exposing the image registry</a>:</p> <div class="language- extra-class"><pre class="language-text"><code>$ podman tag helloworld:v1 default-route-openshift-image-registry.apps.ocp.hpecloud.org/helloworld/helloworld:v1
+</code></pre></div><p>Log in to the local registry:</p> <div class="language- extra-class"><pre class="language-text"><code>$ podman login -u kubeadmin -p $(oc whoami -t) default-route-openshift-image-registry.apps.ocp.hpecloud.org --tls-verify=false
+
+Login Succeeded!
+</code></pre></div><p>Push the image to the local registry:</p> <div class="language- extra-class"><pre class="language-text"><code>$ podman push  default-route-openshift-image-registry.apps.ocp.hpecloud.org/helloworld/helloworld:v1 --tls-verify=false
+
+Getting image source signatures
+Copying blob 553039093d83 done
+Copying blob 73bfa217d66f done
+Copying blob 91ecdd7165d3 done
+Copying blob e4b20fcc48f4 done
+Copying blob 5f3a5adb8e97 done
+Copying blob 2e517d68c391 done
+Copying blob 291f8a573386 done
+Copying blob 10a2b00f2be1 done
+Copying blob 86135eafe3c7 done
+Copying blob 3d8956424ab7 done
+Copying blob d51a74fa5b42 done
+Copying blob 8186e77df3b5 done
+Copying config 3d05913e32 done
+Writing manifest to image destination
+Copying config 3d05913e32 done
+Writing manifest to image destination
+Storing signatures
+</code></pre></div><h2 id="deploy-the-application"><a href="#deploy-the-application" aria-hidden="true" class="header-anchor">#</a> Deploy the application</h2> <p>Deploy the application to the cluster:</p> <div class="language- extra-class"><pre class="language-text"><code>$ kubectl create deployment helloworld --image=image-registry.openshift-image-registry.svc:5000/helloworld/helloworld:v1
+
+deployment.apps/helloworld created
+</code></pre></div><p>Wait for the application to be ready:</p> <div class="language- extra-class"><pre class="language-text"><code>$ oc get deploy
+NAME         READY   UP-TO-DATE   AVAILABLE   AGE
+helloworld   0/1     1            0           19s
+
+$ oc get pods
+NAME                         READY   STATUS              RESTARTS   AGE
+helloworld-d7f944d95-xlg88   0/1     ContainerCreating   0          24s
+
+
+$ oc get pods
+NAME                         READY   STATUS    RESTARTS   AGE
+helloworld-d7f944d95-xlg88   1/1     Running   0          38s
+</code></pre></div><p>Check the logs for this pod to ensure that the appication started successfully:</p> <div class="language- extra-class"><pre class="language-text"><code>$ oc logs helloworld-d7f944d95-xlg88
+
+&gt; helloworld-nodejs@1.0.0 start /usr/src/app
+&gt; node index.js
+
+Hello world listening on port 8080
+</code></pre></div><h2 id="access-the-application"><a href="#access-the-application" aria-hidden="true" class="header-anchor">#</a> Access the application</h2> <p>Create a service for the application:</p> <div class="language- extra-class"><pre class="language-text"><code>$ oc expose deploy helloworld --port 8080
+service/helloworld exposed
+
+$ oc get svc
+NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+helloworld   ClusterIP   172.30.110.14   &lt;none&gt;        8080/TCP   5s
+</code></pre></div><p>Test access to the service. First, establish a debug session on one of your nodes:</p> <div class="language- extra-class"><pre class="language-text"><code>$ oc debug nodes/ocp-master1
+
+Starting pod/ocp-master1-debug ...
+To use host binaries, run `chroot /host`
+Pod IP: 10.15.155.211
+If you don't see a command prompt, try pressing enter.
+sh-4.2#
+</code></pre></div><p>Use the <code>curl</code> command from the debug session to test access to the service from inside the cluster. You should see the message <code>Hello World</code> displayed as a result of accessing the home page:</p> <div class="language- extra-class"><pre class="language-text"><code>sh-4.2# curl 172.30.110.14:8080
+
+Hello World!
+
+sh-4.2# exit
+</code></pre></div><h2 id="access-from-outside-the-cluster"><a href="#access-from-outside-the-cluster" aria-hidden="true" class="header-anchor">#</a> Access from outside the cluster</h2> <p>Create a route to provide access from outside the cluster:</p> <div class="language- extra-class"><pre class="language-text"><code>$ oc expose svc/helloworld --name=helloworld
+route.route.openshift.io/helloworld exposed
+
+$ oc get route
+NAME         HOST/PORT                                     PATH   SERVICES     PORT   TERMINATION   WILDCARD
+helloworld   helloworld-helloworld.apps.ocp.hpecloud.org          helloworld   8080                 None
+</code></pre></div><p>You should now be able to access the application using this route from outside the cluster, for example, from your Ansible controller:</p> <div class="language- extra-class"><pre class="language-text"><code>$ curl helloworld-helloworld.apps.ocp.hpecloud.org
+
+Hello World!
+</code></pre></div><h2 id="known-issue"><a href="#known-issue" aria-hidden="true" class="header-anchor">#</a> Known issue</h2> <p><strong>Note:</strong> When you create the project, you are informed that you can use either <code>oc new-app</code> or <code>kubectl deploy</code>:</p> <div class="language- extra-class"><pre class="language-text"><code>$ oc new-project helloworld
+
+Now using project &quot;helloworld&quot; on server &quot;https://api.ocp.hpecloud.org:6443&quot;.
+
+You can add applications to this project with the 'new-app' command. For example, try:
+
+    oc new-app django-psql-example
+
+to build a new example application in Python. Or use kubectl to deploy a simple Kubernetes application:
+
+    kubectl create deployment hello-node --image=gcr.io/hello-minikube-zero-install/hello-node
+</code></pre></div><p>It is possible that if you use the <code>oc new-app</code> option, you may enocunter an issue relating to certificates:</p> <div class="language- extra-class"><pre class="language-text"><code>$ oc new-app default-route-openshift-image-registry.apps.ocp.hpecloud.org/helloworld/helloworld
+
+W1205 11:08:19.556016     991 dockerimagelookup.go:236] container image registry lookup failed: Get https://default-route-openshift-image-registry.apps.ocp.hpecloud.org/v2/: x509: certificate signed by unknown authority
+error:  local file access failed with: stat default-route-openshift-image-registry.apps.ocp.hpecloud.org/helloworld/helloworld: no such file or directory
+error: unable to locate any images in image streams, templates loaded in accessible projects, template files, local docker images with name &quot;default-route-openshift-image-registry.apps.ocp.hpecloud.org/helloworld/helloworld&quot;
+</code></pre></div></div> <footer class="page-edit"><div class="edit-link"><a href="https://gitlab.com/gmcgoldrick/openshift-on-simplivity/edit/master/docs-src/post-deploy/build-deploy-app.md" target="_blank" rel="noopener noreferrer">Help us improve this page!</a> <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></div> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/OpenShift-on-SimpliVity/post-deploy/expose-registry.html" class="prev">Exposing the image registry</a></span> <span class="next"><a href="/OpenShift-on-SimpliVity/post-deploy/ldap.html">LDAP integration</a>→
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/OpenShift-on-SimpliVity/assets/js/app.1fbc0a9a.js" defer></script><script src="/OpenShift-on-SimpliVity/assets/js/2.b9bcc03f.js" defer></script><script src="/OpenShift-on-SimpliVity/assets/js/37.7e5778a6.js" defer></script>
+  </body>
+</html>

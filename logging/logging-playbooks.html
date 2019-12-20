@@ -3,26 +3,191 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Playbooks for cluster logging | Red Hat OpenShift Container Platform on HPE SimpliVity</title>
+    <title>Playbook for cluster logging | Red Hat OpenShift Container Platform on HPE SimpliVity</title>
     <meta name="description" content="">
     
     
-    <link rel="preload" href="/OpenShift-on-SimpliVity/assets/css/0.styles.807d69a1.css" as="style"><link rel="preload" href="/OpenShift-on-SimpliVity/assets/js/app.3e6c55a6.js" as="script"><link rel="preload" href="/OpenShift-on-SimpliVity/assets/js/2.277d45f3.js" as="script"><link rel="preload" href="/OpenShift-on-SimpliVity/assets/js/29.9f8ee577.js" as="script"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/10.40a6dc39.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/11.897d7237.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/12.a983c9e1.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/13.d4f61521.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/14.741bff84.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/15.3f79955a.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/16.a33b8dac.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/17.30045ab4.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/18.6d6df367.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/19.fc4092bf.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/20.9e832dd3.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/21.586780f2.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/22.d12a49a2.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/23.48104bc6.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/24.201854c8.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/25.26f28cc0.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/26.9644a70e.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/27.6d852609.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/28.8a30d6b2.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/3.4bd42e2f.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/30.3d9e3dae.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/31.2f555e9d.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/32.7da3608f.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/33.1328ab0d.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/34.1279b9aa.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/35.98e18359.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/36.ec3e417c.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/37.64782826.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/38.cb18649d.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/39.6f3cfac9.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/4.34e28561.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/40.4693ffaa.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/41.9c12f663.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/42.ab98bcd0.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/43.b5104dfd.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/44.f3ce8908.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/45.3521734f.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/46.2599aa88.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/47.58953e26.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/48.33f04e0a.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/49.a7a70ee0.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/5.21f30cd0.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/50.65126e2a.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/51.16e7ceb2.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/52.65bd7808.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/53.fd63e470.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/54.97f999d9.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/55.f823ee0f.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/56.87c2e607.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/57.09056cad.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/58.01f28032.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/59.991b1673.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/6.63e09d56.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/60.a64287ee.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/61.76ce5abb.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/7.e9e2e574.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/8.30b5b9b7.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/9.73359652.js">
+    <link rel="preload" href="/OpenShift-on-SimpliVity/assets/css/0.styles.807d69a1.css" as="style"><link rel="preload" href="/OpenShift-on-SimpliVity/assets/js/app.1fbc0a9a.js" as="script"><link rel="preload" href="/OpenShift-on-SimpliVity/assets/js/2.b9bcc03f.js" as="script"><link rel="preload" href="/OpenShift-on-SimpliVity/assets/js/6.f90d1042.js" as="script"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/10.6d3c3089.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/11.1f30642c.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/12.3599ae02.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/13.8884f7c0.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/14.98d195fd.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/15.f36e8d11.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/16.035bbdae.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/17.c916ed06.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/18.26149793.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/19.589833f2.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/20.8ed9ef4b.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/21.379cc40a.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/22.27ffdee4.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/23.0e96a78a.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/24.3da87bb8.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/25.10e84b57.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/26.d030bafa.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/27.ddf3160f.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/28.845a00c7.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/29.37e56e26.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/3.d30377a7.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/30.e5701e54.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/31.ea77b0b3.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/32.17722b48.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/33.a52e48ea.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/34.b0a57c11.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/35.8a12c86e.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/36.dd229b2e.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/37.7e5778a6.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/38.48d3249b.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/39.37199aae.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/4.259fd772.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/40.0f94a617.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/41.aa902df1.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/42.bcb2dda6.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/43.4b8bbc86.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/44.e65b7f88.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/45.2ec18ef5.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/46.ac8be670.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/47.cc03354f.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/48.0abafeb1.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/49.dd254d33.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/5.796ec272.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/50.c6a4f384.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/51.2bd65eb1.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/52.49595838.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/53.816799fa.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/54.d350b02b.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/55.204fd268.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/56.87e6bd34.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/57.f8102967.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/58.3361c527.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/59.8a5955fb.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/60.61e3388d.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/61.17e8a69e.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/62.21d9b819.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/63.47f89eeb.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/64.232cd3a4.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/65.f3788652.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/66.a313896a.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/67.67db3c98.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/68.74e6bfa4.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/69.82089181.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/7.7cc779cf.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/8.bbb83cef.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/assets/js/9.c99366f4.js">
     <link rel="stylesheet" href="/OpenShift-on-SimpliVity/assets/css/0.styles.807d69a1.css">
   </head>
   <body>
-    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/OpenShift-on-SimpliVity/" class="home-link router-link-active"><!----> <span class="site-name">Red Hat OpenShift Container Platform on HPE SimpliVity</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/OpenShift-on-SimpliVity/" class="nav-link">Home</a></div><div class="nav-item"><a href="/OpenShift-on-SimpliVity/blog/" class="nav-link">Blog</a></div> <a href="https://github.com/HewlettPackard/Openshift-on-Simplivity" target="_blank" rel="noopener noreferrer" class="repo-link">
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/OpenShift-on-SimpliVity/" class="home-link router-link-active"><!----> <span class="site-name">Red Hat OpenShift Container Platform on HPE SimpliVity</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/OpenShift-on-SimpliVity/" class="nav-link">Home</a></div><div class="nav-item"><a href="/OpenShift-on-SimpliVity/blog/" class="nav-link">Blog</a></div> <a href="https://github.com/HewlettPackard/OpenShift-on-SimpliVity" target="_blank" rel="noopener noreferrer" class="repo-link">
     Contribute!
-    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/OpenShift-on-SimpliVity/" class="nav-link">Home</a></div><div class="nav-item"><a href="/OpenShift-on-SimpliVity/blog/" class="nav-link">Blog</a></div> <a href="https://github.com/HewlettPackard/Openshift-on-Simplivity" target="_blank" rel="noopener noreferrer" class="repo-link">
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/OpenShift-on-SimpliVity/" class="nav-link">Home</a></div><div class="nav-item"><a href="/OpenShift-on-SimpliVity/blog/" class="nav-link">Blog</a></div> <a href="https://github.com/HewlettPackard/OpenShift-on-SimpliVity" target="_blank" rel="noopener noreferrer" class="repo-link">
     Contribute!
-    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav>  <ul class="sidebar-links"><li><a href="/OpenShift-on-SimpliVity/executive-summary.html" class="sidebar-link">Executive Summary</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Release Notes</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Solution overview</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Solution components</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Preparing the environment</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Configuring the solution</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Overview of the playbooks</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Post deployment tasks</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Configuring storage</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Adding worker nodes</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>Deploying cluster logging</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/OpenShift-on-SimpliVity/logging/logging-intro.html" class="sidebar-link">Introduction to cluster logging</a></li><li><a href="/OpenShift-on-SimpliVity/logging/logging-config.html" class="sidebar-link">Configuring cluster logging</a></li><li><a href="/OpenShift-on-SimpliVity/logging/logging-playbooks.html" class="active sidebar-link">Playbooks for cluster logging</a></li><li><a href="/OpenShift-on-SimpliVity/logging/logging-validate.html" class="sidebar-link">Validating the cluster logging deployment</a></li></ul></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Backup and restore</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Appendices</span> <span class="arrow right"></span></p> <!----></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="playbooks-for-cluster-logging"><a href="#playbooks-for-cluster-logging" aria-hidden="true" class="header-anchor">#</a> Playbooks for cluster logging</h1> <p>After making the customizations appropriate to your environment, deploy the EFK stack by changing to the directory where you cloned the OpenShift-on-SimpliVity repository and running the <code>playbooks/efk.yml</code> playbook:</p> <div class="language-bash extra-class"><pre class="language-text"><code>$ cd ~/OpenShift-on-SimpliVity
-
-$ ansible-playbook -i hosts playbooks/efk.yml
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav>  <ul class="sidebar-links"><li><a href="/OpenShift-on-SimpliVity/executive-summary.html" class="sidebar-link">Executive Summary</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Release Notes</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Solution overview</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Solution components</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Preparing the environment</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Configuring the solution</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Overview of the playbooks</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Post deployment tasks</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Configuring storage</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Adding worker nodes</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>Deploying cluster logging</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/OpenShift-on-SimpliVity/logging/logging-intro.html" class="sidebar-link">Introduction to cluster logging</a></li><li><a href="/OpenShift-on-SimpliVity/logging/logging-config.html" class="sidebar-link">Configuring cluster logging</a></li><li><a href="/OpenShift-on-SimpliVity/logging/logging-playbooks.html" class="active sidebar-link">Playbook for cluster logging</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/OpenShift-on-SimpliVity/logging/logging-playbooks.html#deploying-the-small-profile" class="sidebar-link">Deploying the small profile</a></li><li class="sidebar-sub-header"><a href="/OpenShift-on-SimpliVity/logging/logging-playbooks.html#migrating-from-the-small-to-the-large-profile" class="sidebar-link">Migrating from the small to the large profile</a></li></ul></li></ul></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Backup and restore</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Appendices</span> <span class="arrow right"></span></p> <!----></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="playbook-for-cluster-logging"><a href="#playbook-for-cluster-logging" aria-hidden="true" class="header-anchor">#</a> Playbook for cluster logging</h1> <p>Before running the playbook, you should log in as an admin user (either <code>kubeadmin</code> or
+any other user that has the <code>cluster_admin</code> role):</p> <div class="language- extra-class"><pre class="language-text"><code>$ export KUBECONFIG ~/.ocp/auth/kubeconfig
+$ oc login -u kubeadmin -p &lt;password&gt;
+$ cd ~/OpenShift-on-SimpliVity
+</code></pre></div><h2 id="deploying-the-small-profile"><a href="#deploying-the-small-profile" aria-hidden="true" class="header-anchor">#</a> Deploying the small profile</h2> <p>After making the customizations appropriate to your environment, deploy the <code>small</code> EFK stack. In the following example,
+the configuration specified:</p> <div class="language- extra-class"><pre class="language-text"><code>efk_channel=4.2
+efk_profile=&quot;small&quot;
+</code></pre></div><p>Run the <code>playbooks/efk.yml</code> playbook:</p> <div class="language- extra-class"><pre class="language-text"><code>$ ansible-playbook -i hosts playbooks/efk.yml
 </code></pre></div><p>The playbook takes approximately 1-2 minutes to complete.  However, it may take several additional minutes for the
-various Cluster Logging components to successfully deploy to the OpenShift Container Platform cluster.</p></div> <footer class="page-edit"><div class="edit-link"><a href="https://gitlab.com/gmcgoldrick/openshift-on-simplivity/edit/master/docs-src/logging/logging-playbooks.md" target="_blank" rel="noopener noreferrer">Help us improve this page!</a> <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></div> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+various Cluster Logging components to successfully deploy to the OpenShift Container Platform cluster.
+You can observere the logging pods being created:</p> <div class="language- extra-class"><pre class="language-text"><code>$ oc get pod -n openshift-logging
+
+NAME                                            READY   STATUS              RESTARTS   AGE
+cluster-logging-operator-789f86bc5d-52864       1/1     Running             0          36s
+elasticsearch-cdm-98n13kgt-1-68c7c496b7-7h58d   0/2     ContainerCreating   0          14s
+fluentd-4xxjm                                   0/1     ContainerCreating   0          13s
+fluentd-ds6v7                                   0/1     ContainerCreating   0          13s
+fluentd-gp6mn                                   0/1     ContainerCreating   0          13s
+fluentd-mv29x                                   0/1     ContainerCreating   0          13s
+fluentd-pnpgj                                   0/1     ContainerCreating   0          13s
+fluentd-sfkcl                                   0/1     ContainerCreating   0          13s
+kibana-6db8448b8c-whlfc                         0/2     ContainerCreating   0          14s
+</code></pre></div><p>Once the pods are ready, you can check the distribution of the pods across the nodes. Fluentd is deployed on each
+node in the cluster, while only one instance of Elasticsearch and one of Kibana is deployed.</p> <div class="language- extra-class"><pre class="language-text"><code>$ kubectl get pod -n openshift-logging -o custom-columns='Name:{.metadata.name},Node:{.spec.nodeName}'
+
+Name                                            Node
+cluster-logging-operator-789f86bc5d-52864       ocpp-worker2
+elasticsearch-cdm-98n13kgt-1-68c7c496b7-7h58d   ocpp-worker2
+fluentd-4xxjm                                   ocpp-master1
+fluentd-ds6v7                                   ocpp-worker2
+fluentd-gp6mn                                   ocpp-master2
+fluentd-mv29x                                   ocpp-master0
+fluentd-pnpgj                                   ocpp-worker1
+fluentd-sfkcl                                   ocpp-worker0
+kibana-6db8448b8c-whlfc                         ocpp-worker2
+</code></pre></div><p>You can see the mininim and maximum resource requirements for the small Elasticsearch pod, using the <code>oc describe pod</code>
+command, in the <code>Requests</code> and <code>Limits</code> fields:</p> <div class="language- extra-class"><pre class="language-text"><code>$ oc describe pod elasticsearch-cdm-98n13kgt-1-68c7c496b7-7h58d -n openshift-logging
+Name:               elasticsearch-cdm-98n13kgt-1-68c7c496b7-7h58d
+Namespace:          openshift-logging
+Priority:           0
+PriorityClassName:  &lt;none&gt;
+Node:               ocpp-worker2/10.15.163.215
+Start Time:         Fri, 13 Dec 2019 09:01:26 -0500
+...
+Status:             Running
+IP:                 10.129.2.9
+Controlled By:      ReplicaSet/elasticsearch-cdm-98n13kgt-1-68c7c496b7
+Containers:
+  elasticsearch:
+    Container ID:   cri-o://7baffe9ccc070660805a8fe42d6f62564420b893aa547b570b3342944a10ca43
+    Image:          registry.redhat.io/openshift4/ose-logging-elasticsearch5@sha256:ddcead06ec96b837804f8299d6cbd6ba33e46c9555cdc96a7aba8c820f9bd29f
+    Image ID:       registry.redhat.io/openshift4/ose-logging-elasticsearch5@sha256:ddcead06ec96b837804f8299d6cbd6ba33e46c9555cdc96a7aba8c820f9bd29f
+    Ports:          9300/TCP, 9200/TCP
+    Host Ports:     0/TCP, 0/TCP
+    State:          Running
+      Started:      Fri, 13 Dec 2019 09:02:44 -0500
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      memory:  2Gi
+    Requests:
+      cpu:      200m
+      memory:   2Gi
+</code></pre></div><p>To view the Kibana dashboard, determine the route:</p> <div class="language- extra-class"><pre class="language-text"><code>$ oc get route -n openshift-logging
+
+NAME     HOST/PORT                                             PATH   SERVICES   PORT    TERMINATION          WILDCARD
+kibana   kibana-openshift-logging.apps.ocpproxy.hpecloud.org          kibana     &lt;all&gt;   reencrypt/Redirect   None
+</code></pre></div><p>In your browser, log in and view the Kibana dashboard using the returned route, in this case,
+<code>https://kibana-openshift-logging.apps.ocpproxy.hpecloud.org</code>.</p> <p><img src="/OpenShift-on-SimpliVity/assets/img/kibana-efk-hostname.aaa615c8.png" alt="&quot; &quot;" title="Figure.  Kibana dashboard"></p> <p><strong>Figure. Kibana dashboard</strong></p> <h2 id="migrating-from-the-small-to-the-large-profile"><a href="#migrating-from-the-small-to-the-large-profile" aria-hidden="true" class="header-anchor">#</a> Migrating from the small to the large profile</h2> <p>It is possible to expand this initial <code>small</code> profile to the <code>large</code> profile using the same playbook. You will need to add
+extra worker nodes that have the capacity to accept the larger workload. You can add the new nodes before or after you use
+the playbook to do the migration, as the result will be the same. In the following example, the playbook is run before the
+addition of new nodes, for illustration purposes.</p> <p>Re-run the playbook, but this time specify the <code>large</code> profile. As an alternative to updating your configuration file,
+you can set the value on the command line:</p> <div class="language- extra-class"><pre class="language-text"><code>$ ansible-playbook -i hosts playbooks/efk.yml -e efk_profile=large
+</code></pre></div><p>Notice how there are now 2 Elasticsearch pods in the <code>pending</code> state as the Kubernetes scheduler cannot find any nodes
+that can fulfil the larger minimum requirements (16 GB memory) for the new Elasticsearch pods.</p> <div class="language- extra-class"><pre class="language-text"><code>$ kubectl get pod -n openshift-logging
+NAME                                            READY   STATUS      RESTARTS   AGE
+cluster-logging-operator-789f86bc5d-52864       1/1     Running     0          22m
+curator-1576246800-fbwph                        0/1     Completed   0          3m25s
+elasticsearch-cdm-98n13kgt-1-68c7c496b7-7h58d   2/2     Running     0          22m
+elasticsearch-cdm-98n13kgt-2-77b48d47dd-kszvv   0/2     Pending     0          4m39s
+elasticsearch-cdm-98n13kgt-3-ff8844764-2pjcd    0/2     Pending     0          4m38s
+fluentd-4xxjm                                   1/1     Running     0          22m
+fluentd-ds6v7                                   1/1     Running     0          22m
+fluentd-gp6mn                                   1/1     Running     0          22m
+fluentd-mv29x                                   1/1     Running     0          22m
+fluentd-pnpgj                                   1/1     Running     0          22m
+fluentd-sfkcl                                   1/1     Running     0          22m
+kibana-6db8448b8c-ff8m7                         2/2     Running     0          4m39s
+kibana-6db8448b8c-whlfc                         2/2     Running     0          22m
+</code></pre></div><p>You can use the <code>oc describe pod</code> command to determine that the new Elasticsearch pods cannot be scheduled due to
+the larger memory requirements:</p> <div class="language- extra-class"><pre class="language-text"><code>$ oc describe pod elasticsearch-cdm-98n13kgt-2-77b48d47dd-kszvv -n openshift-logging | tail
+
+QoS Class:       Burstable
+Node-Selectors:  kubernetes.io/os=linux
+Tolerations:     node.kubernetes.io/disk-pressure:NoSchedule
+                 node.kubernetes.io/memory-pressure:NoSchedule
+                 node.kubernetes.io/not-ready:NoExecute for 300s
+                 node.kubernetes.io/unreachable:NoExecute for 300s
+Events:
+  Type     Reason            Age                  From               Message
+  ----     ------            ----                 ----               -------
+  Warning  FailedScheduling  82s (x5 over 3m59s)  default-scheduler  0/5 nodes are available: 5 Insufficient memory.
+</code></pre></div><p>Now add extra worker nodes to your cluster, setting the <code>cpu</code> and <code>ram</code> attributes to sufficiently large values.
+In your hosts file, add new entries in the <code>[rhcos_worker]</code> group:</p> <div class="language- extra-class"><pre class="language-text"><code>[rhcos_worker]
+...
+hpe-worker5   ansible_host=10.15.155.215  cpus=8 ram=32768  # Larger worker node for EFK
+hpe-worker6   ansible_host=10.15.155.216  cpus=8 ram=32768  # Larger worker node for EFK
+hpe-worker7   ansible_host=10.15.155.217  cpus=8 ram=32768  # Larger worker node for EFK
+</code></pre></div><p>In the above example, each of these large CoreOS worker nodes will be allocated 8 virtual CPU cores and 32GB of RAM.
+These values override the default limits of 4 virtual CPU cores and 16GB RAM defined in the <code>group_vars/worker.yml</code> file.</p> <p>Deploy the additional, large worker nodes using the procedure described in the section <a href="../worker-nodes/coreos">Deploying CoreOS worker nodes</a>.</p> <div class="language- extra-class"><pre class="language-text"><code>$ ansible-playbook -i hosts playbooks/scale.yml
+</code></pre></div><p>Check that the new nodes are ready, in this case <code>ocpp-worker5</code>, <code>ocpp-worker6</code> and <code>ocpp-worker7</code>.</p> <div class="language- extra-class"><pre class="language-text"><code>$ oc get nodes
+
+NAME           STATUSS    AGE     VERSION
+ocpp-master0   Ready    master   30h     v1.14.6+31a56cf75
+ocpp-master1   Ready    master   30h     v1.14.6+31a56cf75
+ocpp-master2   Ready    master   30h     v1.14.6+31a56cf75
+ocpp-worker0   Ready    worker   30h     v1.14.6+31a56cf75
+ocpp-worker1   Ready    worker   30h     v1.14.6+31a56cf75
+ocpp-worker2   Ready    worker   30h     v1.14.6+31a56cf75
+ocpp-worker5   Ready    worker   1m      v1.14.6+31a56cf75
+ocpp-worker6   Ready    worker   1m      v1.14.6+31a56cf75
+ocpp-worker7   Ready    worker   1m      v1.14.6+31a56cf75
+</code></pre></div><p>Once the pods are ready, check  how the Elasticsearch pods are distributed across the new nodes:</p> <div class="language- extra-class"><pre class="language-text"><code>$ kubectl get pod -n openshift-logging -o custom-columns='Name:{.metadata.name},Node:{.spec.nodeName}'
+
+Name                                            Node
+cluster-logging-operator-789f86bc5d-52864       ocpp-worker2
+curator-1576248600-cscbg                        ocpp-worker7
+elasticsearch-cdm-98n13kgt-1-59477757c4-v8cxc   ocpp-worker7
+elasticsearch-cdm-98n13kgt-2-77b48d47dd-kszvv   ocpp-worker5
+elasticsearch-cdm-98n13kgt-3-ff8844764-2pjcd    ocpp-worker6
+fluentd-4xxjm                                   ocpp-master1
+fluentd-ds6v7                                   ocpp-worker2
+fluentd-gp6mn                                   ocpp-master2
+fluentd-lggqs                                   ocpp-worker5
+fluentd-mv29x                                   ocpp-master0
+fluentd-pnpgj                                   ocpp-worker1
+fluentd-r2s4l                                   ocpp-worker7
+fluentd-sfkcl                                   ocpp-worker0
+fluentd-zztmq                                   ocpp-worker6
+kibana-6db8448b8c-ff8m7                         ocpp-worker0
+kibana-6db8448b8c-whlfc                         ocpp-worker2
+</code></pre></div><p>The two pending Elasticsearch pods have been scheduled on two of the new larger nodes, <code>ocpp-worker5</code> and <code>ocpp-worker6</code>. The original Elasticsearch pod is terminated and restarted on the third of the larger nodes, <code>ocpp-worker7</code>.</p> <p>If you now examine the Elasticsearch pod on  <code>ocpp-worker7</code>, you will see that the minimum and maximum
+resource requirements have changed, as shown in the <code>Requests</code> and <code>Limits</code> fields:</p> <div class="language- extra-class"><pre class="language-text"><code>$ oc describe pod elasticsearch-cdm-98n13kgt-1-59477757c4-m8m5w -n openshift-logging                                  Name:               elasticsearch-cdm-98n13kgt-1-59477757c4-m8m5w
+
+Namespace:          openshift-logging
+Priority:           0
+PriorityClassName:  &lt;none&gt;
+Node:               ocpp-worker7/10.15.163.220
+Start Time:         Fri, 13 Dec 2019 10:04:13 -0500
+...
+Status:             Running
+IP:                 10.130.2.7
+Controlled By:      ReplicaSet/elasticsearch-cdm-98n13kgt-1-59477757c4
+Containers:
+  elasticsearch:
+    Container ID:   cri-o://42e8169e2c2bd3acbd2b059a12ee33f2fb85a42eb15d36a4a2faf6c6ab13ef3d
+    Image:          registry.redhat.io/openshift4/ose-logging-elasticsearch5@sha256:ddcead06ec96b837804f8299d6cbd6ba33e46c9555cdc96a7aba8c820f9bd29f
+    Image ID:       registry.redhat.io/openshift4/ose-logging-elasticsearch5@sha256:ddcead06ec96b837804f8299d6cbd6ba33e46c9555cdc96a7aba8c820f9bd29f
+    Ports:          9300/TCP, 9200/TCP
+    Host Ports:     0/TCP, 0/TCP
+    State:          Running
+      Started:      Fri, 13 Dec 2019 10:04:38 -0500
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      memory:  16Gi
+    Requests:
+      cpu:      1
+      memory:   16Gi
+</code></pre></div></div> <footer class="page-edit"><div class="edit-link"><a href="https://gitlab.com/gmcgoldrick/openshift-on-simplivity/edit/master/docs-src/logging/logging-playbooks.md" target="_blank" rel="noopener noreferrer">Help us improve this page!</a> <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></div> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
       ←
-      <a href="/OpenShift-on-SimpliVity/logging/logging-config.html" class="prev">Configuring cluster logging</a></span> <span class="next"><a href="/OpenShift-on-SimpliVity/logging/logging-validate.html">Validating the cluster logging deployment</a>→
+      <a href="/OpenShift-on-SimpliVity/logging/logging-config.html" class="prev">Configuring cluster logging</a></span> <span class="next"><a href="/OpenShift-on-SimpliVity/backup-restore/backup-restore-intro.html">Introduction to backup and restore</a>→
     </span></p></div> </main></div><div class="global-ui"></div></div>
-    <script src="/OpenShift-on-SimpliVity/assets/js/app.3e6c55a6.js" defer></script><script src="/OpenShift-on-SimpliVity/assets/js/2.277d45f3.js" defer></script><script src="/OpenShift-on-SimpliVity/assets/js/29.9f8ee577.js" defer></script>
+    <script src="/OpenShift-on-SimpliVity/assets/js/app.1fbc0a9a.js" defer></script><script src="/OpenShift-on-SimpliVity/assets/js/2.b9bcc03f.js" defer></script><script src="/OpenShift-on-SimpliVity/assets/js/6.f90d1042.js" defer></script>
   </body>
 </html>
