@@ -72,7 +72,7 @@ jobs:
         
     - run: |
         pwd
-        cp -Rf PREVIEW/ dest/
+        cp -Rf openshift-docs-output/ dest/
         cd dest
         pwd
         ls
