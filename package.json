@@ -1,0 +1,21 @@
+{
+  "name": "test1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docs:build": "vuepress build docs-src",
+    "docs:build-v10": "vuepress build docs-src-v10",
+    "docs:build-v11": "vuepress build docs-src-v11"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "moment": "^2.24.0",
+    "vuepress": "^1.0.4",
+    "vuepress-plugin-export": "^0.2.0",
+    "yaml-front-matter": "^4.0.0"
+  }
+}

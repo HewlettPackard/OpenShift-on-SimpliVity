@@ -1,8 +1,0 @@
-[Global]
-cluster-id = "{{ vcenter_cluster }}"
-[VirtualCenter "{{ vcenter_hostname }}"]
-insecure-flag = "{{  not vcenter_validate_certs }}"
-user = "{{ vcenter_username }}"
-password = "{{ vault.vcenter_password }}"
-port = "443"
-datacenters = "{{ datacenter }}"
