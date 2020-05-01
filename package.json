@@ -14,7 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "moment": "^2.24.0",
-    "vuepress": "^1.0.4",
+    "vuepress": "^1.4.1",
     "vuepress-plugin-export": "^0.2.0",
     "yaml-front-matter": "^4.0.0"
   }
