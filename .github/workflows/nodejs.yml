@@ -72,7 +72,7 @@ jobs:
         
     - run: |
         pwd
-        cp -Rf MVI1/ dest/
+        cp -Rf PREVIEW/ dest/
         cd dest
         pwd
         ls
