@@ -1,0 +1,87 @@
+# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Build VuePress docs
+
+on:
+  push:
+    branches: [ docs-dev ]
+  pull_request:
+    branches: [ docs-dev ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [10.x]
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        ref: docs-dev
+        path: source
+
+    - run: |
+        pwd
+        ls
+        cd source
+        pwd
+        ls
+
+
+
+    - uses: actions/checkout@v2
+      with:
+        ref: gh-pages 
+        path: dest
+
+    - run: |
+        pwd
+        ls
+        cd dest
+        pwd
+        ls
+
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - run: |
+        cd source
+        pwd
+        npm install
+
+    - shell: bash
+      env: 
+        VUE_APP_VSSUE_CLIENTID: ${{ secrets.VUE_APP_VSSUE_CLIENTID }}
+        VUE_APP_VSSUE_CLIENTSECRET: ${{ secrets.VUE_APP_VSSUE_CLIENTSECRET }}
+      run:  |
+        cd source
+        pwd
+        npm run docs:build
+        ls
+        cd ..
+        pwd
+        ls
+
+        
+    - run: |
+        pwd
+        cp -Rf PREVIEW/ dest/
+        cd dest
+        pwd
+        ls
+        git status
+        git config --local user.email "action@github.com"        
+        git config --local user.name "GitHub Action"
+
+        git status
+        git add .
+        git commit -m "update docs"
+        git push
+        
