@@ -1,7 +1,7 @@
 module.exports = {
   title: 'Red Hat OpenShift Container Platform on HPE SimpliVity',
-  dest: '../PREVIEW/',
-  base: '/OpenShift-on-SimpliVity/PREVIEW/',  
+  dest: '../openshift-docs-output/',
+  base: '/OpenShift-on-SimpliVity/',  
   //base: '/openshift-on-simplivity/',   
   plugins: ['vuepress-plugin-export'], 
   themeConfig: {

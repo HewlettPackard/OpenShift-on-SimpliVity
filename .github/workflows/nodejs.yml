@@ -6,8 +6,8 @@ name: Build VuePress docs
 on:
   push:
     branches: [ docs-dev ]
-  pull_request:
-    branches: [ docs-dev ]
+#  pull_request:
+#    branches: [ docs-dev ]
 
 jobs:
   build:
@@ -72,7 +72,7 @@ jobs:
         
     - run: |
         pwd
-        cp -Rf PREVIEW/ dest/
+        cp -Rf openshift-docs-output/. dest/
         cd dest
         pwd
         ls
