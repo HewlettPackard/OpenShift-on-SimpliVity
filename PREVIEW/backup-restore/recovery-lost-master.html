@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Recovering from lost master hosts | Red Hat OpenShift Container Platform on HPE SimpliVity</title>
+    <meta name="description" content="">
+    
+    
+    <link rel="preload" href="/OpenShift-on-SimpliVity/PREVIEW/assets/css/0.styles.333e3a6f.css" as="style"><link rel="preload" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/app.8040082a.js" as="script"><link rel="preload" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/2.a87ca1fa.js" as="script"><link rel="preload" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/5.0bb19590.js" as="script"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/10.ecd879d9.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/11.19e22bbd.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/12.41df12fb.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/13.1c3a5037.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/14.e40f7d38.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/15.eccd2dea.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/16.46a8ffac.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/17.cbd708e6.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/18.3484acac.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/19.9dad2352.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/20.e37e5d0a.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/21.f5ba60d9.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/22.0c9b75e3.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/23.0d845b40.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/24.b83cd6f3.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/25.2c85b2be.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/26.8aebf371.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/27.1b60a605.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/28.141a0e00.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/29.a733351d.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/3.9d253f05.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/30.6e10c08c.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/31.0117b0e7.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/32.39b6dbe1.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/33.9334502b.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/34.0d13dbe7.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/35.adfe3eb2.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/36.8562ad7a.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/37.a220821f.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/38.106180b9.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/39.5d47df4c.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/4.0c8cc07f.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/40.35902864.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/41.db80a4bf.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/42.0de81410.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/43.573a3adf.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/44.eb040d70.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/45.40264bac.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/46.567fa53c.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/47.2e5f3952.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/48.92a54ec4.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/49.808e2d42.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/50.b9ddd89c.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/51.8ffd9d7b.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/52.2c880ca7.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/53.821218ed.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/54.15a8df54.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/55.43bc625d.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/56.836187fe.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/57.c970dee6.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/58.b5b3cd89.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/59.71d184ef.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/6.f4c83023.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/60.40d1dc91.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/61.dfc23234.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/62.88a68bfb.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/63.d7aa3a24.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/64.49e3a391.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/65.8be6fd54.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/66.8a736dda.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/67.79304fba.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/68.ca1e550a.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/69.fa1ba00f.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/7.b25947aa.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/8.deb8bd45.js"><link rel="prefetch" href="/OpenShift-on-SimpliVity/PREVIEW/assets/js/9.9cd6eb80.js">
+    <link rel="stylesheet" href="/OpenShift-on-SimpliVity/PREVIEW/assets/css/0.styles.333e3a6f.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/OpenShift-on-SimpliVity/PREVIEW/" class="home-link router-link-active"><!----> <span class="site-name">Red Hat OpenShift Container Platform on HPE SimpliVity</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/OpenShift-on-SimpliVity/PREVIEW/" class="nav-link">Home</a></div><div class="nav-item"><a href="/OpenShift-on-SimpliVity/PREVIEW/blog/" class="nav-link">Blog</a></div> <a href="https://github.com/HewlettPackard/OpenShift-on-SimpliVity" target="_blank" rel="noopener noreferrer" class="repo-link">
+    Contribute!
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/OpenShift-on-SimpliVity/PREVIEW/" class="nav-link">Home</a></div><div class="nav-item"><a href="/OpenShift-on-SimpliVity/PREVIEW/blog/" class="nav-link">Blog</a></div> <a href="https://github.com/HewlettPackard/OpenShift-on-SimpliVity" target="_blank" rel="noopener noreferrer" class="repo-link">
+    Contribute!
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav>  <ul class="sidebar-links"><li><a href="/OpenShift-on-SimpliVity/PREVIEW/executive-summary.html" class="sidebar-link">Executive Summary</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Release Notes</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Solution overview</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Solution components</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Preparing the environment</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Configuring the solution</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Overview of the playbooks</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Post deployment tasks</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Configuring storage</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Adding worker nodes</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Deploying cluster logging</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>Backup and restore</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/OpenShift-on-SimpliVity/PREVIEW/backup-restore/backup-restore-intro.html" class="sidebar-link">Introduction to backup and restore</a></li><li><a href="/OpenShift-on-SimpliVity/PREVIEW/backup-restore/backup.html" class="sidebar-link">Backup</a></li><li><a href="/OpenShift-on-SimpliVity/PREVIEW/backup-restore/recovery-lost-master.html" class="active sidebar-link">Recovering from lost master hosts</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/OpenShift-on-SimpliVity/PREVIEW/backup-restore/recovery-lost-master.html#prerequisites" class="sidebar-link">Prerequisites</a></li><li class="sidebar-sub-header"><a href="/OpenShift-on-SimpliVity/PREVIEW/backup-restore/recovery-lost-master.html#loss-of-two-master-nodes" class="sidebar-link">Loss of two master nodes</a></li><li class="sidebar-sub-header"><a href="/OpenShift-on-SimpliVity/PREVIEW/backup-restore/recovery-lost-master.html#restore-etcd-quorum-on-the-remaining-master" class="sidebar-link">Restore etcd quorum on the remaining master</a></li><li class="sidebar-sub-header"><a href="/OpenShift-on-SimpliVity/PREVIEW/backup-restore/recovery-lost-master.html#redeploy-the-two-master-nodes" class="sidebar-link">Redeploy the two master nodes</a></li><li class="sidebar-sub-header"><a href="/OpenShift-on-SimpliVity/PREVIEW/backup-restore/recovery-lost-master.html#grow-etcd-to-full-membership" class="sidebar-link">Grow etcd to full membership.</a></li><li class="sidebar-sub-header"><a href="/OpenShift-on-SimpliVity/PREVIEW/backup-restore/recovery-lost-master.html#add-the-restored-master-hosts-to-the-etcd-cluster" class="sidebar-link">Add the restored master hosts to the etcd cluster</a></li><li class="sidebar-sub-header"><a href="/OpenShift-on-SimpliVity/PREVIEW/backup-restore/recovery-lost-master.html#verify-master-host-has-been-added-to-the-etcd-member-list" class="sidebar-link">Verify master host has been added to the etcd member list</a></li></ul></li></ul></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Appendices</span> <span class="arrow right"></span></p> <!----></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="recovering-from-lost-master-hosts"><a href="#recovering-from-lost-master-hosts" aria-hidden="true" class="header-anchor">#</a> Recovering from lost master hosts</h1> <p>It is possible to use the etcd backup to recover from the scenario where one or more master nodes have been lost. This includes situations where a majority of master hosts have been lost, leading to etcd quorum loss and the cluster going offline. The following procedure assumes that you have at least one healthy master host.</p> <div class="warning custom-block"><p>This procedure can be used to validate that your etcd backup has succeeded, but it is highly invasive in that it
+requires you to destroy master nodes and would render your cluster unusable for the duration of the procedure.</p></div> <p>The information in this section is taken from <a href="https://docs.openshift.com/container-platform/4.2/backup_and_restore/disaster_recovery/scenario-1-infra-recovery.html" target="_blank" rel="noopener noreferrer">https://docs.openshift.com/container-platform/4.2/backup_and_restore/disaster_recovery/scenario-1-infra-recovery.html<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a>. Please check the latest version of the OpenShift documentation for any updates to this procedure.</p> <h2 id="prerequisites"><a href="#prerequisites" aria-hidden="true" class="header-anchor">#</a> Prerequisites</h2> <ul><li><p>Ensure  that you can access the first master node <code>ocp-master0</code> using <code>ssh</code></p></li> <li><p>Ensure that you have taken a backup, as outlined in the preceding section</p> <div class="language-bash extra-class"><pre class="language-bash"><code>$ <span class="token function">ls</span> -al  ~/backups/
+
+-rw-rw-r--.  <span class="token number">1</span> core core   <span class="token number">625040</span> Sep <span class="token number">22</span> 09:18 backup_2019_09_22_131749.misc.tgz
+-rw-rw-r--.  <span class="token number">1</span> core core <span class="token number">21732338</span> Sep <span class="token number">22</span> 09:18 backup_2019_09_22_131749.snapshots.tgz
+</code></pre></div></li></ul> <p>Unpack the snapshots:</p> <div class="language-bash extra-class"><pre class="language-bash"><code>$ <span class="token builtin class-name">cd</span> ~/backups
+$ <span class="token function">tar</span> -xvf backup_2019_09_22_131749.snapshots.tgz
+
+ocp-master1/
+ocp-master0/
+ocp-master2/
+ocp-master1/assets/
+ocp-master1/assets/backup/
+ocp-master1/assets/backup/snapshot.db
+ocp-master1/assets/backup/etcd-member.yaml
+ocp-master1/assets/backup/etcd-client.key
+ocp-master1/assets/backup/etcd-client.crt
+ocp-master1/assets/backup/etcd-ca-bundle.crt
+ocp-master0/assets/
+ocp-master0/assets/backup/
+ocp-master0/assets/backup/snapshot.db
+ocp-master0/assets/backup/etcd-member.yaml
+ocp-master0/assets/backup/etcd-client.key
+ocp-master0/assets/backup/etcd-client.crt
+ocp-master0/assets/backup/etcd-ca-bundle.crt
+ocp-master2/assets/
+ocp-master2/assets/backup/
+ocp-master2/assets/backup/snapshot.db
+ocp-master2/assets/backup/etcd-member.yaml
+ocp-master2/assets/backup/etcd-client.key
+ocp-master2/assets/backup/etcd-client.crt
+ocp-master2/assets/backup/etcd-ca-bundle.crt
+</code></pre></div><h2 id="loss-of-two-master-nodes"><a href="#loss-of-two-master-nodes" aria-hidden="true" class="header-anchor">#</a> Loss of two master nodes</h2> <p>If you lose (or purposely delete) two master nodes, etcd quorum will be lost and this will lead to the cluster going offline. If you the try to run <code>oc</code> commands, they will not respond:</p> <div class="language- extra-class"><pre class="language-text"><code>$ oc get nodes
+</code></pre></div><p>If you view the cluster health in the web console, you will see that the control plane status is unknown.</p> <p><img src="/OpenShift-on-SimpliVity/PREVIEW/assets/img/cluster-health.b50d2961.png" alt="&quot;Cluster health&quot;" title="Figure. Cluster health"></p> <p><strong>Figure. Cluster health</strong></p> <h2 id="restore-etcd-quorum-on-the-remaining-master"><a href="#restore-etcd-quorum-on-the-remaining-master" aria-hidden="true" class="header-anchor">#</a> Restore etcd quorum on the remaining master</h2> <p>Copy a snapshot from the backup to the remaining master:</p> <div class="language-bash extra-class"><pre class="language-bash"><code>$ <span class="token function">scp</span> ~/backups/ocp-master0/assets/backup/snapshot.db core@ocp-master0:~/
+</code></pre></div><p>Connect to the remaining master <code>ocp-master0</code></p> <div class="language-bash extra-class"><pre class="language-bash"><code>$ <span class="token function">ssh</span>  ocp-master0
+
+Warning: Permanently added <span class="token string">'ocp-master0,10.15.155.210'</span> <span class="token punctuation">(</span>ECDSA<span class="token punctuation">)</span> to the list of known hosts.
+Red Hat Enterprise Linux CoreOS <span class="token number">410.8</span>.20190830.0
+WARNING: Direct SSH access to machines is not recommended.
+
+---
+Last login: Sun Sep <span class="token number">22</span> <span class="token number">13</span>:18:33 <span class="token number">2019</span> from <span class="token number">10.15</span>.155.7
+<span class="token punctuation">[</span>core@ocp-master0 ~<span class="token punctuation">]</span>$
+
+</code></pre></div><p>Set the <code>INITIAL_CLUSTER</code> variable to the single remaining member, in the format of <code>&lt;name&gt;=&lt;url&gt;</code>. First,
+you need to determine the <code>name</code> and <code>url</code> to use:</p> <div class="language-bash extra-class"><pre class="language-bash"><code>$ <span class="token assign-left variable">ETCDCTL</span><span class="token operator">=</span>/var/home/core/assets/bin/etcdctl
+$ <span class="token assign-left variable">ASSET_DIR</span><span class="token operator">=</span>/home/core/assets/
+$ <span class="token function">sudo</span> <span class="token assign-left variable">ETCDCTL_API</span><span class="token operator">=</span><span class="token number">3</span> <span class="token variable">${ETCDCTL}</span> --cert <span class="token variable">$ASSET_DIR</span>/backup/etcd-client.crt --key <span class="token variable">$ASSET_DIR</span>/backup/etcd-client.key --cacert <span class="token variable">$ASSET_DIR</span>/backup/etcd-ca-bundle.crt member list
+
+1daf5dbed09ea2d3, started, etcd-member-ocp-master2, https://etcd-2.ocp.hpecloud.org:2380, https://10.15.155.212:2379
+333583b05ff2cf8a, started, etcd-member-ocp-master0, https://etcd-0.ocp.hpecloud.org:2380, https://10.15.155.210:2379
+4be0034d015274a2, started, etcd-member-ocp-master1, https://etcd-1.ocp.hpecloud.org:2380, https://10.15.155.211:2379
+</code></pre></div><p>Now, set the <code>INITIAL_CLUSTER</code> environment variable using the information gathered for <code>ocp-master0</code>:</p> <div class="language-bash extra-class"><pre class="language-bash"><code>$ <span class="token builtin class-name">export</span> <span class="token assign-left variable">INITIAL_CLUSTER</span><span class="token operator">=</span><span class="token string">&quot;etcd-member-ocp-master0.ocp.hpecloud.org=https://etcd-0.ocp.hpecloud.org:2380&quot;</span>
+</code></pre></div><p>Run the <code>etcd-snapshot-restore.sh</code> script, using the copied snapshot and the member list, in this case, just the <code>ocp-master0</code> member:</p> <div class="language-bash extra-class"><pre class="language-bash"><code>$ <span class="token function">sudo</span> /usr/local/bin/etcd-snapshot-restore.sh /home/core/snapshot.db <span class="token variable">$INITIAL_CLUSTER</span>
+
+
+Downloading etcdctl binary<span class="token punctuation">..</span>
+etcdctl version: <span class="token number">3.3</span>.10
+API version: <span class="token number">3.3</span>
+etcd-member.yaml found <span class="token keyword">in</span> ./assets/backup/
+Stopping all static pods<span class="token punctuation">..</span>
+<span class="token punctuation">..</span>stopping etcd-member.yaml
+<span class="token punctuation">..</span>stopping kube-scheduler-pod.yaml
+<span class="token punctuation">..</span>stopping kube-controller-manager-pod.yaml
+<span class="token punctuation">..</span>stopping kube-apiserver-pod.yaml
+Stopping etcd<span class="token punctuation">..</span>
+Waiting <span class="token keyword">for</span> etcd-member to stop
+Stopping kubelet<span class="token punctuation">..</span>
+Stopping all containers<span class="token punctuation">..</span>
+019708c6aff244dbc47f90cec65c4823a93b8e3fe731f3a5e8f3cdedb0dc37ed
+81eed61df3ee87bd960602f23e598ab48b43a6cb5610f4ecfed709f1e1b67119
+<span class="token punctuation">..</span>.
+Backing up etcd data-dir<span class="token punctuation">..</span>
+Removing etcd data-dir /var/lib/etcd
+Restoring etcd member etcd-member-ocp-master0.ocp.hpecloud.org from snapshot<span class="token punctuation">..</span>
+<span class="token number">2019</span>-09-22 <span class="token number">14</span>:18:21.903011 I <span class="token operator">|</span> pkg/netutil: resolving etcd-0.ocp.hpecloud.org:2380 to <span class="token number">10.15</span>.155.210:2380
+<span class="token number">2019</span>-09-22 <span class="token number">14</span>:18:22.154363 I <span class="token operator">|</span> mvcc: restore compact to <span class="token number">713621</span>
+<span class="token number">2019</span>-09-22 <span class="token number">14</span>:18:22.207764 I <span class="token operator">|</span> etcdserver/membership: added member 1c5a549c9f4e67b5 <span class="token punctuation">[</span>https://etcd-0.ocp.hpecloud.org:2380<span class="token punctuation">]</span> to cluster 11eeb64feb9a2071
+Starting static pods<span class="token punctuation">..</span>
+<span class="token punctuation">..</span>starting etcd-member.yaml
+<span class="token punctuation">..</span>starting kube-scheduler-pod.yaml
+<span class="token punctuation">..</span>starting kube-controller-manager-pod.yaml
+<span class="token punctuation">..</span>starting kube-apiserver-pod.yaml
+Starting kubelet<span class="token punctuation">..</span>
+</code></pre></div><p>On your Ansible controller node, check the nodes in your cluster:</p> <div class="language-bash extra-class"><pre class="language-bash"><code>$ oc get nodes
+
+NAME          STATUS     ROLES    AGE   VERSION
+ocp-master0   Ready      master   45h   v1.14.6+31a56cf75
+ocp-master1   NotReady   master   45h   v1.14.6+31a56cf75
+ocp-master2   NotReady   master   45h   v1.14.6+31a56cf75
+ocp-worker0   Ready      worker   45h   v1.14.6+31a56cf75
+ocp-worker1   Ready      worker   45h   v1.14.6+31a56cf75
+</code></pre></div><p>You need to explicitly delete the <code>NotReady</code> nodes <code>ocp-master1</code> and <code>ocp-master2</code>:</p> <div class="language-bash extra-class"><pre class="language-bash"><code>$ oc delete node ocp-master1
+$ oc delete node ocp-master2
+
+$ oc get nodes
+
+NAME          STATUS   ROLES    AGE   VERSION
+ocp-master0   Ready    master   45h   v1.14.6+31a56cf75
+ocp-worker0   Ready    worker   45h   v1.14.6+31a56cf75
+ocp-worker1   Ready    worker   45h   v1.14.6+31a56cf75
+</code></pre></div><h2 id="redeploy-the-two-master-nodes"><a href="#redeploy-the-two-master-nodes" aria-hidden="true" class="header-anchor">#</a> Redeploy the two master nodes</h2> <p>You need to re-build the nodes for <code>ocp-master1</code> and <code>ocp-master2</code>. You must ensure that your <code>/etc/hosts</code>, DNS, and load balancers are modified appropriately.</p> <h2 id="grow-etcd-to-full-membership"><a href="#grow-etcd-to-full-membership" aria-hidden="true" class="header-anchor">#</a> Grow etcd to full membership.</h2> <p>Set up a temporary etcd certificate signer service on your master node that is an etcd member, in this case, <code>ocp-master0</code>. Connect to the master node and then log in to your cluster as a <code>cluster-admin</code> user using the following command:</p> <div class="language-bash extra-class"><pre class="language-bash"><code>$ oc login https://localhost:6443
+
+The server uses a certificate signed by an unknown authority.
+You can bypass the certificate check, but any data you send to the server could be intercepted by others.
+Use insecure connections? <span class="token punctuation">(</span>y/n<span class="token punctuation">)</span>: y
+
+Authentication required <span class="token keyword">for</span> https://localhost:6443 <span class="token punctuation">(</span>openshift<span class="token punctuation">)</span>
+Username: kubeadmin
+Password:  LX65K-DXmpC-P4Hpo-W35au
+Login successful.
+</code></pre></div><p>Obtain the pull specification for the <code>kube-etcd-signer-server</code> image:</p> <div class="language-bash extra-class"><pre class="language-bash"><code>$ <span class="token builtin class-name">export</span> <span class="token assign-left variable">KUBE_ETCD_SIGNER_SERVER</span><span class="token operator">=</span><span class="token variable"><span class="token variable">$(</span><span class="token function">sudo</span> oc adm release info --image-for kube-etcd-signer-server --registry-config<span class="token operator">=</span>/var/lib/kubelet/config.json --config<span class="token operator">=</span>/home/core/.kube/config<span class="token variable">)</span></span>
+</code></pre></div><p>Run the <code>tokenize-signer.sh</code> script to generate the required files:</p> <div class="language-bash extra-class"><pre class="language-bash"><code>$ <span class="token function">sudo</span> -E /usr/local/bin/tokenize-signer.sh ocp-master0
+
+Populating template /usr/local/share/openshift-recovery/template/kube-etcd-cert-signer.yaml.template
+Populating template ./assets/tmp/kube-etcd-cert-signer.yaml.stage1
+Tokenized template now ready: ./assets/manifests/kube-etcd-cert-signer.yaml
+</code></pre></div><p>Use the generated <code>kube-etcd-cert-signer.yaml</code> file to deploy the signer pod:</p> <div class="language-bash extra-class"><pre class="language-bash"><code>$ oc create -f assets/manifests/kube-etcd-cert-signer.yaml
+
+pod/etcd-signer created
+</code></pre></div><p>Verify that the signer is listening on this master node - it may take a minute or two to start.</p> <div class="language-bash extra-class"><pre class="language-bash"><code>$ ss -ltn <span class="token operator">|</span> <span class="token function">grep</span> <span class="token number">9943</span>
+$ ss -ltn <span class="token operator">|</span> <span class="token function">grep</span> <span class="token number">9943</span>
+
+LISTEN   <span class="token number">0</span>         <span class="token number">128</span>                       *:9943                   *:*
+</code></pre></div><h2 id="add-the-restored-master-hosts-to-the-etcd-cluster"><a href="#add-the-restored-master-hosts-to-the-etcd-cluster" aria-hidden="true" class="header-anchor">#</a> Add the restored master hosts to the etcd cluster</h2> <p>Connect to one of the restored master nodes, in this case, <code>ocp-master1</code>:</p> <div class="language-bash extra-class"><pre class="language-bash"><code>$ <span class="token function">ssh</span> ocp-master1
+</code></pre></div><p>Log in to your cluster as a cluster-admin user using the following command:</p> <div class="language-bash extra-class"><pre class="language-bash"><code>$ oc login https://localhost:6443
+
+The server uses a certificate signed by an unknown authority.
+You can bypass the certificate check, but any data you send to the server could be intercepted by others.
+Use insecure connections? <span class="token punctuation">(</span>y/n<span class="token punctuation">)</span>: y
+
+Authentication required <span class="token keyword">for</span> https://localhost:6443 <span class="token punctuation">(</span>openshift<span class="token punctuation">)</span>
+Username: kubeadmin
+Password:  LX65K-DXmpC-P4Hpo-W35au
+Login successful.
+
+</code></pre></div><p>Export two environment variables that are required by the etcd-member-recover.sh script:</p> <div class="language-bash extra-class"><pre class="language-bash"><code>$ <span class="token builtin class-name">export</span> <span class="token assign-left variable">SETUP_ETCD_ENVIRONMENT</span><span class="token operator">=</span><span class="token variable"><span class="token variable">$(</span><span class="token function">sudo</span> oc adm release info --image-for setup-etcd-environment --registry-config<span class="token operator">=</span>/var/lib/kubelet/config.json  --config<span class="token operator">=</span>/home/core/.kube/config<span class="token variable">)</span></span>
+
+$ <span class="token builtin class-name">export</span> <span class="token assign-left variable">KUBE_CLIENT_AGENT</span><span class="token operator">=</span><span class="token variable"><span class="token variable">$(</span><span class="token function">sudo</span> oc adm release info --image-for kube-client-agent --registry-config<span class="token operator">=</span>/var/lib/kubelet/config.json --config<span class="token operator">=</span>/home/core/.kube/config<span class="token variable">)</span></span>
+</code></pre></div><p>Run the <code>etcd-member-recover.sh</code> script, passing in that IP address of <code>ocp-master0</code> and the name of the new etcd member:</p> <div class="language-bash extra-class"><pre class="language-bash"><code>$ <span class="token function">sudo</span> -E /usr/local/bin/etcd-member-recover.sh <span class="token number">10.15</span>.155.210 etcd-member-ocp-master1.ocp.hpecloud.org
+
+Creating asset directory ./assets
+Downloading etcdctl binary<span class="token punctuation">..</span>
+etcdctl version: <span class="token number">3.3</span>.10
+API version: <span class="token number">3.3</span>
+Backing up /etc/kubernetes/manifests/etcd-member.yaml to ./assets/backup/
+Backing up /etc/etcd/etcd.conf to ./assets/backup/
+Trying to backup etcd client certs<span class="token punctuation">..</span>
+etcd client certs found <span class="token keyword">in</span> /etc/kubernetes/static-pod-resources/kube-apiserver-pod-8 backing up to ./assets/backup/
+Stopping etcd<span class="token punctuation">..</span>
+Waiting <span class="token keyword">for</span> etcd-member to stop
+Waiting <span class="token keyword">for</span> etcd-member to stop
+Waiting <span class="token keyword">for</span> etcd-member to stop
+Waiting <span class="token keyword">for</span> etcd-member to stop
+Local etcd snapshot <span class="token function">file</span> not found, backup skipped<span class="token punctuation">..</span>
+Backing up etcd certificates<span class="token punctuation">..</span>
+Populating template /usr/local/share/openshift-recovery/template/etcd-generate-certs.yaml.template
+Populating template ./assets/tmp/etcd-generate-certs.stage1
+Populating template ./assets/tmp/etcd-generate-certs.stage2
+Starting etcd client cert recovery agent<span class="token punctuation">..</span>
+Waiting <span class="token keyword">for</span> certs to generate<span class="token punctuation">..</span>
+Waiting <span class="token keyword">for</span> certs to generate<span class="token punctuation">..</span>
+Waiting <span class="token keyword">for</span> certs to generate<span class="token punctuation">..</span>
+Waiting <span class="token keyword">for</span> certs to generate<span class="token punctuation">..</span>
+Stopping cert recover<span class="token punctuation">..</span>
+Waiting <span class="token keyword">for</span> generate-certs to stop
+Patching etcd-member manifest<span class="token punctuation">..</span>
+Updating etcd membership<span class="token punctuation">..</span>
+Member 81d77724154f987e added to cluster 11eeb64feb9a2071
+
+<span class="token assign-left variable">ETCD_NAME</span><span class="token operator">=</span><span class="token string">&quot;etcd-member-ocp-master1.ocp.hpecloud.org&quot;</span>
+<span class="token assign-left variable">ETCD_INITIAL_CLUSTER</span><span class="token operator">=</span><span class="token string">&quot;etcd-member-ocp-master0=https://etcd-0.ocp.hpecloud.org:2380,etcd-member-ocp-master1.ocp.hpecloud.org=https://etcd-1.ocp.hpecloud.org:2380&quot;</span>
+<span class="token assign-left variable">ETCD_INITIAL_ADVERTISE_PEER_URLS</span><span class="token operator">=</span><span class="token string">&quot;https://etcd-1.ocp.hpecloud.org:2380&quot;</span>
+<span class="token assign-left variable">ETCD_INITIAL_CLUSTER_STATE</span><span class="token operator">=</span><span class="token string">&quot;existing&quot;</span>
+Starting etcd<span class="token punctuation">..</span>
+</code></pre></div><h2 id="verify-master-host-has-been-added-to-the-etcd-member-list"><a href="#verify-master-host-has-been-added-to-the-etcd-member-list" aria-hidden="true" class="header-anchor">#</a> Verify master host has been added to the etcd member list</h2> <p>From your Ansible controller node, connect to the first master <code>ocp-master1</code>:</p> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token comment"># ssh ocp-master0</span>
+</code></pre></div><p>Connect to the running etcd container:</p> <div class="language- extra-class"><pre class="language-text"><code>$ id=$(sudo crictl ps --name etcd-member | awk 'FNR==2{ print $1}')
+$ sudo crictl exec -it $id /bin/sh
+
+sh-4.2#
+</code></pre></div><p>In the etcd container, export variables needed for connecting to etcd:</p> <div class="language- extra-class"><pre class="language-text"><code>sh-4.2# export ETCDCTL_API=3 
+sh-4.2# export ETCDCTL_CACERT=/etc/ssl/etcd/ca.crt 
+sh-4.2# export ETCDCTL_CERT=$(find /etc/ssl/ -name *peer*crt)                   
+sh-4.2# export ETCDCTL_KEY=$(find /etc/ssl/ -name *peer*key)
+</code></pre></div><p>In the etcd container, execute <code>etcdctl member list</code> and verify that the new member is listed:</p> <div class="language- extra-class"><pre class="language-text"><code>sh-4.2# etcdctl member list -w table
++------------------+---------+------------------------------------------+--------------------------------------+                               ----------------------------+
+|        ID        | STATUS  |                   NAME                   |              PEER ADDRS              |                                       CLIENT ADDRS        |
++------------------+---------+------------------------------------------+--------------------------------------+                               ----------------------------+
+| 1c5a549c9f4e67b5 | started |                  etcd-member-ocp-master0 | https://etcd-0.ocp.hpecloud.org:2380 |                                https://10.15.155.210:2379 |
+| 81d77724154f987e | started | etcd-member-ocp-master1.ocp.hpecloud.org | https://etcd-1.ocp.hpecloud.org:2380 |                                https://10.15.155.211:2379 |
++------------------+---------+------------------------------------------+--------------------------------------+                               ----------------------------+
+sh-4.2#
+</code></pre></div><p>Note that it may take up to 10 minutes for the new member to start. Repeat these steps for <code>ocp-master2</code> until
+you have achieved full etcd membership.</p> <p>When you are finished restoring the etcd cluster, delete the signer pod from the OpenShift cluster:</p> <div class="language-bash extra-class"><pre class="language-bash"><code>$ oc delete pod -n openshift-config etcd-signer
+</code></pre></div></div> <footer class="page-edit"><div class="edit-link"><a href="https://github.com/HewlettPackard/OpenShift-on-SimpliVity/edit/docs-dev/docs-src/backup-restore/recovery-lost-master.md" target="_blank" rel="noopener noreferrer">Help us improve this page!</a> <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></div> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/OpenShift-on-SimpliVity/PREVIEW/backup-restore/backup.html" class="prev">Backup</a></span> <span class="next"><a href="/OpenShift-on-SimpliVity/PREVIEW/appendices/appendix-a.html">Appendix A: Bill of Materials</a>→
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/OpenShift-on-SimpliVity/PREVIEW/assets/js/app.8040082a.js" defer></script><script src="/OpenShift-on-SimpliVity/PREVIEW/assets/js/2.a87ca1fa.js" defer></script><script src="/OpenShift-on-SimpliVity/PREVIEW/assets/js/5.0bb19590.js" defer></script>
+  </body>
+</html>
