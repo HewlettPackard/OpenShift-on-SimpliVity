@@ -10,6 +10,11 @@ module.exports = {
       { text: 'Blog', link: '/blog/' }
     ],
 
+    algolia: {
+      apiKey: process.env.VUE_APP_OPENSHIFT_ALGOLIA_APIKEY,
+      indexName: process.env.VUE_APP_OPENSHIFT_ALGOLIA_INDEXNAME
+    },
+
     repo: 'HewlettPackard/OpenShift-on-SimpliVity',
     // Customising the header label
     // Defaults to "GitHub"/"GitLab"/"Bitbucket" depending on `themeConfig.repo`
