@@ -23,6 +23,5 @@ The current version is based on Red Hat OpenShift Container Platform **4.2**. Ne
 
 The corresponding Reference Configuration is available at [https://h20195.www2.hpe.com/V2/GetDocument.aspx?docname=a50000461enw](https://h20195.www2.hpe.com/V2/GetDocument.aspx?docname=a50000461enw).
 
-
-The playbooks are available at 
+The playbooks are available at
 [https://github.com/HewlettPackard/OpenShift-on-SimpliVity/](https://github.com/HewlettPackard/OpenShift-on-SimpliVity/)
