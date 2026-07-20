@@ -1,3 +1,5 @@
+# This project is no longer supported.
+
 # Welcome to the HPE Reference Configuration for Red Hat OpenShift Container Platform (OCP) on HPE SimpliVity
 
 The HPE Reference Configuration for Red Hat OpenShift Container Platform (OCP) on HPE SimpliVity is part of an overall solution 
